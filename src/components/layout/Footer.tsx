@@ -47,7 +47,7 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-paper-500">Navigate</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-paper-500">Navigate.</p>
             <ul className="mt-4 space-y-3">
               {navLinks.map((link) => (
                 <li key={link.href}>
