@@ -11,11 +11,20 @@
     @apply bg-paper-100 text-ink-900 antialiased;
   }
 
+  /*
+   * Deliberately no color here. Headings inherit `text-ink-900` from
+   * `body` on ordinary light sections, and the correct light color from
+   * whichever dark-section wrapper they sit in (Hero, PageHero, FinalCTA,
+   * CTABanner, etc. already set text-paper-100/text-white on themselves).
+   * A hard-coded color here would always win over that inherited value
+   * and silently render ink-on-ink on any dark section — that was a real
+   * bug (the homepage H1 among others), not a hypothetical one.
+   */
   h1,
   h2,
   h3,
   h4 {
-    @apply font-display text-ink-900;
+    @apply font-display;
   }
 
   /* Visible, on-brand focus states for keyboard users everywhere */

@@ -7,7 +7,7 @@ const toneStyles: Record<Tone, string> = {
   ink: "bg-ink-900 text-paper-100",
   grove: "bg-grove-100 text-grove-800",
   signal: "bg-signal-100 text-signal-800",
-  ember: "bg-ember-300/40 text-ember-600",
+  ember: "bg-ember-300 text-ember-800",
 };
 
 export function Badge({

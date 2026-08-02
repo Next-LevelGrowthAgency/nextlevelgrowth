@@ -19,7 +19,7 @@ export function Accordion({ items }: { items: AccordionItemData[] }) {
   const baseId = useId();
 
   return (
-    <div className="divide-y divide-ink-100 rounded-2xl border border-ink-100 bg-white">
+    <div className="divide-y divide-ink-100 rounded-2xl border border-ink-200 bg-white">
       {items.map((item, index) => {
         const isOpen = openIndex === index;
         const panelId = `${baseId}-panel-${index}`;

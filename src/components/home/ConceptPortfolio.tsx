@@ -28,7 +28,7 @@ export function ConceptPortfolio() {
           <SectionHeading
             eyebrow="Sample Transformations"
             title="What Growth Could Look Like for a Business Like Yours"
-            description="Concept builds created to demonstrate strategy and craft — clearly labeled, not real client engagements."
+            description="Concept builds created to demonstrate strategy and craft, clearly labeled, not real client engagements."
             className="max-w-2xl"
           />
           <Button href="/work" variant="secondary" size="md" className="shrink-0">

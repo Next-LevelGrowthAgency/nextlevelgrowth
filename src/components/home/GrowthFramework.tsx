@@ -13,7 +13,7 @@ export function GrowthFramework() {
         <SectionHeading
           eyebrow="Our Methodology"
           title="The Next Level Growth Framework"
-          description="A clear, repeatable path from where your business is today to where it's ready to go — no guesswork, no wasted motion."
+          description="A clear, repeatable path from where your business is today to where it's ready to go. No guesswork, no wasted motion."
           tone="dark"
         />
 

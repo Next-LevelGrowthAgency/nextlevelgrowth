@@ -35,9 +35,9 @@ export const siteConfig = {
     email: "hello@nextlevelgrowth.com",
     phone: "(555) 010-0142",
     phoneHref: "+15550100142",
-    addressLine1: "PLACEHOLDER — Street Address",
-    addressLine2: "PLACEHOLDER — City, State ZIP",
-    serviceArea: "PLACEHOLDER — Primary service area / region",
+    addressLine1: "PLACEHOLDER: Street Address",
+    addressLine2: "PLACEHOLDER: City, State ZIP",
+    serviceArea: "PLACEHOLDER: Primary service area / region",
   },
 
   // PLACEHOLDER — replace with real, verified profiles before launch.
@@ -151,7 +151,7 @@ export const frameworkStages: FrameworkStage[] = [
     number: "03",
     title: "Build",
     description:
-      "We create your website, lead-capture systems, content, and digital foundation — designed with intention, not templates.",
+      "We create your website, lead-capture systems, content, and digital foundation, designed with intention, not templates.",
   },
   {
     number: "04",
@@ -163,7 +163,7 @@ export const frameworkStages: FrameworkStage[] = [
     number: "05",
     title: "Grow",
     description:
-      "We monitor results, refine strategy, and keep creating momentum — growth is a direction, not a one-time project.",
+      "We monitor results, refine strategy, and keep creating momentum. Growth is a direction, not a one-time project.",
   },
 ];
 
@@ -175,7 +175,7 @@ export const differentiators: Differentiator[] = [
   },
   {
     title: "Business outcomes over vanity metrics",
-    description: "We build toward leads, calls, and appointments — not just good looks.",
+    description: "We build toward leads, calls, and appointments, not just good looks.",
     icon: "Target",
   },
   {
@@ -195,7 +195,7 @@ export const differentiators: Differentiator[] = [
   },
   {
     title: "Honest recommendations",
-    description: "We tell you what your business needs — not what's easiest for us to sell.",
+    description: "We tell you what your business needs, not what's easiest for us to sell.",
     icon: "BadgeCheck",
   },
   {
@@ -295,7 +295,7 @@ export const capabilityProofs: CapabilityProof[] = [
   { title: "Conversion-focused structure", description: "Every page has a clear next step.", icon: "MousePointerClick" },
   { title: "Clear calls to action", description: "No confusing menus of options.", icon: "ArrowUpRight" },
   { title: "Search-friendly technical foundation", description: "Built to be found, not just to look good.", icon: "Search" },
-  { title: "Fast performance", description: "Speed is a trust signal — and a ranking factor.", icon: "Gauge" },
+  { title: "Fast performance", description: "Speed is a trust signal and a ranking factor.", icon: "Gauge" },
   { title: "Accessible experience", description: "Usable for every visitor, on every device.", icon: "Accessibility" },
   { title: "Analytics readiness", description: "Set up to measure what actually matters.", icon: "BarChart3" },
   { title: "Lead-capture systems", description: "Built in from day one, not bolted on later.", icon: "Inbox" },
@@ -324,7 +324,7 @@ export const faqs: FaqItem[] = [
   {
     question: "What types of businesses do you work with?",
     answer:
-      "We work with local and service-based businesses across nearly every industry — from restaurants and med-spas to contractors, law firms, and fitness studios. The common thread isn't industry; it's wanting more visibility, more customers, and a stronger online presence.",
+      "We work with local and service-based businesses across nearly every industry, from restaurants and med-spas to contractors, law firms, and fitness studios. The common thread isn't industry; it's wanting more visibility, more customers, and a stronger online presence.",
   },
   {
     question: "Do I need a new website?",
@@ -334,7 +334,7 @@ export const faqs: FaqItem[] = [
   {
     question: "Can you improve my existing website?",
     answer:
-      "Yes. We regularly improve existing sites — performance, SEO, structure, and conversion paths — without necessarily rebuilding from scratch.",
+      "Yes. We regularly improve existing sites: performance, SEO, structure, and conversion paths, without necessarily rebuilding from scratch.",
   },
   {
     question: "How long does a website project take?",
@@ -344,7 +344,7 @@ export const faqs: FaqItem[] = [
   {
     question: "Do you provide hosting and ongoing support?",
     answer:
-      "Yes. We offer hosting, maintenance, and ongoing optimization so your site keeps performing well after launch — not just on launch day.",
+      "Yes. We offer hosting, maintenance, and ongoing optimization so your site keeps performing well after launch, not just on launch day.",
   },
   {
     question: "Can you help my business appear on Google?",
@@ -354,12 +354,12 @@ export const faqs: FaqItem[] = [
   {
     question: "What is a Growth Audit?",
     answer:
-      "A Growth Audit is a free, no-pressure review of your current online presence — website, local search visibility, and lead capture — with clear, honest observations about what's working and what could be improved.",
+      "A Growth Audit is a free, no-pressure review of your current online presence (website, local search visibility, and lead capture) with clear, honest observations about what's working and what could be improved.",
   },
   {
     question: "Do you offer AI chatbots?",
     answer:
-      "Yes, as an optional add-on. Our AI chat is designed to capture and qualify leads and answer common questions — it's disclosed as a virtual assistant and escalates anything it can't confidently answer to a real person.",
+      "Yes, as an optional add-on. Our AI chat is designed to capture and qualify leads and answer common questions. It's disclosed as a virtual assistant and escalates anything it can't confidently answer to a real person.",
   },
   {
     question: "Will I own my website?",
@@ -369,7 +369,7 @@ export const faqs: FaqItem[] = [
   {
     question: "How much do your services cost?",
     answer:
-      "Pricing depends on scope — a single-page site and a full multi-service engagement aren't priced the same way. We'll give you clear, itemized pricing after understanding your goals, with no obligation.",
+      "Pricing depends on scope. A single-page site and a full multi-service engagement aren't priced the same way. We'll give you clear, itemized pricing after understanding your goals, with no obligation.",
   },
   {
     question: "Can we start small and expand later?",
@@ -379,7 +379,7 @@ export const faqs: FaqItem[] = [
   {
     question: "What happens after the website launches?",
     answer:
-      "We monitor performance, review analytics together, and recommend next steps — that's the 'Grow' stage of our process, and it doesn't have an end date.",
+      "We monitor performance, review analytics together, and recommend next steps. That's the 'Grow' stage of our process, and it doesn't have an end date.",
   },
 ];
 

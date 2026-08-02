@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with Next Level Growth — no pressure, no confusing pitch.",
+  description: "Get in touch with Next Level Growth. No pressure, no confusing pitch.",
   alternates: { canonical: "/contact" },
 };
 
@@ -56,7 +56,7 @@ export default function ContactPage() {
                 <div>
                   <p className="font-medium text-ink-900">Service Area</p>
                   <p className="text-ink-600">{siteConfig.contact.serviceArea}</p>
-                  <p className="mt-1 text-xs text-ink-400">
+                  <p className="mt-1 text-xs text-ink-500">
                     {siteConfig.contact.addressLine1}, {siteConfig.contact.addressLine2}
                   </p>
                 </div>

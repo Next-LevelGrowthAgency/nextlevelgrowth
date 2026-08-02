@@ -10,7 +10,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Our Approach",
   description:
-    "The Next Level Growth Framework: Discover, Clarify, Build, Launch, Grow — a clear, repeatable path from where your business is to where it's ready to go.",
+    "The Next Level Growth Framework: Discover, Clarify, Build, Launch, Grow. A clear, repeatable path from where your business is to where it's ready to go.",
   alternates: { canonical: "/approach" },
 };
 
@@ -29,7 +29,7 @@ export default function ApproachPage() {
         <Container className="max-w-3xl">
           <p className="text-lg leading-relaxed text-ink-700">
             Great digital marketing and web design don&rsquo;t start with a
-            template — they start with understanding your business. The Next
+            template. They start with understanding your business. The Next
             Level Growth Framework is the same five-stage process we use with
             every client, adapted to your industry, your goals, and your
             budget. It exists so you always know what&rsquo;s happening next

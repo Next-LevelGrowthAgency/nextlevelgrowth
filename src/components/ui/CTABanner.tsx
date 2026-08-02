@@ -4,7 +4,7 @@ import { primaryCta } from "@/lib/site-config";
 
 export function CTABanner({
   title = "Ready to see what's possible for your business?",
-  description = "Start with a free, no-pressure Growth Audit — we'll show you exactly where the opportunity is.",
+  description = "Start with a free, no-pressure Growth Audit. We'll show you exactly where the opportunity is.",
 }: {
   title?: string;
   description?: string;

@@ -9,10 +9,13 @@ const variantStyles: Record<Variant, string> = {
   primary:
     "bg-grove-600 text-white hover:bg-grove-700 shadow-soft hover:shadow-lifted focus-visible:outline-grove-700",
   secondary:
-    "bg-transparent text-ink-900 border border-ink-300 hover:border-ink-900 hover:bg-ink-50",
-  ghost: "bg-transparent text-ink-700 hover:text-ink-900 hover:bg-ink-100",
+    "bg-transparent text-ink-900 border border-ink-400 hover:border-ink-900 hover:bg-ink-50 focus-visible:outline-grove-700",
+  ghost: "bg-transparent text-ink-700 hover:text-ink-900 hover:bg-ink-100 focus-visible:outline-grove-700",
+  // Used on dark/colored surfaces (e.g. inside CTABanner's grove-700 band) —
+  // needs its own light-colored ring rather than the site's default grove
+  // one, which would nearly disappear against a similarly-dark backdrop.
   inverse:
-    "bg-paper-100 text-ink-900 hover:bg-white shadow-soft hover:shadow-lifted",
+    "bg-paper-100 text-ink-900 hover:bg-white shadow-soft hover:shadow-lifted focus-visible:outline-paper-100",
 };
 
 const sizeStyles: Record<Size, string> = {

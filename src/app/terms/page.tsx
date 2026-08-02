@@ -15,7 +15,7 @@ export default function TermsPage() {
       <PageHero
         eyebrow="Legal"
         title="Terms of Service"
-        description="PLACEHOLDER — this page requires review by a qualified attorney before launch. It is not legal advice."
+        description="PLACEHOLDER: this page requires review by a qualified attorney before launch. It is not legal advice."
       />
       <Section tone="paper">
         <Container className="max-w-3xl space-y-6 text-ink-700">

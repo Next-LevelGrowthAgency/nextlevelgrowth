@@ -12,7 +12,7 @@ import { ArrowUpRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Website design, local SEO, digital marketing, automation, and ongoing growth support — built around your business goals, not a generic package.",
+    "Website design, local SEO, digital marketing, automation, and ongoing growth support, built around your business goals, not a generic package.",
   alternates: { canonical: "/services" },
 };
 
@@ -31,7 +31,7 @@ export default function ServicesPage() {
         <Container>
           <SectionHeading
             eyebrow="What We Do"
-            title="Choose Where to Start — Everything Connects"
+            title="Choose Where to Start: Everything Connects"
             description="Most clients begin with one priority and expand as momentum builds. Here's how each service moves your business forward."
           />
 

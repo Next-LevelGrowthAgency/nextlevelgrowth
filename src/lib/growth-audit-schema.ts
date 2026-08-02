@@ -47,7 +47,7 @@ export const primaryGoalOptions = [
   "Get found more on Google",
   "Generate more leads",
   "Improve my online reputation",
-  "Not sure yet — I need guidance",
+  "Not sure yet, I need guidance",
 ];
 
 export const servicesOfInterestOptions = [

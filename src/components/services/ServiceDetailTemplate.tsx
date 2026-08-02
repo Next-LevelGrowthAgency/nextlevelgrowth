@@ -58,17 +58,23 @@ export function ServiceDetailTemplate({ service }: { service: ServiceDetail }) {
         </Container>
       </Section>
 
+      {/* A bordered, elevated card (rather than a third plain paper section)
+          breaks up what would otherwise be three visually identical light
+          sections in a row, without stacking a second dark band right
+          before the CTA. */}
       <Section tone="paper">
         <Container className="max-w-3xl">
-          <h2 className="text-display-md">What You Can Expect</h2>
-          <ul className="mt-8 space-y-4">
-            {service.outcomes.map((outcome) => (
-              <li key={outcome} className="flex items-start gap-3">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-grove-600" aria-hidden="true" />
-                <span className="text-ink-700">{outcome}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="rounded-2xl border border-ink-200 bg-white p-8 shadow-soft sm:p-10">
+            <h2 className="text-display-md">What You Can Expect</h2>
+            <ul className="mt-8 space-y-4">
+              {service.outcomes.map((outcome) => (
+                <li key={outcome} className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-grove-600" aria-hidden="true" />
+                  <span className="text-ink-700">{outcome}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </Container>
       </Section>
 

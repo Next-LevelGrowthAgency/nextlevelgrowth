@@ -48,7 +48,7 @@ export default async function InsightPostPage({
             {post.category}
           </Badge>
           <h1 className="mt-4 text-display-lg">{post.title}</h1>
-          <p className="mt-3 text-sm text-ink-400">{post.readTime}</p>
+          <p className="mt-3 text-sm text-ink-500">{post.readTime}</p>
         </Container>
       </Section>
 

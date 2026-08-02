@@ -16,7 +16,7 @@ export function ServicesOverview() {
         <SectionHeading
           eyebrow="How We Help"
           title="Everything Your Business Needs to Grow Online, Organized Around Outcomes"
-          description="Not a menu of technical deliverables — a set of tools built to move your business forward."
+          description="Not a menu of technical deliverables. A set of tools built to move your business forward."
         />
 
         <motion.div

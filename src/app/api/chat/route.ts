@@ -26,7 +26,7 @@ function isRateLimited(key: string) {
 }
 
 const NON_AI_FALLBACK =
-  "Thanks for reaching out — our virtual assistant isn't available right now, but you can request a Free Growth Audit or send us a message on the Contact page and a real person will follow up.";
+  "Thanks for reaching out. Our virtual assistant isn't available right now, but you can request a Free Growth Audit or send us a message on the Contact page and a real person will follow up.";
 
 /**
  * Server-side proxy for the AI chat widget. Deliberately does NOT call an
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "unknown";
   if (isRateLimited(ip)) {
     return NextResponse.json(
-      { reply: "You're sending messages a little quickly — please wait a moment and try again." },
+      { reply: "You're sending messages a little quickly. Please wait a moment and try again." },
       { status: 429 }
     );
   }

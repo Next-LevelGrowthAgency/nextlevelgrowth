@@ -45,7 +45,7 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <div role="status" className="rounded-2xl border border-grove-200 bg-grove-50 p-6 text-grove-800">
-        <p className="font-semibold">Thanks — your message is in.</p>
+        <p className="font-semibold">Thanks. Your message is in.</p>
         <p className="mt-1 text-sm">We'll get back to you shortly.</p>
       </div>
     );
@@ -63,7 +63,7 @@ export function ContactForm() {
           type="text"
           required
           autoComplete="name"
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
         />
       </div>
       <div>
@@ -76,7 +76,7 @@ export function ContactForm() {
           type="email"
           required
           autoComplete="email"
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
         />
       </div>
       <div>
@@ -88,7 +88,7 @@ export function ContactForm() {
           name="message"
           required
           rows={5}
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
         />
       </div>
 

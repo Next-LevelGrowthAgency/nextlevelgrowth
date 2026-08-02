@@ -19,7 +19,7 @@ export default function InsightsPage() {
       <PageHero
         eyebrow="Insights"
         title="Practical Guidance, No Jargon"
-        description="Straightforward articles on websites, local SEO, and digital marketing — written for business owners, not developers."
+        description="Straightforward articles on websites, local SEO, and digital marketing, written for business owners, not developers."
       />
 
       <Section tone="paper">
@@ -38,7 +38,7 @@ export default function InsightsPage() {
                   {post.title}
                 </h2>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-600">{post.excerpt}</p>
-                <p className="mt-4 text-xs font-medium text-ink-400">{post.readTime}</p>
+                <p className="mt-4 text-xs font-medium text-ink-500">{post.readTime}</p>
               </Link>
             ))}
           </div>

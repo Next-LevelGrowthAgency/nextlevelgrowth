@@ -35,7 +35,7 @@ export default function AccessibilityPage() {
             and we will work to address it.
           </p>
           <p className="rounded-2xl border border-dashed border-ink-300 bg-paper-200 p-6 text-sm">
-            PLACEHOLDER — review this statement against your actual, tested
+            PLACEHOLDER: review this statement against your actual, tested
             accessibility conformance before launch.
           </p>
         </Container>

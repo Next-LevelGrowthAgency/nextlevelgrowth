@@ -25,19 +25,19 @@ export const insightPosts: InsightPost[] = [
     category: "Getting Started",
     readTime: "4 min read",
     body: [
-      "PLACEHOLDER ARTICLE — replace with real written content before launch.",
-      "A Growth Audit looks at three things: your website, your local search visibility, and how well your current site captures leads. You'll get clear, honest observations — not a sales pitch.",
+      "PLACEHOLDER ARTICLE: replace with real written content before launch.",
+      "A Growth Audit looks at three things: your website, your local search visibility, and how well your current site captures leads. You'll get clear, honest observations, not a sales pitch.",
     ],
   },
   {
     slug: "local-seo-basics-for-small-business",
     title: "Local SEO Basics Every Small Business Owner Should Know",
     excerpt:
-      "The handful of fundamentals that actually move the needle for local search visibility — no jargon required.",
+      "The handful of fundamentals that actually move the needle for local search visibility. No jargon required.",
     category: "Local SEO",
     readTime: "6 min read",
     body: [
-      "PLACEHOLDER ARTICLE — replace with real written content before launch.",
+      "PLACEHOLDER ARTICLE: replace with real written content before launch.",
       "Local SEO comes down to a few fundamentals: an accurate, complete Google Business Profile, consistent business information across the web, and a website that clearly explains what you do and where you do it.",
     ],
   },
@@ -49,8 +49,8 @@ export const insightPosts: InsightPost[] = [
     category: "Website Design",
     readTime: "5 min read",
     body: [
-      "PLACEHOLDER ARTICLE — replace with real written content before launch.",
-      "Sometimes the right move is targeted improvements — better calls to action, faster load times, clearer navigation. Sometimes the foundation genuinely needs to be rebuilt. A short audit usually makes it obvious which situation you're in.",
+      "PLACEHOLDER ARTICLE: replace with real written content before launch.",
+      "Sometimes the right move is targeted improvements: better calls to action, faster load times, clearer navigation. Sometimes the foundation genuinely needs to be rebuilt. A short audit usually makes it obvious which situation you're in.",
     ],
   },
   {
@@ -61,8 +61,8 @@ export const insightPosts: InsightPost[] = [
     category: "Automation",
     readTime: "5 min read",
     body: [
-      "PLACEHOLDER ARTICLE — replace with real written content before launch.",
-      "The goal of AI chat isn't to replace conversations with your customers — it's to make sure no inquiry goes unanswered. Done well, it should always disclose that it's a virtual assistant and hand off to a person quickly.",
+      "PLACEHOLDER ARTICLE: replace with real written content before launch.",
+      "The goal of AI chat isn't to replace conversations with your customers. It's to make sure no inquiry goes unanswered. Done well, it should always disclose that it's a virtual assistant and hand off to a person quickly.",
     ],
   },
 ];

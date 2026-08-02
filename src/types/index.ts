@@ -70,3 +70,526 @@ export type GrowthAuditFormData = {
   preferredContact: "Email" | "Phone" | "Text";
   additionalDetails?: string;
 };
+
+/**
+ * Next Level Growth Coach — types shared between the mock coaching engine
+ * (src/lib/growth-coach/engine.ts) and the UI (src/components/growth-coach/).
+ */
+
+export type CoachingMode =
+  | "clarity"
+  | "strategy"
+  | "execution"
+  | "performance"
+  | "encouragement"
+  | "challenge"
+  | "life-design"
+  | "financial-discipline"
+  | "founder";
+
+export type SuggestedPrompt = {
+  id: string;
+  label: string;
+  icon: string; // lucide-react icon name, resolved via <Icon />
+  tier: "primary" | "more";
+};
+
+export type ReportSection = {
+  heading: string;
+  body: string | string[];
+};
+
+export type StructuredReport = {
+  title: string;
+  demo?: boolean; // true = visually flagged as a demonstration/mock analysis
+  scoreLabel?: string; // e.g. "6.5 / 10 (demo score)"
+  sections: ReportSection[];
+};
+
+export type QuickReplyAction = "consult-yes" | "consult-no" | "report-yes" | "report-not-now" | "start-full-assessment";
+
+export type QuickReply = {
+  label: string;
+  action: QuickReplyAction;
+};
+
+/** Structured answer choices for a Growth Score question — rendered as buttons, not free text. */
+export type GrowthScoreQuestionPrompt = {
+  questionId: string;
+  options: { value: string; label: string }[];
+  progress: { answered: number; total: number };
+};
+
+export type CoachMessage = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  mode?: CoachingMode;
+  report?: StructuredReport;
+  businessReport?: BusinessGrowthReport;
+  scoreQuestion?: GrowthScoreQuestionPrompt;
+  growthScoreResult?: GrowthScoreResult;
+  quickReplies?: QuickReply[];
+  cta?: { label: string; href: string };
+};
+
+export type FlowId = "assessment" | "growth-plan" | "website-review" | null;
+
+/** Single-follow-up topics for the seven prompts that aren't full scripted flows. */
+export type CoachTopic =
+  | "leads"
+  | "google-visibility"
+  | "marketing"
+  | "systems"
+  | "automation"
+  | "prioritize"
+  | "challenge"
+  | null;
+
+/**
+ * Lightweight memory of what the coach has learned about this visitor so
+ * far this session — used to personalize later mock replies (e.g. the
+ * low-confidence fallback) instead of repeating the same generic line.
+ */
+export type CoachContext = {
+  business: string | null;
+  primaryGoal: string | null;
+  mainFear: string | null;
+  weeklyHours: number | null;
+  currentPriority: string | null;
+};
+
+export type CoachState = {
+  flow: FlowId;
+  topic: CoachTopic;
+  step: number;
+  answers: string[];
+  offeredConsult: boolean;
+  context: CoachContext;
+  /** Per-intent reply counter, used to cycle through response variants instead of repeating one. */
+  categoryUseCount: Record<string, number>;
+  /** Whether the "want a full Business Growth Report?" offer has already been made this session — asked at most once. */
+  reportOffered: boolean;
+  /** The most recently generated report, kept so "save & send" can reuse it without recomputing. */
+  businessReport: BusinessGrowthReport | null;
+  /** Non-null while a Quick Growth Check or Full Growth Assessment is in progress. */
+  growthAssessment: GrowthAssessmentState | null;
+  /** The most recently generated Growth Score, kept so it can be attached to a later report/lead without recomputing. */
+  lastGrowthScore: GrowthScoreResult | null;
+};
+
+// -----------------------------------------------------------------------
+// Business Growth Report, service/plan recommendations, and lead capture
+// -----------------------------------------------------------------------
+
+export type ServiceId =
+  | "website-design"
+  | "website-redesign"
+  | "website-maintenance"
+  | "local-seo"
+  | "gbp-optimization"
+  | "reputation-reviews"
+  | "ai-chatbot"
+  | "ai-workflow-automation"
+  | "lead-capture-systems"
+  | "crm-setup"
+  | "follow-up-automation"
+  | "marketing-strategy"
+  | "branding-positioning"
+  | "conversion-optimization"
+  | "lead-generation"
+  | "monthly-growth-partnership";
+
+export type ServiceRecommendation = {
+  serviceId: ServiceId;
+  name: string;
+  problem: string;
+  relevance: string;
+  benefitType: string;
+  priority: "do-now" | "do-next" | "do-later";
+  dependencies?: string;
+  whatToMeasure: string;
+};
+
+export type PlanId = "foundation" | "growth" | "scale" | "custom-partnership";
+
+export type PlanRecommendation = {
+  planId: PlanId;
+  name: string;
+  reason: string;
+  included: string[];
+  notIncluded: string[];
+  nextStep: string;
+};
+
+export type BusinessGrowthReport = {
+  generatedAt: number;
+  businessName: string | null;
+  visitorName: string | null;
+  executiveSummary: string;
+  currentState: string;
+  idealState: string;
+  growthGap: string;
+  rootCauses: string[];
+  strengths: string[];
+  topOpportunities: string[];
+  quickWins: string[];
+  thirtyDayPlan: string[];
+  ninetyDayRoadmap: { days1to30: string[]; days31to60: string[]; days61to90: string[] };
+  keyMetrics: string[];
+  risksAndConstraints: string[];
+  recommendedServices: ServiceRecommendation[];
+  recommendedPlan: PlanRecommendation;
+  nextAction: string;
+  /** Present when a Growth Score was generated earlier in the session. */
+  growthScore?: GrowthScoreResult;
+};
+
+export type LeadQualification =
+  | "exploring"
+  | "developing-need"
+  | "qualified-opportunity"
+  | "high-priority-follow-up"
+  | "not-ready-yet";
+
+/**
+ * Full lead-capture data model. Only firstName/email are required to
+ * request the report; everything else is optional and filled in only
+ * where the visitor volunteered it or the conversation surfaced it.
+ */
+export type LeadProfile = {
+  id: string;
+  sessionId: string;
+  source: string;
+  campaignSource?: string;
+
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  preferredContactMethod?: "Email" | "Phone" | "Text";
+
+  businessName?: string;
+  industry?: string;
+  city?: string;
+  state?: string;
+  serviceArea?: string;
+  websiteUrl?: string;
+  primaryServices?: string;
+  yearsInBusiness?: string;
+  businessStage?: string;
+  teamSize?: string;
+  idealCustomer?: string;
+  primaryGoal?: string;
+  primaryChallenge?: string;
+  marketingChannels?: string;
+  monthlyLeadVolume?: string;
+  leadResponseProcess?: string;
+  websiteStatus?: string;
+  googleBusinessProfileStatus?: string;
+  reviewProcess?: string;
+  revenueRange?: string;
+  marketingBudgetRange?: string;
+  weeklyTimeAvailable?: number;
+  desiredTimeline?: string;
+  personalConstraints?: string;
+
+  serviceInterests?: string[];
+  recommendedServices?: ServiceRecommendation[];
+  recommendedPlan?: PlanRecommendation;
+
+  conversationSummary?: string;
+  currentState?: string;
+  idealState?: string;
+  growthGap?: string;
+  rootCause?: string;
+  quickWins?: string[];
+  thirtyDayPlan?: string[];
+  ninetyDayRoadmap?: BusinessGrowthReport["ninetyDayRoadmap"];
+  nextAction?: string;
+
+  leadQualificationLevel?: LeadQualification;
+  consultationRequested?: boolean;
+
+  growthScore?: number | null;
+  growthScoreConfidence?: ConfidenceLabel;
+  growthScoreBand?: string;
+  biggestGrowthGap?: string;
+  growthCategorySnapshot?: { categoryId: GrowthScoreCategoryId; label: string; score: number }[];
+
+  consentToSaveReport: boolean;
+  consentToContact: boolean;
+  consentToMarketing: boolean;
+  reportConsentTimestamp?: number;
+  contactConsentTimestamp?: number;
+  marketingConsentTimestamp?: number;
+
+  createdAt: number;
+  updatedAt: number;
+  followUpStatus?: "new" | "contacted" | "qualified" | "won" | "lost" | "follow-up-needed";
+  assignedOwner?: string;
+  internalNotes?: string;
+};
+
+export type OwnerLeadSummary = {
+  leadId: string;
+  name: string;
+  followUpStatus: NonNullable<LeadProfile["followUpStatus"]>;
+  email: string;
+  phone?: string;
+  preferredContactMethod?: string;
+  businessName?: string;
+  industry?: string;
+  location?: string;
+  website?: string;
+  businessStage?: string;
+  teamSize?: string;
+  primaryChallenge?: string;
+  primaryGoal?: string;
+  constraints?: string;
+  timeline?: string;
+  marketingChannels?: string;
+  leadVolume?: string;
+  revenueOrBudget?: string;
+  servicesOfInterest?: string[];
+  recommendedServices: string[];
+  recommendedPlan: string;
+  qualification: LeadQualification;
+  growthScore?: number | null;
+  growthScoreConfidence?: ConfidenceLabel;
+  growthScoreBand?: string;
+  biggestGrowthGap?: string;
+  growthCategorySnapshot?: LeadProfile["growthCategorySnapshot"];
+  respectfulFollowUpNote: string;
+  reportSummary: string;
+  nextAction: string;
+  consultationRequested: boolean;
+  consent: { saveReport: boolean; contact: boolean; marketing: boolean };
+  consentTimestamps: { report?: number; contact?: number; marketing?: number };
+  suggestedFollowUpApproach: string;
+};
+
+export type AnalyticsEvent =
+  | "coach_opened"
+  | "prompt_selected"
+  | "assessment_started"
+  | "assessment_completed"
+  | "report_offered"
+  | "report_accepted"
+  | "report_declined"
+  | "report_generated"
+  | "lead_form_opened"
+  | "lead_form_completed"
+  | "contact_consent_accepted"
+  | "contact_consent_declined"
+  | "marketing_consent_accepted"
+  | "marketing_consent_declined"
+  | "consultation_offered"
+  | "consultation_accepted"
+  | "consultation_declined"
+  | "service_recommendation_shown"
+  | "plan_recommendation_shown"
+  | "conversation_reset"
+  | "api_error"
+  | "report_generation_error"
+  | "quick_check_started"
+  | "full_assessment_started"
+  | "assessment_question_answered"
+  | "growth_score_generated"
+  | "growth_score_low_confidence"
+  | "admin_login_success"
+  | "admin_login_failed"
+  | "admin_logout";
+
+// -----------------------------------------------------------------------
+// Next Level Growth Score
+// -----------------------------------------------------------------------
+
+export type GrowthScoreCategoryId =
+  | "business-foundation"
+  | "website-digital-presence"
+  | "local-visibility-seo"
+  | "lead-generation"
+  | "sales-follow-up"
+  | "customer-experience-retention"
+  | "brand-trust"
+  | "systems-operations"
+  | "ai-automation-readiness"
+  | "financial-discipline"
+  | "leadership-team"
+  | "founder-sustainability";
+
+/** An option's value id, or one of the two universal non-scoring answers every question supports. */
+export type ScoreAnswerValue = "unknown" | "not-applicable" | string;
+
+export type GrowthScoreQuestionOption = {
+  value: string;
+  label: string;
+  points: number;
+};
+
+export type GrowthScoreQuestion = {
+  id: string;
+  categoryId: GrowthScoreCategoryId;
+  prompt: string;
+  signal: "positive" | "risk";
+  options: GrowthScoreQuestionOption[];
+  maxPoints: number;
+  weight: number;
+  quickCheck: boolean;
+};
+
+export type GrowthScoreCategoryConfig = {
+  id: GrowthScoreCategoryId;
+  label: string;
+  description: string;
+  weight: number;
+  enabled: boolean;
+  relevantIndustries: string[] | "all";
+  questions: GrowthScoreQuestion[];
+  positiveIndicatorHints: string[];
+  riskIndicatorHints: string[];
+  thresholds: { strong: number; weak: number };
+  recommendedActionsByWeakness: string[];
+  relatedServiceIds: ServiceId[];
+  relatedPlanHint?: PlanId;
+  /** 1 (fast/cheap fix) – 5 (slow/expensive fix); used only in the prioritization formula, never shown as fake precision to the visitor. */
+  effortProxy: number;
+  displayOrder: number;
+};
+
+export type GrowthScoreAnswer = {
+  questionId: string;
+  categoryId: GrowthScoreCategoryId;
+  value: ScoreAnswerValue;
+  points: number | null;
+  answeredAt: number;
+};
+
+export type GrowthAssessmentState = {
+  mode: "quick" | "full";
+  questionQueue: string[];
+  currentQuestionId: string | null;
+  answers: GrowthScoreAnswer[];
+  completed: boolean;
+};
+
+export type ConfidenceLabel = "insufficient" | "low" | "moderate" | "high";
+
+export type GrowthWeakness = {
+  categoryId: GrowthScoreCategoryId;
+  what: string;
+  evidence: string;
+  severity: "low" | "moderate" | "high";
+  businessImpact: string;
+  rootCause: string;
+  countermeasure: string;
+  metricToTrack: string;
+  priority: "do-now" | "do-next" | "do-later" | "not-yet";
+  relatedServiceId?: ServiceId;
+};
+
+export type GrowthStrength = {
+  categoryId: GrowthScoreCategoryId;
+  what: string;
+  evidence: string;
+  whyItMatters: string;
+  howToLeverage: string;
+  scalable: boolean;
+  ownerDependent: boolean;
+};
+
+export type GrowthCategoryResult = {
+  categoryId: GrowthScoreCategoryId;
+  label: string;
+  rawScore: number;
+  weightedScore: number;
+  maximumScore: number;
+  normalizedScore: number;
+  confidenceScore: number;
+  confidenceLabel: ConfidenceLabel;
+  questionsAnswered: number;
+  questionsSkipped: number;
+  questionsUnknown: number;
+  supportingEvidence: string[];
+  positiveIndicators: string[];
+  riskIndicators: string[];
+  strengths: GrowthStrength[];
+  weaknesses: GrowthWeakness[];
+  growthGaps: string[];
+  recommendedActions: string[];
+  relatedServices: ServiceId[];
+};
+
+export type GrowthScoreBand = {
+  min: number;
+  max: number;
+  label: string;
+  message: string;
+};
+
+export type GrowthScoreResult = {
+  mode: "quick" | "full";
+  generatedAt: number;
+  /** Null when overallConfidenceLabel is "insufficient" — never a misleading number. */
+  overallScore: number | null;
+  scoreBand: GrowthScoreBand | null;
+  overallConfidence: number;
+  overallConfidenceLabel: ConfidenceLabel;
+  categoriesEvaluated: GrowthScoreCategoryId[];
+  categoriesMissing: GrowthScoreCategoryId[];
+  categoryResults: GrowthCategoryResult[];
+  strongestCategory: GrowthScoreCategoryId | null;
+  weakestCategory: GrowthScoreCategoryId | null;
+  highestPriorityGap: string | null;
+  topStrengths: GrowthStrength[];
+  topWeaknesses: GrowthWeakness[];
+  quickWins: string[];
+  doNow: string[];
+  doNext: string[];
+  doLater: string[];
+  notYet: string[];
+  thirtyDayPlan: string[];
+  ninetyDayPlan: string[];
+  metricsToTrack: string[];
+  recommendedServices: ServiceRecommendation[];
+  recommendedPlan: PlanRecommendation | null;
+  immediateNextAction: string;
+  contradictionsDetected: string[];
+  infoUsed: string[];
+  infoMissing: string[];
+  confidenceExplanation: string;
+};
+
+// -----------------------------------------------------------------------
+// Dev-grade owner authentication & audit logging
+// -----------------------------------------------------------------------
+
+export type AdminRole = "owner" | "admin" | "staff";
+
+export type AdminSessionPayload = {
+  role: AdminRole;
+  issuedAt: number;
+  expiresAt: number;
+};
+
+export type AuditAction =
+  | "admin_login"
+  | "admin_login_failed"
+  | "admin_logout"
+  | "lead_viewed"
+  | "lead_exported"
+  | "lead_updated"
+  | "lead_deleted"
+  | "consent_changed"
+  | "role_changed"
+  | "follow_up_status_changed";
+
+export type AuditEvent = {
+  id: string;
+  action: AuditAction;
+  actorRole: AdminRole | "unknown";
+  leadId?: string;
+  detail?: string;
+  timestamp: number;
+};

@@ -9,7 +9,7 @@ export function Industries() {
         <SectionHeading
           eyebrow="Who We Serve"
           title="Built for Local Businesses With Bigger Goals"
-          description="From restaurants to real estate, our strategy adapts to your business — not the other way around."
+          description="From restaurants to real estate, our strategy adapts to your business, not the other way around."
         />
 
         <ul className="mt-10 flex flex-wrap gap-3">

@@ -250,7 +250,7 @@ export function GrowthAuditForm() {
                   >
                     <input
                       type="checkbox"
-                      className="h-4 w-4 rounded border-ink-300 text-grove-600 focus-visible:outline focus-visible:outline-2"
+                      className="h-4 w-4 rounded border-ink-300 text-grove-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-grove-600"
                       checked={values.servicesOfInterest.includes(service)}
                       onChange={() => toggleService(service)}
                     />
@@ -281,7 +281,7 @@ export function GrowthAuditForm() {
                     <input
                       type="radio"
                       name="preferredContact"
-                      className="h-4 w-4 text-grove-600 focus-visible:outline focus-visible:outline-2"
+                      className="h-4 w-4 text-grove-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-grove-600"
                       checked={values.preferredContact === method}
                       onChange={() => updateField("preferredContact", method)}
                     />
@@ -378,7 +378,7 @@ function TextField({
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-ink-800">
-        {label} {required ? null : <span className="font-normal text-ink-400">(optional)</span>}
+        {label} {required ? null : <span className="font-normal text-ink-500">(optional)</span>}
       </label>
       <input
         id={id}
@@ -389,7 +389,7 @@ function TextField({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
         className={cn(
-          "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+          "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600",
           error ? "border-red-400" : "border-ink-200"
         )}
       />
@@ -420,7 +420,7 @@ function TextAreaField({
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-ink-800">
-        {label} {required ? null : <span className="font-normal text-ink-400">(optional)</span>}
+        {label} {required ? null : <span className="font-normal text-ink-500">(optional)</span>}
       </label>
       <textarea
         id={id}
@@ -430,7 +430,7 @@ function TextAreaField({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
         className={cn(
-          "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+          "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600",
           error ? "border-red-400" : "border-ink-200"
         )}
       />
@@ -470,7 +470,7 @@ function SelectField({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
         className={cn(
-          "w-full rounded-lg border bg-white px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+          "w-full rounded-lg border bg-white px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600",
           error ? "border-red-400" : "border-ink-200"
         )}
       >

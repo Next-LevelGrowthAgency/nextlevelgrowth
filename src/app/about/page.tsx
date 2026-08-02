@@ -18,7 +18,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About"
         title="Why Next Level Growth Exists"
-        description="Too many local businesses are doing great work and getting overlooked online — not because they lack quality, but because their digital presence doesn't reflect it."
+        description="Too many local businesses are doing great work and getting overlooked online, not because they lack quality, but because their digital presence doesn't reflect it."
         ctaLabel={primaryCta.label}
         ctaHref={primaryCta.href}
       />
@@ -33,7 +33,7 @@ export default function AboutPage() {
             simply a clearer next step for visitors to take.
           </p>
           <p>
-            We exist to close that gap — translating websites, SEO,
+            We exist to close that gap, translating websites, SEO,
             marketing, and automation into a strategy that&rsquo;s actually
             built around your goals, your customers, and your budget. Not
             generic best practices. Not one-size-fits-all packages.
@@ -45,10 +45,10 @@ export default function AboutPage() {
           </p>
 
           <div className="rounded-2xl border border-dashed border-ink-300 bg-paper-200 p-6 text-base text-ink-600">
-            <p className="font-semibold text-ink-800">Placeholder — Founder / Team Bio</p>
+            <p className="font-semibold text-ink-800">Placeholder: Founder / Team Bio</p>
             <p className="mt-2">
               This section is intentionally left as an editable placeholder.
-              Add your real name, background, and photo here before launch —
+              Add your real name, background, and photo here before launch,
               see CONTENT-GUIDE.md for instructions. We do not fabricate
               founder biographies.
             </p>

@@ -41,7 +41,7 @@ export function TransformationSection() {
             variants={fadeUp}
             className="rounded-3xl border border-ink-200 bg-white p-8"
           >
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Before</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">Before</p>
             <ul className="mt-5 space-y-4">
               {before.map((item) => (
                 <li key={item} className="flex items-center gap-3 text-ink-600">

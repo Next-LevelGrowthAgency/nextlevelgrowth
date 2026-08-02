@@ -24,7 +24,7 @@ export function EmpathySection() {
         <SectionHeading
           eyebrow="We Get It"
           title="Running a Great Business Is Hard Enough. Growing Online Shouldn&rsquo;t Feel This Complicated."
-          description="Most business owners aren't struggling because they lack ambition — they're struggling because digital marketing has been made more confusing than it needs to be."
+          description="Most business owners aren't struggling because they lack ambition. They're struggling because digital marketing has been made more confusing than it needs to be."
         />
 
         <motion.ul

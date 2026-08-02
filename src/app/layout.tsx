@@ -1,5 +1,5 @@
-import { ChatWidget } from "@/components/chat/ChatWidget";
 import { Footer } from "@/components/layout/Footer";
+import { GrowthCoach } from "@/components/growth-coach/GrowthCoach";
 import { Header } from "@/components/layout/Header";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationSchema } from "@/lib/schema";
@@ -66,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <Footer />
-        <ChatWidget />
+        <GrowthCoach />
       </body>
     </html>
   );

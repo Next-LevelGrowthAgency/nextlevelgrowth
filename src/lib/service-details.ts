@@ -24,7 +24,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     heroDescription:
       "Your website is often the first real impression of your business. We design and build sites that look credible, load fast, work beautifully on any device, and make it obvious what a visitor should do next.",
     overview:
-      "A good-looking website that doesn't generate leads isn't doing its job. We start with strategy — who's visiting, what they need to know, and what action matters most — before a single design decision is made. The result is a site that represents your business well and quietly does the work of turning visitors into inquiries.",
+      "A good-looking website that doesn't generate leads isn't doing its job. We start with strategy: who's visiting, what they need to know, and what action matters most, before a single design decision is made. The result is a site that represents your business well and quietly does the work of turning visitors into inquiries.",
     pillars: [
       {
         title: "Strategy before design",
@@ -35,13 +35,13 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       {
         title: "User experience",
         description:
-          "Clear navigation, logical page flow, and calls to action that feel like the next natural step — not a hard sell.",
+          "Clear navigation, logical page flow, and calls to action that feel like the next natural step, not a hard sell.",
         icon: "MousePointerClick",
       },
       {
         title: "Mobile responsiveness",
         description:
-          "Designed mobile-first, since most local searches happen on a phone — buttons, forms, and menus all stay comfortable to use.",
+          "Designed mobile-first, since most local searches happen on a phone. Buttons, forms, and menus all stay comfortable to use.",
         icon: "Smartphone",
       },
       {
@@ -59,7 +59,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       {
         title: "Performance",
         description:
-          "Fast load times and clean technical foundations — speed is both a trust signal and a search ranking factor.",
+          "Fast load times and clean technical foundations. Speed is both a trust signal and a search ranking factor.",
         icon: "Gauge",
       },
       {
@@ -83,14 +83,14 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     eyebrow: "Local SEO & Google Business Profile",
     heroTitle: "Get Found by the Customers Already Searching for You",
     heroDescription:
-      "Most customers start with a search — 'near me,' a service, or your business name. Local SEO makes sure your business shows up clearly, accurately, and competitively when they do.",
+      "Most customers start with a search: 'near me,' a service, or your business name. Local SEO makes sure your business shows up clearly, accurately, and competitively when they do.",
     overview:
-      "Local SEO isn't about chasing algorithm tricks. It's about making sure Google — and your customers — can clearly understand what you do, where you do it, and why you're a trustworthy choice. We focus on the fundamentals that actually move local rankings and, more importantly, actually bring in customers.",
+      "Local SEO isn't about chasing algorithm tricks. It's about making sure Google, and your customers, can clearly understand what you do, where you do it, and why you're a trustworthy choice. We focus on the fundamentals that actually move local rankings and, more importantly, actually bring in customers.",
     pillars: [
       {
         title: "Google Business Profile optimization",
         description:
-          "A complete, accurate, and actively managed profile — the single highest-leverage local SEO asset most businesses neglect.",
+          "A complete, accurate, and actively managed profile: the single highest-leverage local SEO asset most businesses neglect.",
         icon: "MapPin",
       },
       {
@@ -102,7 +102,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       {
         title: "Reputation support",
         description:
-          "Guidance on generating and responding to reviews the right way — reviews are both a trust signal and a ranking factor.",
+          "Guidance on generating and responding to reviews the right way. Reviews are both a trust signal and a ranking factor.",
         icon: "Star",
       },
       {
@@ -126,9 +126,9 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     eyebrow: "Digital Marketing Strategy",
     heroTitle: "Marketing Built Around Measurable Business Outcomes",
     heroDescription:
-      "Digital marketing should connect directly to leads, calls, and appointments — not just impressions. We build strategy around your goals, your market, and your budget.",
+      "Digital marketing should connect directly to leads, calls, and appointments, not just impressions. We build strategy around your goals, your market, and your budget.",
     overview:
-      "There's no shortage of marketing tactics available to a local business — the hard part is knowing which ones actually matter for yours. We start with your goals and your numbers, then build a strategy that's honest about tradeoffs, focused on conversion, and set up so results can actually be measured.",
+      "There's no shortage of marketing tactics available to a local business. The hard part is knowing which ones actually matter for yours. We start with your goals and your numbers, then build a strategy that's honest about tradeoffs, focused on conversion, and set up so results can actually be measured.",
     pillars: [
       {
         title: "Strategic campaigns",
@@ -151,7 +151,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       {
         title: "Measurement",
         description:
-          "Clear tracking on what matters — leads, calls, and form submissions — so decisions are based on data, not guesses.",
+          "Clear tracking on what matters (leads, calls, and form submissions) so decisions are based on data, not guesses.",
         icon: "BarChart3",
       },
     ],
@@ -169,9 +169,9 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     eyebrow: "Automation & AI-Powered Chat",
     heroTitle: "Respond to Every Customer, Even When You Can't",
     heroDescription:
-      "A practical tool for busy business owners: AI-powered chat and automation that capture inquiries, answer common questions, and make sure no lead falls through the cracks — day or night.",
+      "A practical tool for busy business owners: AI-powered chat and automation that capture inquiries, answer common questions, and make sure no lead falls through the cracks, day or night.",
     overview:
-      "This isn't about putting 'AI' in your brand identity — it's about making sure a customer who reaches out at 9pm on a Saturday still gets a helpful response and a way to leave their information. Our automation is built to save you time on repetitive questions and routing, while clearly identifying itself as a virtual assistant and handing off to a real person whenever a question calls for one.",
+      "This isn't about putting 'AI' in your brand identity. It's about making sure a customer who reaches out at 9pm on a Saturday still gets a helpful response and a way to leave their information. Our automation is built to save you time on repetitive questions and routing, while clearly identifying itself as a virtual assistant and handing off to a real person whenever a question calls for one.",
     pillars: [
       {
         title: "Capturing inquiries",
@@ -203,7 +203,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     outcomes: [
       "24/7 lead capture without hiring additional staff",
       "Faster response times, which customers consistently rate as a top factor in choosing a business",
-      "A clear disclosure that visitors are chatting with a virtual assistant — never pretending to be a person",
+      "A clear disclosure that visitors are chatting with a virtual assistant, never pretending to be a person",
       "Automatic escalation to a human for anything the assistant can't confidently answer",
     ],
   },
