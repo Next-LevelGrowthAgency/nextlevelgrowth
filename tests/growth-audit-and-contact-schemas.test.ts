@@ -72,6 +72,31 @@ describe("Contact form schema", () => {
   });
 });
 
+describe("Regression: turnstileToken null broke every real submission (Turnstile unconfigured)", () => {
+  it("contactSchema accepts turnstileToken: null, matching exactly what ContactForm.tsx sends while Turnstile is off", () => {
+    const result = contactSchema.safeParse({
+      name: "Dana Lee",
+      email: "dana@gmail.com",
+      message: "I'd like to learn more.",
+      phone: "",
+      companyName: "",
+      hpToken: "",
+      turnstileToken: null,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("growthAuditSchema accepts turnstileToken: null, matching exactly what GrowthAuditForm.tsx sends while Turnstile is off", () => {
+    const result = growthAuditSchema.safeParse({
+      ...validAuditBase,
+      phone: "",
+      preferredContact: "Email",
+      turnstileToken: null,
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
 describe("Regression: duplicate '(optional)' label bug", () => {
   it("GrowthAuditForm no longer hardcodes '(optional)' inside a label that already renders it via the field wrapper", () => {
     const source = readFileSync(new URL("../src/components/forms/GrowthAuditForm.tsx", import.meta.url), "utf-8");

@@ -150,6 +150,11 @@ describe("Regression: lead schema validation fails clearly", () => {
     const result = leadSubmissionSchema.safeParse({ ...base, consentToEmailFollowUp: true });
     expect(result.success).toBe(true);
   });
+
+  it("accepts turnstileToken: null — same shared field as contact/growth-audit, same live bug while Turnstile is unconfigured", () => {
+    const result = leadSubmissionSchema.safeParse({ ...base, turnstileToken: null });
+    expect(result.success).toBe(true);
+  });
 });
 
 describe("Regression: sensitive-data detection stays active", () => {

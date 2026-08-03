@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { emailField, messageField, nameField, optionalPhoneField, optionalTrimmedString, optionalUrlField, phoneField } from "@/lib/validation/fields";
+import {
+  emailField,
+  messageField,
+  nameField,
+  optionalPhoneField,
+  optionalTrimmedString,
+  optionalUrlField,
+  phoneField,
+  turnstileTokenField,
+} from "@/lib/validation/fields";
 
 /**
  * ROOT CAUSE regression coverage: the live site was rejecting valid email
@@ -130,6 +139,32 @@ describe("optionalUrlField", () => {
   });
   it("rejects a non-URL value", () => {
     expect(optionalUrlField.safeParse("not a url").success).toBe(false);
+  });
+});
+
+describe("turnstileTokenField — ROOT CAUSE regression: null vs. undefined", () => {
+  // TurnstileWidget renders nothing and never fires onToken while Turnstile
+  // is unconfigured (NEXT_PUBLIC_TURNSTILE_SITE_KEY unset — a known,
+  // intentional TODO, not something this fix touches). The client-side ref
+  // backing turnstileToken therefore stays `null` (not `undefined`) for the
+  // lifetime of the page, and JSON.stringify preserves that literal `null`
+  // in the POST body. `z.string().optional()` only widens to
+  // `string | undefined` and rejects `null` outright with "Expected
+  // string, received null" — this was breaking every real Contact/Growth
+  // Audit/Growth Coach submission in production. `.nullable().optional()`
+  // must accept all three.
+  it("accepts null (the actual value sent by every form while Turnstile is unconfigured)", () => {
+    expect(turnstileTokenField.safeParse(null).success).toBe(true);
+  });
+
+  it("accepts undefined", () => {
+    expect(turnstileTokenField.safeParse(undefined).success).toBe(true);
+  });
+
+  it("accepts a real token string once Turnstile is configured and solved", () => {
+    const r = turnstileTokenField.safeParse("0.AAAA-real-turnstile-token");
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data).toBe("0.AAAA-real-turnstile-token");
   });
 });
 

@@ -119,6 +119,16 @@ export const optionalUrlField = z
  */
 export const honeypotField = z.string().max(300).optional().or(z.literal(""));
 
-export const turnstileTokenField = z.string().optional();
+// `.nullable()` matters here, not just `.optional()`: the client-side ref
+// backing this value (see ContactForm.tsx/GrowthAuditForm.tsx/
+// GrowthCoachLeadForm.tsx) starts as `useRef<string | null>(null)` and
+// stays `null` for as long as Turnstile is unconfigured (TurnstileWidget
+// renders nothing and never calls its onToken callback). JSON.stringify
+// preserves that `null` in the request body, and a bare `z.string()
+// .optional()` only accepts `string | undefined` — it rejects `null`
+// with "Expected string, received null", failing every real submission
+// while Turnstile is off. `.nullable().optional()` accepts undefined,
+// null, or a real token string.
+export const turnstileTokenField = z.string().nullable().optional();
 
 export const consentBooleanField = z.boolean().default(false);
