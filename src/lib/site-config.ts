@@ -30,24 +30,38 @@ export const siteConfig = {
     "Next Level Growth helps local and service-based businesses attract more customers, build credibility, and grow with confidence through modern websites, local SEO, and smarter digital strategy.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.nextlevelgrowth.com",
 
-  // PLACEHOLDER — replace with verified business information before launch.
   contact: {
-    email: "hello@nextlevelgrowth.com",
-    phone: "(555) 010-0142",
-    phoneHref: "+15550100142",
-    addressLine1: "PLACEHOLDER: Street Address",
-    addressLine2: "PLACEHOLDER: City, State ZIP",
-    serviceArea: "PLACEHOLDER: Primary service area / region",
+    email: "hello@nextlevelgrowthagency.com",
+    // Not yet configured. Left `null` rather than a fake number/address —
+    // every component that renders these checks for `null` and omits the
+    // element entirely (see hasPhone/hasAddress/hasServiceArea below)
+    // instead of ever showing fabricated contact info to a live visitor.
+    // Fill in with real, verified information when available.
+    phone: null as string | null,
+    phoneHref: null as string | null,
+    addressLine1: null as string | null,
+    addressLine2: null as string | null,
+    serviceArea: null as string | null,
   },
 
-  // PLACEHOLDER — replace with real, verified profiles before launch.
+  // Not yet configured — same "omit, never fabricate" rule as contact
+  // above. Each is `null` until a real, verified profile URL exists.
   social: {
-    facebook: "https://facebook.com/PLACEHOLDER",
-    instagram: "https://instagram.com/PLACEHOLDER",
-    linkedin: "https://linkedin.com/company/PLACEHOLDER",
-    google: "https://g.page/PLACEHOLDER",
+    facebook: null as string | null,
+    instagram: null as string | null,
+    linkedin: null as string | null,
+    google: null as string | null,
   },
 } as const;
+
+/** Full bio lives on the About page. This shorter version is for compact placements (bylines, footers, proposals). */
+export const founderShortBio =
+  "Dimitri Del Peloso is the founder of Next Level Growth. With a background in leadership, operations, continuous improvement, and team development, he created the company to help businesses turn goals and challenges into practical growth systems. His approach combines strategy, custom websites, digital marketing, automation, and AI with a strong focus on measurable execution and long-term results.";
+
+export const hasPhone = Boolean(siteConfig.contact.phone && siteConfig.contact.phoneHref);
+export const hasAddress = Boolean(siteConfig.contact.addressLine1);
+export const hasServiceArea = Boolean(siteConfig.contact.serviceArea);
+export const configuredSocialLinks = Object.entries(siteConfig.social).filter((entry): entry is [string, string] => Boolean(entry[1]));
 
 export const primaryCta = {
   label: "Get Your Free Growth Audit",

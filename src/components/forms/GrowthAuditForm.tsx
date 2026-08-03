@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { TurnstileWidget } from "@/components/forms/TurnstileWidget";
 import { cn } from "@/lib/utils";
 import {
   growthAuditSchema,
@@ -10,7 +11,7 @@ import {
   type GrowthAuditFormValues,
 } from "@/lib/growth-audit-schema";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const initialValues: GrowthAuditFormValues = {
   name: "",
@@ -25,6 +26,7 @@ const initialValues: GrowthAuditFormValues = {
   servicesOfInterest: [],
   preferredContact: "Email",
   additionalDetails: "",
+  companyWebsite2: "",
 };
 
 const stepFieldGroups: (keyof GrowthAuditFormValues)[][] = [
@@ -44,6 +46,8 @@ export function GrowthAuditForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof GrowthAuditFormValues, string>>>({});
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const turnstileTokenRef = useRef<string | null>(null);
+  const submittingRef = useRef(false);
 
   const totalSteps = stepFieldGroups.length;
   const isLastStep = step === totalSteps - 1;
@@ -101,6 +105,8 @@ export function GrowthAuditForm() {
 
   async function handleSubmit() {
     if (!validateCurrentStep()) return;
+    if (submittingRef.current) return; // prevents double-click double submission
+    if (values.companyWebsite2) return; // honeypot — silently drop, no error shown to a bot
 
     const fullResult = growthAuditSchema.safeParse(values);
     if (!fullResult.success) {
@@ -108,21 +114,27 @@ export function GrowthAuditForm() {
       return;
     }
 
+    submittingRef.current = true;
     setStatus("submitting");
     setServerError(null);
     try {
       const res = await fetch("/api/growth-audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fullResult.data),
+        body: JSON.stringify({ ...fullResult.data, turnstileToken: turnstileTokenRef.current }),
       });
-      if (!res.ok) throw new Error("Request failed");
+      const responseBody = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(responseBody.error ?? "Request failed");
       setStatus("success");
-    } catch {
+    } catch (err) {
       setStatus("error");
       setServerError(
-        "Something went wrong submitting your audit request. Please try again, or email us directly."
+        err instanceof Error && err.message !== "Request failed"
+          ? err.message
+          : "Something went wrong submitting your audit request. Please try again, or email us directly."
       );
+    } finally {
+      submittingRef.current = false;
     }
   }
 
@@ -297,6 +309,18 @@ export function GrowthAuditForm() {
               onChange={(v) => updateField("additionalDetails", v)}
               required={false}
             />
+            {/* Honeypot — hidden from real visitors, catches basic bots that fill every field. */}
+            <input
+              type="text"
+              name="companyWebsite2"
+              value={values.companyWebsite2 ?? ""}
+              onChange={(e) => updateField("companyWebsite2", e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              className="sr-only"
+              aria-hidden="true"
+            />
+            <TurnstileWidget onToken={(token) => (turnstileTokenRef.current = token)} />
           </fieldset>
         ) : null}
 

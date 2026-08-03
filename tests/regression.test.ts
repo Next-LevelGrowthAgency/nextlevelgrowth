@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { localLeadAdapter } from "@/lib/growth-coach/adapters/local-mock";
+import { getInitialState, respond } from "@/lib/growth-coach/engine";
 import { buildLeadInput } from "@/lib/growth-coach/lead-profile";
 import { leadSubmissionSchema } from "@/lib/growth-coach/lead-schema";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -12,7 +13,14 @@ import type { BusinessGrowthReport, CoachContext } from "@/types";
  * guards against so a future change that reintroduces it fails loudly.
  */
 
-const emptyContext: CoachContext = { business: null, primaryGoal: null, mainFear: null, weeklyHours: null, currentPriority: null };
+const emptyContext: CoachContext = {
+  business: null,
+  primaryGoal: null,
+  mainFear: null,
+  weeklyHours: null,
+  currentPriority: null,
+  ninetyDayPlanRequested: false,
+};
 
 function fakeReport(overrides: Partial<BusinessGrowthReport> = {}): BusinessGrowthReport {
   return {
@@ -42,7 +50,7 @@ describe("Regression: business-name extraction must not store a full raw sentenc
   it("falls back to nothing (not the sentence) when the form field is blank and context.business is a long description", () => {
     const report = fakeReport({ businessName: "I run a bakery in Austin, my biggest challenge is my outdated website." });
     const input = buildLeadInput(
-      { firstName: "Dana", email: "dana@example.com", consentToSaveReport: true, consentToContact: false, consentToMarketing: false },
+      { firstName: "Dana", email: "dana@example.com", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToTextMessage: false, consentToMarketing: false },
       report,
       emptyContext,
       "session-1"
@@ -53,7 +61,7 @@ describe("Regression: business-name extraction must not store a full raw sentenc
   it("uses the form field when provided", () => {
     const report = fakeReport({ businessName: "Some long raw sentence that is not a name at all." });
     const input = buildLeadInput(
-      { firstName: "Dana", email: "dana@example.com", businessName: "Dana's Bakery", consentToSaveReport: true, consentToContact: false, consentToMarketing: false },
+      { firstName: "Dana", email: "dana@example.com", businessName: "Dana's Bakery", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToTextMessage: false, consentToMarketing: false },
       report,
       emptyContext,
       "session-1"
@@ -64,7 +72,7 @@ describe("Regression: business-name extraction must not store a full raw sentenc
   it("uses a short, clean business name from context when the form is blank", () => {
     const report = fakeReport({ businessName: "Dana's Bakery" });
     const input = buildLeadInput(
-      { firstName: "Dana", email: "dana@example.com", consentToSaveReport: true, consentToContact: false, consentToMarketing: false },
+      { firstName: "Dana", email: "dana@example.com", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToTextMessage: false, consentToMarketing: false },
       report,
       emptyContext,
       "session-1"
@@ -95,7 +103,9 @@ describe("Regression: lead schema validation fails clearly", () => {
     firstName: "Dana",
     email: "dana@example.com",
     consentToSaveReport: true as const,
-    consentToContact: false,
+    consentToEmailFollowUp: false,
+    consentToPhoneCall: false,
+    consentToTextMessage: false,
     consentToMarketing: false,
     report: {},
     context: {},
@@ -118,6 +128,26 @@ describe("Regression: lead schema validation fails clearly", () => {
 
   it("valid submission with only required fields passes", () => {
     const result = leadSubmissionSchema.safeParse(base);
+    expect(result.success).toBe(true);
+  });
+
+  it("consenting to a phone call without a phone number is rejected", () => {
+    const result = leadSubmissionSchema.safeParse({ ...base, consentToPhoneCall: true, phone: "" });
+    expect(result.success).toBe(false);
+  });
+
+  it("consenting to a text message without a phone number is rejected", () => {
+    const result = leadSubmissionSchema.safeParse({ ...base, consentToTextMessage: true, phone: "" });
+    expect(result.success).toBe(false);
+  });
+
+  it("consenting to a phone call WITH a phone number passes", () => {
+    const result = leadSubmissionSchema.safeParse({ ...base, consentToPhoneCall: true, phone: "555-123-4567" });
+    expect(result.success).toBe(true);
+  });
+
+  it("the three contact permissions are independent — email-only consent doesn't require a phone number", () => {
+    const result = leadSubmissionSchema.safeParse({ ...base, consentToEmailFollowUp: true });
     expect(result.success).toBe(true);
   });
 });
@@ -145,6 +175,60 @@ describe("Regression: rate limiting stays active", () => {
 
   it("does not block a fresh key", () => {
     expect(isRateLimited("regression-bucket", `fresh-${Date.now()}`, 60_000, 5)).toBe(false);
+  });
+});
+
+describe("Response-depth selection", () => {
+  it("Quick Answer mode finishes the assessment flow after a single answer", () => {
+    let state = getInitialState();
+    ({ state } = respond(state, "", "depth-quick"));
+    expect(state.responseDepth).toBe("quick");
+    ({ state } = respond(state, "", "analyze"));
+    expect(state.flow).toBe("assessment");
+    const { state: afterAnswer, message } = respond(state, "I run a small landscaping company in Denver.");
+    expect(afterAnswer.flow).toBeNull(); // short-circuited straight to a finished report, not step 1
+    expect(message.businessReport ?? message.report).toBeTruthy();
+  });
+
+  it("Deep Analysis mode still asks the full multi-step sequence", () => {
+    let state = getInitialState();
+    ({ state } = respond(state, "", "depth-deep"));
+    ({ state } = respond(state, "", "analyze"));
+    const { state: afterAnswer } = respond(state, "I run a small landscaping company in Denver.");
+    expect(afterAnswer.flow).toBe("assessment");
+    expect(afterAnswer.step).toBe(1);
+  });
+
+  it("natural language switches depth mid-conversation", () => {
+    const { state } = respond(getInitialState(), "Can you just give me the quick version?");
+    expect(state.responseDepth).toBe("quick");
+  });
+});
+
+describe("Business-path selection adapts the assessment opener", () => {
+  it("Start My Business asks about the idea, not existing performance", () => {
+    let state = getInitialState();
+    ({ state } = respond(state, "", "path-start"));
+    expect(state.businessPath).toBe("start");
+    const { message } = respond(state, "", "analyze");
+    expect(message.content.toLowerCase()).toContain("idea");
+  });
+
+  it("Grow My Business asks about current obstacles, not startup validation", () => {
+    let state = getInitialState();
+    ({ state } = respond(state, "", "path-grow"));
+    const { message } = respond(state, "", "analyze");
+    expect(message.content.toLowerCase()).toContain("obstacle");
+  });
+});
+
+describe("90-day plan request is tracked separately from the free 30-day plan", () => {
+  it("defaults to not requested, and flips true only after an explicit yes", () => {
+    expect(getInitialState().context.ninetyDayPlanRequested).toBe(false);
+    let state = getInitialState();
+    state = { ...state, businessReport: fakeReport() };
+    ({ state } = respond(state, "", "ninety-day-yes"));
+    expect(state.context.ninetyDayPlanRequested).toBe(true);
   });
 });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { navLinks, primaryCta, siteConfig } from "@/lib/site-config";
+import { hasPhone, navLinks, primaryCta, siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -65,12 +65,14 @@ export function MobileNav() {
             <Button href={primaryCta.href} className="w-full" size="lg">
               {primaryCta.label}
             </Button>
-            <a
-              href={`tel:${siteConfig.contact.phoneHref}`}
-              className="text-center text-sm text-ink-600 underline underline-offset-4"
-            >
-              or call {siteConfig.contact.phone}
-            </a>
+            {hasPhone ? (
+              <a
+                href={`tel:${siteConfig.contact.phoneHref}`}
+                className="text-center text-sm text-ink-600 underline underline-offset-4"
+              >
+                or call {siteConfig.contact.phone}
+              </a>
+            ) : null}
           </div>
         </nav>
       </div>

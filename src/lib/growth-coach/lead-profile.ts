@@ -10,7 +10,9 @@ export type LeadFormValues = {
   phone?: string;
   preferredContactMethod?: "Email" | "Phone" | "Text";
   consentToSaveReport: boolean;
-  consentToContact: boolean;
+  consentToEmailFollowUp: boolean;
+  consentToPhoneCall: boolean;
+  consentToTextMessage: boolean;
   consentToMarketing: boolean;
   consultationRequested?: boolean;
 };
@@ -72,12 +74,16 @@ export function buildLeadInput(
     conversationSummary: report.executiveSummary,
 
     consultationRequested: form.consultationRequested ?? false,
+    ninetyDayPlanRequested: context.ninetyDayPlanRequested,
 
     consentToSaveReport: form.consentToSaveReport,
-    consentToContact: form.consentToContact,
+    consentToEmailFollowUp: form.consentToEmailFollowUp,
+    consentToPhoneCall: form.consentToPhoneCall,
+    consentToTextMessage: form.consentToTextMessage,
+    consentToContact: form.consentToEmailFollowUp || form.consentToPhoneCall || form.consentToTextMessage,
     consentToMarketing: form.consentToMarketing,
     reportConsentTimestamp: form.consentToSaveReport ? now : undefined,
-    contactConsentTimestamp: form.consentToContact ? now : undefined,
+    contactConsentTimestamp: form.consentToEmailFollowUp || form.consentToPhoneCall || form.consentToTextMessage ? now : undefined,
     marketingConsentTimestamp: form.consentToMarketing ? now : undefined,
 
     followUpStatus: "new",
@@ -143,7 +149,15 @@ export function buildOwnerSummary(lead: LeadProfile): OwnerLeadSummary {
     reportSummary: lead.conversationSummary ?? "No summary captured.",
     nextAction: lead.nextAction ?? "Review the full session context before reaching out.",
     consultationRequested: lead.consultationRequested ?? false,
-    consent: { saveReport: lead.consentToSaveReport, contact: lead.consentToContact, marketing: lead.consentToMarketing },
+    ninetyDayPlanRequested: lead.ninetyDayPlanRequested ?? false,
+    consent: {
+      saveReport: lead.consentToSaveReport,
+      contact: lead.consentToContact,
+      emailFollowUp: lead.consentToEmailFollowUp ?? false,
+      phoneCall: lead.consentToPhoneCall ?? false,
+      textMessage: lead.consentToTextMessage ?? false,
+      marketing: lead.consentToMarketing,
+    },
     consentTimestamps: {
       report: lead.reportConsentTimestamp,
       contact: lead.contactConsentTimestamp,

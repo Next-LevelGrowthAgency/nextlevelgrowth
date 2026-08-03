@@ -1,4 +1,7 @@
+import { getEmailAdapter, isEmailDeliveryActive } from "@/lib/growth-coach/adapters";
+import { verifyTurnstileToken } from "@/lib/growth-coach/spam-protection";
 import { growthAuditSchema } from "@/lib/growth-audit-schema";
+import { siteConfig } from "@/lib/site-config";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -24,10 +27,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests. Please try again shortly." }, { status: 429 });
   }
 
-  // TODO before launch: verify a spam-protection token here (e.g. Cloudflare
-  // Turnstile / hCaptcha) using TURNSTILE_SECRET_KEY from .env.example,
-  // before trusting the payload below.
-
   let body: unknown;
   try {
     body = await request.json();
@@ -42,32 +41,45 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
+  const data = parsed.data;
 
-  // ── Delivery step (not yet configured) ────────────────────────────
-  // This is where a submitted Growth Audit request should be sent to your
-  // team and/or CRM. Two common options:
-  //
-  // 1. Email notification (e.g. Resend, Postmark, SendGrid):
-  //    await sendEmail({
-  //      to: process.env.EMAIL_TO_ADDRESS,
-  //      subject: `New Growth Audit request from ${parsed.data.businessName}`,
-  //      body: JSON.stringify(parsed.data, null, 2),
-  //    });
-  //
-  // 2. CRM integration (e.g. HubSpot, Pipedrive, Airtable):
-  //    await fetch(process.env.CRM_ENDPOINT_URL!, {
-  //      method: "POST",
-  //      headers: { Authorization: `Bearer ${process.env.CRM_API_KEY}` },
-  //      body: JSON.stringify(parsed.data),
-  //    });
-  //
-  // Never hard-code API keys here — always read from process.env so
-  // secrets stay out of source control (see .env.example).
+  // Honeypot: a real visitor never fills this field.
+  if (data.companyWebsite2) {
+    return NextResponse.json({ error: "Submission rejected." }, { status: 400 });
+  }
 
-  if (!process.env.EMAIL_PROVIDER_API_KEY && !process.env.CRM_API_KEY) {
-    console.warn(
-      "[growth-audit] No EMAIL_PROVIDER_API_KEY or CRM_API_KEY set — submission was validated but not delivered anywhere. See .env.example."
-    );
+  const turnstile = await verifyTurnstileToken(data.turnstileToken, ip);
+  if (!turnstile.ok) {
+    return NextResponse.json({ error: "Spam check failed. Please reload and try again." }, { status: 400 });
+  }
+
+  try {
+    await getEmailAdapter().sendTransactional({
+      to: process.env.LEAD_NOTIFICATION_EMAIL || siteConfig.contact.email,
+      subject: `New Growth Audit request from ${data.businessName}`,
+      body: [
+        `Name: ${data.name}`,
+        `Business: ${data.businessName}`,
+        `Email: ${data.email}`,
+        `Phone: ${data.phone}`,
+        `Website: ${data.websiteUrl || "(none)"}`,
+        `Industry: ${data.industry}`,
+        `Location: ${data.location}`,
+        `Primary goal: ${data.primaryGoal}`,
+        `Biggest challenge: ${data.biggestChallenge}`,
+        `Services of interest: ${data.servicesOfInterest.join(", ")}`,
+        `Preferred contact: ${data.preferredContact}`,
+        data.additionalDetails ? `Additional details: ${data.additionalDetails}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    });
+  } catch (error) {
+    console.error("[growth-audit] Notification email failed:", error instanceof Error ? error.message : error);
+  }
+
+  if (!isEmailDeliveryActive()) {
+    console.warn("[growth-audit] RESEND_API_KEY/EMAIL_FROM_ADDRESS not set — submission validated but logged to console only. See .env.example.");
   }
 
   return NextResponse.json({ ok: true });

@@ -18,6 +18,9 @@ export const growthAuditSchema = z.object({
   servicesOfInterest: z.array(z.string()).min(1, "Select at least one service."),
   preferredContact: z.enum(["Email", "Phone", "Text"]),
   additionalDetails: z.string().optional().or(z.literal("")),
+  // Honeypot — real visitors never see or fill this field.
+  companyWebsite2: z.string().max(300).optional().or(z.literal("")),
+  turnstileToken: z.string().optional(),
 });
 
 export type GrowthAuditFormValues = z.infer<typeof growthAuditSchema>;

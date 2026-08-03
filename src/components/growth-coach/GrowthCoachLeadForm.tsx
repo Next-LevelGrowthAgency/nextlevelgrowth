@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { TurnstileWidget } from "@/components/forms/TurnstileWidget";
 import { containsSensitiveData } from "@/lib/growth-coach/sensitive-data";
 import { cn } from "@/lib/utils";
 import type { BusinessGrowthReport, CoachContext } from "@/types";
@@ -16,7 +17,9 @@ type FormValues = {
   phone: string;
   preferredContactMethod: "" | "Email" | "Phone" | "Text";
   consentToSaveReport: boolean;
-  consentToContact: boolean;
+  consentToEmailFollowUp: boolean;
+  consentToPhoneCall: boolean;
+  consentToTextMessage: boolean;
   consentToMarketing: boolean;
   consultationRequested: boolean;
   companyWebsite2: string; // honeypot
@@ -36,7 +39,9 @@ const emptyValues = (report: BusinessGrowthReport): FormValues => ({
   phone: "",
   preferredContactMethod: "",
   consentToSaveReport: false,
-  consentToContact: false,
+  consentToEmailFollowUp: false,
+  consentToPhoneCall: false,
+  consentToTextMessage: false,
   consentToMarketing: false,
   consultationRequested: false,
   companyWebsite2: "",
@@ -94,6 +99,8 @@ export function GrowthCoachLeadForm({
   const [errors, setErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
   const headingId = useId();
 
   useEffect(() => {
@@ -127,6 +134,10 @@ export function GrowthCoachLeadForm({
       setErrors({ consentToSaveReport: "Please check this box to save and send your report. It's how we know you want it." });
       return false;
     }
+    if ((values.consentToPhoneCall || values.consentToTextMessage) && !values.phone.trim()) {
+      setErrors({ phone: "A phone number is required to consent to a phone call or text message." });
+      return false;
+    }
     setErrors({});
     return true;
   }
@@ -148,10 +159,13 @@ export function GrowthCoachLeadForm({
           phone: values.phone,
           preferredContactMethod: values.preferredContactMethod || undefined,
           consentToSaveReport: values.consentToSaveReport,
-          consentToContact: values.consentToContact,
+          consentToEmailFollowUp: values.consentToEmailFollowUp,
+          consentToPhoneCall: values.consentToPhoneCall,
+          consentToTextMessage: values.consentToTextMessage,
           consentToMarketing: values.consentToMarketing,
           consultationRequested: values.consultationRequested,
           companyWebsite2: values.companyWebsite2,
+          turnstileToken,
           report,
           context,
         }),
@@ -163,7 +177,9 @@ export function GrowthCoachLeadForm({
         return;
       }
       setStatus("success");
-      onSubmitted({ planName: report.recommendedPlan.name, consentToContact: values.consentToContact });
+      setEmailSent(Boolean(data.emailSent));
+      const consentToContact = values.consentToEmailFollowUp || values.consentToPhoneCall || values.consentToTextMessage;
+      onSubmitted({ planName: report.recommendedPlan.name, consentToContact });
     } catch {
       setServerError("Couldn't reach the server. Please check your connection and try again.");
       setStatus("error");
@@ -190,7 +206,11 @@ export function GrowthCoachLeadForm({
             <div role="status" className="mt-8 flex flex-col items-center gap-3 py-6 text-center">
               <CheckCircle2 className="h-10 w-10 text-grove-600" aria-hidden="true" />
               <p className="font-medium text-ink-900">Saved. Your report has been recorded.</p>
-              <p className="text-sm text-ink-500">This is a preview experience: your report was saved to this session, but no real email was sent yet.</p>
+              <p className="text-sm text-ink-500">
+                {emailSent
+                  ? `A copy has been sent to ${values.email}.`
+                  : "Email delivery isn't fully configured yet, so no email was sent — your report is saved and visible to our team."}
+              </p>
             </div>
           ) : (
             <>
@@ -292,9 +312,9 @@ export function GrowthCoachLeadForm({
               {step === 2 ? (
                 <div className="mt-6 space-y-4">
                   <p className="text-sm text-ink-600">
-                    Your information will be used to deliver your requested report and, only with your permission, provide
-                    follow-up from Next Level Growth. Do not share passwords, banking details, Social Security numbers, or
-                    other highly sensitive information.
+                    We use the information you provide to personalize your growth plan, respond to your request, and
+                    improve our services. Please do not submit passwords, banking information, Social Security
+                    numbers, or other highly sensitive information.
                   </p>
 
                   <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
@@ -315,18 +335,50 @@ export function GrowthCoachLeadForm({
                     </p>
                   ) : null}
 
-                  <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
-                    <input
-                      type="checkbox"
-                      className="mt-0.5 h-4 w-4"
-                      checked={values.consentToContact}
-                      onChange={(e) => set("consentToContact", e.target.checked)}
-                    />
-                    <span className="text-sm text-ink-800">
-                      <span className="font-medium">Next Level Growth may contact me</span> about this report using the method
-                      above. Entirely optional.
-                    </span>
-                  </label>
+                  <div>
+                    <p className="text-sm font-medium text-ink-800">Optional: Next Level Growth may follow up by</p>
+                    <p className="mt-0.5 text-xs text-ink-500">Each is separate and optional. You can decline all three and still get your report.</p>
+                    <div className="mt-2 space-y-2">
+                      <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 h-4 w-4"
+                          checked={values.consentToEmailFollowUp}
+                          onChange={(e) => set("consentToEmailFollowUp", e.target.checked)}
+                        />
+                        <span className="text-sm text-ink-800">
+                          <span className="font-medium">Email</span> — additional follow-up beyond this report.
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 h-4 w-4"
+                          checked={values.consentToPhoneCall}
+                          onChange={(e) => set("consentToPhoneCall", e.target.checked)}
+                        />
+                        <span className="text-sm text-ink-800">
+                          <span className="font-medium">Phone call</span> — requires a phone number above.
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 h-4 w-4"
+                          checked={values.consentToTextMessage}
+                          onChange={(e) => set("consentToTextMessage", e.target.checked)}
+                        />
+                        <span className="text-sm text-ink-800">
+                          <span className="font-medium">Text message</span> — requires a phone number above.
+                        </span>
+                      </label>
+                    </div>
+                    {errors.phone ? (
+                      <p role="alert" className="mt-1.5 text-sm font-medium text-red-700">
+                        {errors.phone}
+                      </p>
+                    ) : null}
+                  </div>
 
                   <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
                     <input
@@ -364,6 +416,7 @@ export function GrowthCoachLeadForm({
                     className="sr-only"
                     aria-hidden="true"
                   />
+                  <TurnstileWidget onToken={setTurnstileToken} />
 
                   <div className="flex justify-end gap-3 pt-2">
                     <Button variant="ghost" onClick={() => setStep(1)}>
@@ -424,8 +477,16 @@ export function GrowthCoachLeadForm({
                         <dd className="font-medium text-grove-700">Yes</dd>
                       </div>
                       <div className="flex justify-between">
-                        <dt>Contact permission</dt>
-                        <dd className={values.consentToContact ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToContact ? "Yes" : "No"}</dd>
+                        <dt>Email follow-up</dt>
+                        <dd className={values.consentToEmailFollowUp ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToEmailFollowUp ? "Yes" : "No"}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt>Phone call</dt>
+                        <dd className={values.consentToPhoneCall ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToPhoneCall ? "Yes" : "No"}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt>Text message</dt>
+                        <dd className={values.consentToTextMessage ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToTextMessage ? "Yes" : "No"}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt>Marketing emails</dt>

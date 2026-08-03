@@ -11,7 +11,7 @@ import type {
   StructuredReport,
 } from "@/types";
 import { buildBusinessGrowthReport, buildBusinessGrowthReportFromScore } from "./business-report";
-import { consultDeclineReply, consultOfferText, growthScoreIntro } from "./config";
+import { consultDeclineReply, consultOfferText, growthScoreIntro, ninetyDayPlanOfferText } from "./config";
 import { buildQuestionQueue, calculateGrowthScore, getQuestionById, recordAnswer } from "./growth-score/engine";
 
 /**
@@ -39,6 +39,7 @@ const EMPTY_CONTEXT: CoachContext = {
   mainFear: null,
   weeklyHours: null,
   currentPriority: null,
+  ninetyDayPlanRequested: false,
 };
 
 export function getInitialState(): CoachState {
@@ -54,7 +55,14 @@ export function getInitialState(): CoachState {
     businessReport: null,
     growthAssessment: null,
     lastGrowthScore: null,
+    responseDepth: null,
+    businessPath: null,
   };
+}
+
+/** Quick Answer mode short-circuits a scripted flow after its first question instead of asking the usual two or three. */
+function isQuickDepth(state: CoachState): boolean {
+  return state.responseDepth === "quick";
 }
 
 function clearFlow(state: CoachState): CoachState {
@@ -167,10 +175,16 @@ const FLOW_TEXT = {
 // suggested-prompt card, unaffected by the free-text intent engine below)
 // ---------------------------------------------------------------------
 
+const PATH_ASSESSMENT_OPENERS: Record<Exclude<CoachState["businessPath"], null>, string> = {
+  start: "Let's ground this in reality first. What problem does your business idea solve, who specifically has that problem, and what's made you confident real people would pay for the solution?",
+  grow: "Let's start with where things actually stand. What's working well in the business right now, and what's the biggest obstacle between you and your next goal?",
+};
+
 function enterAssessment(state: CoachState) {
+  const opener = state.businessPath ? PATH_ASSESSMENT_OPENERS[state.businessPath] : FLOW_TEXT.analyzeOpener;
   return {
     state: { ...clearFlow(state), flow: "assessment" as const },
-    message: assistantMessage(FLOW_TEXT.analyzeOpener, { mode: "clarity" }),
+    message: assistantMessage(opener, { mode: "clarity" }),
   };
 }
 
@@ -390,12 +404,62 @@ const PROMPT_HANDLERS: Record<string, (state: CoachState) => { state: CoachState
     }
     return {
       state,
-      message: assistantMessage("Here's your personalized Business Growth Report.", { mode: "strategy", businessReport: state.businessReport }),
+      message: assistantMessage(`Here's your personalized Business Growth Report.\n\n${ninetyDayPlanOfferText}`, {
+        mode: "strategy",
+        businessReport: state.businessReport,
+        quickReplies: [
+          { label: "Yes, include the full 90-day plan", action: "ninety-day-yes" },
+          { label: "Just the 30-day plan is fine", action: "ninety-day-no" },
+        ],
+      }),
     };
   },
   "report-not-now": (state) => ({
     state,
     message: assistantMessage("No problem. We can always put this together later. Let's keep going.", { mode: "clarity" }),
+  }),
+  "ninety-day-yes": (state) => ({
+    state: { ...state, context: { ...state.context, ninetyDayPlanRequested: true } },
+    message: assistantMessage(
+      "Done. I'll include the full 90-day roadmap, not just the 30-day plan, when you save and send this report below.",
+      { mode: "strategy" }
+    ),
+  }),
+  "ninety-day-no": (state) => ({
+    state: { ...state, context: { ...state.context, ninetyDayPlanRequested: false } },
+    message: assistantMessage("Understood, the 30-day plan will be the focus. You can always ask for the full roadmap later.", { mode: "clarity" }),
+  }),
+  "path-start": (state) => ({
+    state: { ...clearFlow(state), businessPath: "start" },
+    message: assistantMessage(
+      "Starting something new. Before strategy, let's ground this in reality: what's the business idea, and what specific problem does it solve for someone?",
+      { mode: "founder" }
+    ),
+  }),
+  "path-grow": (state) => ({
+    state: { ...clearFlow(state), businessPath: "grow" },
+    message: assistantMessage(
+      "Growing what's already working. What's your main goal right now, and what's the biggest obstacle standing between you and it?",
+      { mode: "strategy" }
+    ),
+  }),
+  "depth-quick": (state) => ({
+    state: { ...state, responseDepth: "quick" },
+    message: assistantMessage(
+      "Quick Answer it is. I'll keep things concise, ask at most one essential follow-up, and give you one clear next action. What's the situation?",
+      { mode: "clarity" }
+    ),
+  }),
+  "depth-deep": (state) => ({
+    state: { ...state, responseDepth: "deep" },
+    message: assistantMessage(
+      "Deep Analysis it is. I'll ask a few diagnostic questions and build a full, structured plan. What's the situation?",
+      { mode: "clarity" }
+    ),
+  }),
+  "depth-guide": (state) => ({
+    state: { ...state, responseDepth: "guide-me" },
+    message: assistantMessage("I'll set the pace and ask what's actually relevant as we go. What's on your mind?", { mode: "clarity" }),
   }),
 };
 
@@ -470,11 +534,58 @@ const TOPIC_FOLLOWUPS: Partial<Record<Exclude<CoachState["topic"], null>, { cont
 // Flow step machines (assessment / growth-plan / website-review)
 // ---------------------------------------------------------------------
 
+function finishAssessment(state: CoachState, answers: string[]) {
+  const report = buildAssessmentReport(answers);
+  const priorityKey = detectPriority(answers.join(" "));
+  const nextState: CoachState = {
+    ...clearFlow(state),
+    context: {
+      ...state.context,
+      business: state.context.business ?? answers[0]?.slice(0, 80) ?? null,
+      primaryGoal: state.context.primaryGoal ?? answers[answers.length - 1]?.slice(0, 80) ?? null,
+      currentPriority: PRIORITY_CONTENT[priorityKey].headline,
+    },
+  };
+  const businessReport = buildBusinessGrowthReport({ sourceFlow: "assessment", priorityKey, answers, context: nextState.context });
+  return withReportOffer(nextState, assistantMessage("Here's where things stand, and where I'd start.", { mode: "strategy", report }), businessReport);
+}
+
+function finishGrowthPlan(state: CoachState, answers: string[]) {
+  const report = buildGrowthPlanReport(answers);
+  const nextState: CoachState = {
+    ...clearFlow(state),
+    context: { ...state.context, primaryGoal: state.context.primaryGoal ?? answers[0]?.slice(0, 80) ?? null },
+  };
+  const priorityKey = detectPriority(answers.join(" "));
+  const businessReport = buildBusinessGrowthReport({ sourceFlow: "growth-plan", priorityKey, answers, context: nextState.context });
+  return withReportOffer(
+    nextState,
+    assistantMessage("Here's a 90-day plan sized to what you actually have to work with.", { mode: "execution", report }),
+    businessReport
+  );
+}
+
+function finishWebsiteReview(state: CoachState, answers: string[]) {
+  const report = buildWebsiteReviewReport(answers);
+  const clearedState = clearFlow(state);
+  const businessReport = buildBusinessGrowthReport({ sourceFlow: "website-review", priorityKey: "website", answers, context: clearedState.context });
+  return withReportOffer(
+    clearedState,
+    assistantMessage("Here's a demonstration review based on what you've shared. A real scan would go deeper, but this shows the kind of thinking we'd apply.", {
+      mode: "strategy",
+      report,
+    }),
+    businessReport
+  );
+}
+
 function advanceFlow(state: CoachState, userText: string) {
   const answers = [...state.answers, userText];
+  const quick = isQuickDepth(state);
 
   if (state.flow === "assessment") {
     if (state.step === 0) {
+      if (quick) return finishAssessment(state, answers);
       return {
         state: { ...state, step: 1, answers },
         message: assistantMessage(
@@ -492,23 +603,12 @@ function advanceFlow(state: CoachState, userText: string) {
         ),
       };
     }
-    const report = buildAssessmentReport(answers);
-    const priorityKey = detectPriority(answers.join(" "));
-    const nextState: CoachState = {
-      ...clearFlow(state),
-      context: {
-        ...state.context,
-        business: state.context.business ?? answers[0]?.slice(0, 80) ?? null,
-        primaryGoal: state.context.primaryGoal ?? answers[2]?.slice(0, 80) ?? null,
-        currentPriority: PRIORITY_CONTENT[priorityKey].headline,
-      },
-    };
-    const businessReport = buildBusinessGrowthReport({ sourceFlow: "assessment", priorityKey, answers, context: nextState.context });
-    return withReportOffer(nextState, assistantMessage("Here's where things stand, and where I'd start.", { mode: "strategy", report }), businessReport);
+    return finishAssessment(state, answers);
   }
 
   if (state.flow === "growth-plan") {
     if (state.step === 0) {
+      if (quick) return finishGrowthPlan(state, answers);
       return {
         state: { ...state, step: 1, answers },
         message: assistantMessage(
@@ -517,22 +617,12 @@ function advanceFlow(state: CoachState, userText: string) {
         ),
       };
     }
-    const report = buildGrowthPlanReport(answers);
-    const nextState: CoachState = {
-      ...clearFlow(state),
-      context: { ...state.context, primaryGoal: state.context.primaryGoal ?? answers[0]?.slice(0, 80) ?? null },
-    };
-    const priorityKey = detectPriority(answers.join(" "));
-    const businessReport = buildBusinessGrowthReport({ sourceFlow: "growth-plan", priorityKey, answers, context: nextState.context });
-    return withReportOffer(
-      nextState,
-      assistantMessage("Here's a 90-day plan sized to what you actually have to work with.", { mode: "execution", report }),
-      businessReport
-    );
+    return finishGrowthPlan(state, answers);
   }
 
   if (state.flow === "website-review") {
     if (state.step === 0) {
+      if (quick) return finishWebsiteReview(state, answers);
       return {
         state: { ...state, step: 1, answers },
         message: assistantMessage(
@@ -541,17 +631,7 @@ function advanceFlow(state: CoachState, userText: string) {
         ),
       };
     }
-    const report = buildWebsiteReviewReport(answers);
-    const clearedState = clearFlow(state);
-    const businessReport = buildBusinessGrowthReport({ sourceFlow: "website-review", priorityKey: "website", answers, context: clearedState.context });
-    return withReportOffer(
-      clearedState,
-      assistantMessage("Here's a demonstration review based on what you've shared. A real scan would go deeper, but this shows the kind of thinking we'd apply.", {
-        mode: "strategy",
-        report,
-      }),
-      businessReport
-    );
+    return finishWebsiteReview(state, answers);
   }
 
   return routeFreeText(clearFlow(state), userText);
@@ -916,6 +996,49 @@ const SCALING_STRATEGY_VARIANTS = [
 // --- Intent routing table (structural entries reuse existing handlers) --
 
 const INTENT_ROUTES: IntentDef[] = [
+  // Response-depth switching — checked first via weight, but never forced;
+  // a visitor can ignore these entirely and just keep typing.
+  {
+    id: "depth-switch-quick",
+    mode: "clarity",
+    keywords: [
+      { re: /quick (version|answer)/i, weight: 4 },
+      { re: /keep it short|just the short version|short answer/i, weight: 3 },
+    ],
+    handle: (state) => ({
+      state: { ...clearFlow(state), responseDepth: "quick" },
+      message: assistantMessage("Got it. I'll keep things quick and to the point from here.", { mode: "clarity" }),
+    }),
+  },
+  {
+    id: "depth-switch-deep",
+    mode: "clarity",
+    keywords: [
+      { re: /go deeper|deep(er)? analysis|more detail(ed)?|dive deeper/i, weight: 4 },
+    ],
+    handle: (state) => ({
+      state: { ...clearFlow(state), responseDepth: "deep" },
+      message: assistantMessage("Understood. Let's go deeper. I'll ask more questions to build a fuller picture.", { mode: "clarity" }),
+    }),
+  },
+  {
+    id: "depth-switch-guide",
+    mode: "clarity",
+    keywords: [
+      { re: /ask me whatever (you need|is relevant)|you decide|guide me|however (you|it) (think|makes sense)/i, weight: 4 },
+    ],
+    handle: (state) => ({
+      state: { ...clearFlow(state), responseDepth: "guide-me" },
+      message: assistantMessage("Sounds good. I'll set the pace and ask what's actually relevant as we go.", { mode: "clarity" }),
+    }),
+  },
+  {
+    id: "build-full-plan",
+    mode: "strategy",
+    keywords: [{ re: /build me a full plan|full 90.?day plan|complete growth plan/i, weight: 4 }],
+    handle: (state) => enterGrowthPlan({ ...state, responseDepth: "deep" }),
+  },
+
   // Emotional / mindset
   {
     id: "fear-of-failure",

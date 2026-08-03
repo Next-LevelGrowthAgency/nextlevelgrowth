@@ -129,7 +129,10 @@ describe("Growth Score engine — determinism and configurability", () => {
     const answers = answerAllBest(fullIds);
     const a = calculateGrowthScore("full", answers);
     const b = calculateGrowthScore("full", answers);
-    expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+    // generatedAt is a real timestamp (Date.now()) and can legitimately
+    // differ by a millisecond between these two calls — everything else
+    // must be byte-identical.
+    expect(JSON.stringify({ ...a, generatedAt: 0 })).toBe(JSON.stringify({ ...b, generatedAt: 0 }));
   });
 
   it("category weights are all positive and sum to a stable total (weight changes shift results predictably)", () => {

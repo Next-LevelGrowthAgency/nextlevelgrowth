@@ -17,7 +17,7 @@ export interface LeadAdapter {
   listLeads(): Promise<LeadProfile[]>;
   recordConsent(
     id: string,
-    consent: { saveReport?: boolean; contact?: boolean; marketing?: boolean },
+    consent: { saveReport?: boolean; emailFollowUp?: boolean; phoneCall?: boolean; textMessage?: boolean; marketing?: boolean },
     timestamp: number
   ): Promise<LeadProfile | null>;
   saveReport(id: string, reportSummary: string): Promise<LeadProfile | null>;
@@ -33,7 +33,10 @@ export interface LeadAdapter {
 export type OutboundEmail = {
   to: string;
   subject: string;
+  /** Plain-text body — always required, used as the text part and as the full content when no `html` is given (e.g. the console mock). */
   body: string;
+  /** Rendered HTML body. When present (real provider sends), `body` is still sent as the plain-text alternative part. */
+  html?: string;
 };
 
 export interface EmailAdapter {

@@ -40,16 +40,42 @@ export const previewNotice =
   "Preview experience: responses are demonstration content, not a live AI connection.";
 
 /**
- * Ten suggested starting prompts. "primary" tier renders on the welcome
+ * Business-path entry points — "Start My Business" vs. "Grow My Business"
+ * from the product spec. Selecting one sets CoachState.businessPath, which
+ * adapts question wording in engine.ts (enterAssessment) without ever
+ * blocking free-text coaching for a visitor who ignores these and just types.
+ */
+export const businessPathPrompts: SuggestedPrompt[] = [
+  { id: "path-start", label: "Start My Business", icon: "Rocket", tier: "primary" },
+  { id: "path-grow", label: "Grow My Business", icon: "TrendingUp", tier: "primary" },
+];
+
+/**
+ * Response-depth selector — "How would you like me to help today?" Rendered
+ * as its own row above the topic suggestions so it reads as the first
+ * question, not just another suggestion card. Selecting one sets
+ * CoachState.responseDepth; natural-language switches ("give me the quick
+ * version", "go deeper") are also handled in engine.ts's intent router.
+ */
+export const responseDepthPrompts: { id: "depth-quick" | "depth-deep" | "depth-guide"; label: string; description: string }[] = [
+  { id: "depth-quick", label: "Quick Answer", description: "Concise, one follow-up at most, one clear next action." },
+  { id: "depth-deep", label: "Deep Analysis", description: "Diagnostic questions and a structured plan." },
+  { id: "depth-guide", label: "Guide Me", description: "I'll decide how much depth makes sense." },
+];
+
+export const responseDepthPromptHeading = "How would you like me to help today?";
+
+/**
+ * Twelve suggested starting prompts. "primary" tier renders on the welcome
  * screen by default; "more" tier sits behind the "More ways I can help"
  * disclosure so the initial screen stays uncluttered.
  */
 export const suggestedPrompts: SuggestedPrompt[] = [
   { id: "growth-score-quick", label: "Get My Growth Score", icon: "Gauge", tier: "primary" },
   { id: "analyze", label: "Analyze My Business", icon: "Compass", tier: "primary" },
-  { id: "growth-plan", label: "Build My 90-Day Growth Plan", icon: "CalendarRange", tier: "primary" },
-  { id: "website-review", label: "Review My Website", icon: "LayoutTemplate", tier: "primary" },
-  { id: "leads", label: "Help Me Generate More Leads", icon: "Users", tier: "primary" },
+  { id: "growth-plan", label: "Build My 90-Day Growth Plan", icon: "CalendarRange", tier: "more" },
+  { id: "website-review", label: "Review My Website", icon: "LayoutTemplate", tier: "more" },
+  { id: "leads", label: "Help Me Generate More Leads", icon: "Users", tier: "more" },
   { id: "growth-score-full", label: "Take the Full Growth Assessment", icon: "ClipboardList", tier: "more" },
   { id: "google-visibility", label: "Improve My Google Visibility", icon: "MapPin", tier: "more" },
   { id: "marketing", label: "Strengthen My Marketing", icon: "Megaphone", tier: "more" },
@@ -104,3 +130,6 @@ export const consultOfferText =
 
 export const consultDeclineReply =
   "No pressure at all. Let's keep building. What would you like to work through next?";
+
+export const ninetyDayPlanOfferText =
+  "Would you like the full 90-day roadmap included when this report is emailed to you, not just the 30-day plan?";

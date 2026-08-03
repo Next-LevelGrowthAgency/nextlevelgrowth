@@ -1,22 +1,26 @@
-import { localLeadAdapter, consoleEmailAdapter } from "@/lib/growth-coach/adapters/local-mock";
+import { getEmailAdapter, getLeadAdapter, isDurableStorageActive, isEmailDeliveryActive } from "@/lib/growth-coach/adapters";
+import { buildInternalLeadEmail, buildInternalLeadEmailSubject, buildVisitorReportEmail } from "@/lib/growth-coach/email-templates";
 import { buildLeadInput, buildOwnerSummary, type LeadFormValues } from "@/lib/growth-coach/lead-profile";
 import { leadSubmissionSchema } from "@/lib/growth-coach/lead-schema";
 import { containsSensitiveData } from "@/lib/growth-coach/sensitive-data";
 import { isRateLimited } from "@/lib/rate-limit";
+import { siteConfig } from "@/lib/site-config";
+import { verifyTurnstileToken } from "@/lib/growth-coach/spam-protection";
 import type { BusinessGrowthReport, CoachContext } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
 /**
- * Validated, rate-limited local lead-capture endpoint for the Growth
- * Coach's "save & send my report" flow.
+ * Validated, rate-limited lead-capture endpoint for the Growth Coach's
+ * "save & send my report" flow.
  *
- * DEVELOPMENT-ONLY: writes to an in-memory mock adapter
- * (src/lib/growth-coach/adapters/local-mock.ts) and "sends" an owner
- * notification through a mock email adapter that only logs to the
- * console — no real database and no real email provider are connected
- * yet. See Phase B recommendations for what's required to go live.
+ * Persistence and email delivery both go through adapter factories
+ * (getLeadAdapter()/getEmailAdapter() — see ./adapters/index.ts) that pick
+ * the real provider only when it's fully configured via environment
+ * variables, and fall back to the in-memory store / console-logged email
+ * otherwise — so the app never silently loses a submission, and this route
+ * never needs to change as providers come online.
  */
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "unknown";
@@ -43,6 +47,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Submission rejected." }, { status: 400 });
   }
 
+  const turnstile = await verifyTurnstileToken((body as Record<string, unknown>).turnstileToken, ip);
+  if (!turnstile.ok) {
+    return NextResponse.json({ error: "Spam check failed. Please reload and try again." }, { status: 400 });
+  }
+
   for (const field of [data.businessName, data.cityState, data.websiteUrl, data.phone]) {
     if (field && containsSensitiveData(field)) {
       return NextResponse.json(
@@ -61,7 +70,9 @@ export async function POST(request: NextRequest) {
     phone: data.phone || undefined,
     preferredContactMethod: data.preferredContactMethod,
     consentToSaveReport: data.consentToSaveReport,
-    consentToContact: data.consentToContact,
+    consentToEmailFollowUp: data.consentToEmailFollowUp,
+    consentToPhoneCall: data.consentToPhoneCall,
+    consentToTextMessage: data.consentToTextMessage,
     consentToMarketing: data.consentToMarketing,
     consultationRequested: data.consultationRequested,
   };
@@ -73,19 +84,54 @@ export async function POST(request: NextRequest) {
     data.sessionId
   );
 
-  const lead = await localLeadAdapter.createLead(leadInput);
+  const leadAdapter = getLeadAdapter();
+  const emailAdapter = getEmailAdapter();
+
+  const lead = await leadAdapter.createLead(leadInput);
   const ownerSummary = buildOwnerSummary(lead);
 
-  // Owner notification — mock only, never a real send in this phase.
-  await consoleEmailAdapter.sendTransactional({
-    to: process.env.EMAIL_TO_ADDRESS || "hello@nextlevelgrowth.com",
-    subject: `New Next Level Growth Coach Lead: ${lead.businessName ?? lead.firstName ?? "Unnamed"}`,
-    body: JSON.stringify(ownerSummary, null, 2),
-  });
-
-  if (!process.env.EMAIL_PROVIDER_API_KEY && !process.env.CRM_API_KEY) {
-    console.warn("[growth-coach-lead] No EMAIL_PROVIDER_API_KEY or CRM_API_KEY set — lead was saved locally (mock) only. See .env.example.");
+  // Internal notification — the lead is already saved at this point, so an
+  // email-provider failure here never loses the submission itself. Errors
+  // are logged server-side, not surfaced to the visitor.
+  let internalEmailSent = false;
+  try {
+    const internal = buildInternalLeadEmail(lead, ownerSummary);
+    await emailAdapter.sendTransactional({
+      to: process.env.LEAD_NOTIFICATION_EMAIL || siteConfig.contact.email,
+      subject: buildInternalLeadEmailSubject(lead),
+      body: internal.text,
+      html: internal.html,
+    });
+    internalEmailSent = true;
+  } catch (error) {
+    console.error("[growth-coach-lead] Internal notification email failed:", error instanceof Error ? error.message : error);
   }
 
-  return NextResponse.json({ ok: true, leadId: lead.id });
+  // Visitor's personalized plan — never includes internal lead-scoring
+  // labels, sales-qualification tiers, or private notes (see
+  // buildVisitorReportEmail's doc comment).
+  let visitorEmailSent = false;
+  if (lead.email) {
+    try {
+      const visitor = buildVisitorReportEmail(lead);
+      await emailAdapter.sendTransactional({ to: lead.email, subject: visitor.subject, body: visitor.text, html: visitor.html });
+      visitorEmailSent = true;
+    } catch (error) {
+      console.error("[growth-coach-lead] Visitor report email failed:", error instanceof Error ? error.message : error);
+    }
+  }
+
+  if (!isEmailDeliveryActive()) {
+    console.warn("[growth-coach-lead] RESEND_API_KEY/EMAIL_FROM_ADDRESS not set — lead saved, email logged to console only. See .env.example.");
+  }
+  if (!isDurableStorageActive()) {
+    console.warn("[growth-coach-lead] SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY not set — lead saved to the in-memory store only, not a durable database. See .env.example.");
+  }
+
+  return NextResponse.json({
+    ok: true,
+    leadId: lead.id,
+    emailSent: visitorEmailSent,
+    internalEmailSent,
+  });
 }

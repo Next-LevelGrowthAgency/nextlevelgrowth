@@ -70,10 +70,20 @@ export const localLeadAdapter: LeadAdapter = {
   async recordConsent(id, consent, timestamp) {
     const existing = store.get(id);
     if (!existing) return null;
+    const nextEmailFollowUp = consent.emailFollowUp ?? existing.consentToEmailFollowUp ?? false;
+    const nextPhoneCall = consent.phoneCall ?? existing.consentToPhoneCall ?? false;
+    const nextTextMessage = consent.textMessage ?? existing.consentToTextMessage ?? false;
+    const contactFieldsChanged = consent.emailFollowUp !== undefined || consent.phoneCall !== undefined || consent.textMessage !== undefined;
     const updated: LeadProfile = {
       ...existing,
       ...(consent.saveReport !== undefined && { consentToSaveReport: consent.saveReport, reportConsentTimestamp: timestamp }),
-      ...(consent.contact !== undefined && { consentToContact: consent.contact, contactConsentTimestamp: timestamp }),
+      ...(contactFieldsChanged && {
+        consentToEmailFollowUp: nextEmailFollowUp,
+        consentToPhoneCall: nextPhoneCall,
+        consentToTextMessage: nextTextMessage,
+        consentToContact: nextEmailFollowUp || nextPhoneCall || nextTextMessage,
+        contactConsentTimestamp: timestamp,
+      }),
       ...(consent.marketing !== undefined && { consentToMarketing: consent.marketing, marketingConsentTimestamp: timestamp }),
       updatedAt: Date.now(),
     };

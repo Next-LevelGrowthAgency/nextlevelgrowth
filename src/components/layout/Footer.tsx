@@ -1,12 +1,17 @@
 import { Container } from "@/components/ui/Container";
 import {
+  configuredSocialLinks,
   footerLegalLinks,
   footerServiceLinks,
+  hasPhone,
+  hasServiceArea,
   navLinks,
   siteConfig,
 } from "@/lib/site-config";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
 import Link from "next/link";
+
+const SOCIAL_ICON = { facebook: Facebook, instagram: Instagram, linkedin: Linkedin } as const;
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -21,29 +26,19 @@ export function Footer() {
               Helping local businesses reach their next level through modern
               websites, local SEO, and smarter digital strategy.
             </p>
-            <div className="mt-6 flex gap-4">
-              <a
-                href={siteConfig.social.facebook}
-                aria-label="Next Level Growth on Facebook"
-                className="text-paper-400 hover:text-paper-100"
-              >
-                <Facebook className="h-5 w-5" aria-hidden="true" />
-              </a>
-              <a
-                href={siteConfig.social.instagram}
-                aria-label="Next Level Growth on Instagram"
-                className="text-paper-400 hover:text-paper-100"
-              >
-                <Instagram className="h-5 w-5" aria-hidden="true" />
-              </a>
-              <a
-                href={siteConfig.social.linkedin}
-                aria-label="Next Level Growth on LinkedIn"
-                className="text-paper-400 hover:text-paper-100"
-              >
-                <Linkedin className="h-5 w-5" aria-hidden="true" />
-              </a>
-            </div>
+            {configuredSocialLinks.length > 0 ? (
+              <div className="mt-6 flex gap-4">
+                {configuredSocialLinks.map(([platform, href]) => {
+                  const Icon = SOCIAL_ICON[platform as keyof typeof SOCIAL_ICON];
+                  if (!Icon) return null;
+                  return (
+                    <a key={platform} href={href} aria-label={`${siteConfig.name} on ${platform}`} className="text-paper-400 hover:text-paper-100">
+                      <Icon className="h-5 w-5" aria-hidden="true" />
+                    </a>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
 
           <div>
@@ -80,12 +75,14 @@ export function Footer() {
                   {siteConfig.contact.email}
                 </a>
               </li>
-              <li>
-                <a href={`tel:${siteConfig.contact.phoneHref}`} className="hover:text-paper-100">
-                  {siteConfig.contact.phone}
-                </a>
-              </li>
-              <li className="text-paper-500">{siteConfig.contact.serviceArea}</li>
+              {hasPhone ? (
+                <li>
+                  <a href={`tel:${siteConfig.contact.phoneHref}`} className="hover:text-paper-100">
+                    {siteConfig.contact.phone}
+                  </a>
+                </li>
+              ) : null}
+              {hasServiceArea ? <li className="text-paper-500">{siteConfig.contact.serviceArea}</li> : null}
             </ul>
           </div>
         </div>

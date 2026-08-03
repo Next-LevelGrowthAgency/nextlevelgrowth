@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { useState, type FormEvent } from "react";
+import { TurnstileWidget } from "@/components/forms/TurnstileWidget";
+import { useRef, useState, type FormEvent } from "react";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -13,32 +14,41 @@ type Status = "idle" | "submitting" | "success" | "error";
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const turnstileTokenRef = useRef<string | null>(null);
+  const submittingRef = useRef(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    if (submittingRef.current) return; // prevents double-click double submission
 
     const form = event.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
+
+    if (data.companyWebsite2) return; // honeypot — silently drop, no error shown to a bot
 
     if (!data.name || !data.email || !data.message) {
       setError("Please fill in your name, email, and message.");
       return;
     }
 
+    submittingRef.current = true;
     setStatus("submitting");
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, turnstileToken: turnstileTokenRef.current }),
       });
-      if (!res.ok) throw new Error("Request failed");
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error ?? "Request failed");
       setStatus("success");
       form.reset();
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setError("Something went wrong sending your message. Please try again or email us directly.");
+      setError(err instanceof Error && err.message !== "Request failed" ? err.message : "Something went wrong sending your message. Please try again or email us directly.");
+    } finally {
+      submittingRef.current = false;
     }
   }
 
@@ -91,6 +101,17 @@ export function ContactForm() {
           className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
         />
       </div>
+
+      {/* Honeypot — hidden from real visitors, catches basic bots that fill every field. */}
+      <input
+        type="text"
+        name="companyWebsite2"
+        tabIndex={-1}
+        autoComplete="off"
+        className="sr-only"
+        aria-hidden="true"
+      />
+      <TurnstileWidget onToken={(token) => (turnstileTokenRef.current = token)} />
 
       {error ? (
         <p role="alert" className="text-sm font-medium text-red-700">

@@ -64,6 +64,10 @@ export function GrowthCoach() {
     if (promptId === "growth-score-quick") track("quick_check_started");
     if (promptId === "growth-score-full" || promptId === "start-full-assessment") track("full_assessment_started");
     if (promptId?.startsWith("score:")) track("assessment_question_answered");
+    if (promptId === "path-start" || promptId === "path-grow") track("business_path_selected", { path: promptId });
+    if (promptId === "depth-quick" || promptId === "depth-deep" || promptId === "depth-guide") track("response_depth_selected", { depth: promptId });
+    if (promptId === "ninety-day-yes") track("ninety_day_plan_requested");
+    if (promptId === "ninety-day-no") track("ninety_day_plan_declined");
 
     if (userText.trim()) {
       setMessages((prev) => [...prev, makeUserMessage(userText.trim())]);

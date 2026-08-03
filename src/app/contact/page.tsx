@@ -2,7 +2,7 @@ import { ContactForm } from "@/components/forms/ContactForm";
 import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
-import { siteConfig } from "@/lib/site-config";
+import { hasAddress, hasPhone, hasServiceArea, siteConfig } from "@/lib/site-config";
 import { Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -42,25 +42,31 @@ export default function ContactPage() {
                   </a>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <Phone className="mt-1 h-5 w-5 shrink-0 text-grove-600" aria-hidden="true" />
-                <div>
-                  <p className="font-medium text-ink-900">Phone</p>
-                  <a href={`tel:${siteConfig.contact.phoneHref}`} className="text-ink-600 hover:text-ink-900">
-                    {siteConfig.contact.phone}
-                  </a>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-1 h-5 w-5 shrink-0 text-grove-600" aria-hidden="true" />
-                <div>
-                  <p className="font-medium text-ink-900">Service Area</p>
-                  <p className="text-ink-600">{siteConfig.contact.serviceArea}</p>
-                  <p className="mt-1 text-xs text-ink-500">
-                    {siteConfig.contact.addressLine1}, {siteConfig.contact.addressLine2}
-                  </p>
-                </div>
-              </li>
+              {hasPhone ? (
+                <li className="flex items-start gap-3">
+                  <Phone className="mt-1 h-5 w-5 shrink-0 text-grove-600" aria-hidden="true" />
+                  <div>
+                    <p className="font-medium text-ink-900">Phone</p>
+                    <a href={`tel:${siteConfig.contact.phoneHref}`} className="text-ink-600 hover:text-ink-900">
+                      {siteConfig.contact.phone}
+                    </a>
+                  </div>
+                </li>
+              ) : null}
+              {hasServiceArea || hasAddress ? (
+                <li className="flex items-start gap-3">
+                  <MapPin className="mt-1 h-5 w-5 shrink-0 text-grove-600" aria-hidden="true" />
+                  <div>
+                    <p className="font-medium text-ink-900">Service Area</p>
+                    {hasServiceArea ? <p className="text-ink-600">{siteConfig.contact.serviceArea}</p> : null}
+                    {hasAddress ? (
+                      <p className="mt-1 text-xs text-ink-500">
+                        {siteConfig.contact.addressLine1}, {siteConfig.contact.addressLine2}
+                      </p>
+                    ) : null}
+                  </div>
+                </li>
+              ) : null}
             </ul>
           </div>
         </Container>

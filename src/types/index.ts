@@ -106,7 +106,20 @@ export type StructuredReport = {
   sections: ReportSection[];
 };
 
-export type QuickReplyAction = "consult-yes" | "consult-no" | "report-yes" | "report-not-now" | "start-full-assessment";
+export type QuickReplyAction =
+  | "consult-yes"
+  | "consult-no"
+  | "report-yes"
+  | "report-not-now"
+  | "start-full-assessment"
+  | "ninety-day-yes"
+  | "ninety-day-no";
+
+/** How much depth the visitor wants in coach responses — see engine.ts's routing at the top of `respond()`. */
+export type ResponseDepth = "quick" | "deep" | "guide-me";
+
+/** Which of the two primary conversation paths the visitor selected — adapts question wording in engine.ts. */
+export type BusinessPath = "start" | "grow";
 
 export type QuickReply = {
   label: string;
@@ -157,6 +170,8 @@ export type CoachContext = {
   mainFear: string | null;
   weeklyHours: number | null;
   currentPriority: string | null;
+  /** Set when the visitor explicitly asks for the detailed 90-day plan to be included in their emailed report. */
+  ninetyDayPlanRequested: boolean;
 };
 
 export type CoachState = {
@@ -176,6 +191,10 @@ export type CoachState = {
   growthAssessment: GrowthAssessmentState | null;
   /** The most recently generated Growth Score, kept so it can be attached to a later report/lead without recomputing. */
   lastGrowthScore: GrowthScoreResult | null;
+  /** Null until the visitor picks a depth (or the coach defaults to "guide-me" on first structured question) — see engine.ts. */
+  responseDepth: ResponseDepth | null;
+  /** Null until the visitor picks "Start My Business" or "Grow My Business" — adapts question wording, never blocks free-text coaching. */
+  businessPath: BusinessPath | null;
 };
 
 // -----------------------------------------------------------------------
@@ -310,6 +329,7 @@ export type LeadProfile = {
 
   leadQualificationLevel?: LeadQualification;
   consultationRequested?: boolean;
+  ninetyDayPlanRequested?: boolean;
 
   growthScore?: number | null;
   growthScoreConfidence?: ConfidenceLabel;
@@ -318,9 +338,15 @@ export type LeadProfile = {
   growthCategorySnapshot?: { categoryId: GrowthScoreCategoryId; label: string; score: number }[];
 
   consentToSaveReport: boolean;
+  /** Derived: true if any of the three granular contact permissions below is true. Never collected directly from the visitor. */
   consentToContact: boolean;
+  /** Separate, individually optional permissions — never combined into one checkbox. See GrowthCoachLeadForm.tsx. */
+  consentToEmailFollowUp?: boolean;
+  consentToPhoneCall?: boolean;
+  consentToTextMessage?: boolean;
   consentToMarketing: boolean;
   reportConsentTimestamp?: number;
+  /** Shared timestamp for whichever of the three granular contact permissions were set — they're always submitted together in one request. */
   contactConsentTimestamp?: number;
   marketingConsentTimestamp?: number;
 
@@ -364,7 +390,16 @@ export type OwnerLeadSummary = {
   reportSummary: string;
   nextAction: string;
   consultationRequested: boolean;
-  consent: { saveReport: boolean; contact: boolean; marketing: boolean };
+  ninetyDayPlanRequested: boolean;
+  consent: {
+    saveReport: boolean;
+    /** Derived: true if any of the three below is true. */
+    contact: boolean;
+    emailFollowUp: boolean;
+    phoneCall: boolean;
+    textMessage: boolean;
+    marketing: boolean;
+  };
   consentTimestamps: { report?: number; contact?: number; marketing?: number };
   suggestedFollowUpApproach: string;
 };
@@ -397,6 +432,10 @@ export type AnalyticsEvent =
   | "assessment_question_answered"
   | "growth_score_generated"
   | "growth_score_low_confidence"
+  | "response_depth_selected"
+  | "business_path_selected"
+  | "ninety_day_plan_requested"
+  | "ninety_day_plan_declined"
   | "admin_login_success"
   | "admin_login_failed"
   | "admin_logout";

@@ -27,7 +27,13 @@ export const leadSubmissionSchema = z.object({
   phone: z.string().trim().max(40).optional().or(z.literal("")),
   preferredContactMethod: z.enum(["Email", "Phone", "Text"]).optional(),
   consentToSaveReport: z.literal(true, { errorMap: () => ({ message: "Consent to save and send the report is required to continue." }) }),
-  consentToContact: z.boolean(),
+  // Three separate, individually optional contact permissions — never a
+  // single combined "may we contact you" checkbox. Each defaults to
+  // unchecked and the visitor may accept the report while declining all
+  // three.
+  consentToEmailFollowUp: z.boolean(),
+  consentToPhoneCall: z.boolean(),
+  consentToTextMessage: z.boolean(),
   consentToMarketing: z.boolean(),
   consultationRequested: z.boolean().optional(),
   // Honeypot — must stay empty. Real visitors never see or fill this field.
@@ -37,6 +43,10 @@ export const leadSubmissionSchema = z.object({
   companyWebsite2: z.string().max(300).optional().or(z.literal("")),
   report: z.record(z.any()),
   context: z.record(z.any()),
-});
+})
+  .refine((data) => !(data.consentToPhoneCall || data.consentToTextMessage) || !!data.phone?.trim(), {
+    message: "A phone number is required to consent to a phone call or text message.",
+    path: ["phone"],
+  });
 
 export type LeadSubmissionInput = z.infer<typeof leadSubmissionSchema>;

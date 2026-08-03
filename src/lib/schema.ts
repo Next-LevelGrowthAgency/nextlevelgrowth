@@ -1,9 +1,11 @@
-import { siteConfig } from "@/lib/site-config";
+import { hasAddress, hasPhone, hasServiceArea, siteConfig } from "@/lib/site-config";
 
 /**
- * Organization / ProfessionalService schema for the whole site.
- * PLACEHOLDER values (address, geo) must be filled in with verified data
- * before launch — see CONTENT-GUIDE.md.
+ * Organization / ProfessionalService schema for the whole site. Phone,
+ * address, service area, and social profiles are only included once
+ * they're configured with real values in site-config.ts — omitted
+ * entirely rather than emitting structured data that asserts a fake
+ * phone number or address to search engines.
  */
 export function organizationSchema() {
   return {
@@ -13,14 +15,16 @@ export function organizationSchema() {
     url: siteConfig.url,
     description: siteConfig.description,
     email: siteConfig.contact.email,
-    telephone: siteConfig.contact.phone,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: siteConfig.contact.addressLine1,
-      addressLocality: siteConfig.contact.addressLine2,
-    },
-    areaServed: siteConfig.contact.serviceArea,
-    sameAs: Object.values(siteConfig.social),
+    ...(hasPhone && { telephone: siteConfig.contact.phone }),
+    ...(hasAddress && {
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: siteConfig.contact.addressLine1,
+        addressLocality: siteConfig.contact.addressLine2,
+      },
+    }),
+    ...(hasServiceArea && { areaServed: siteConfig.contact.serviceArea }),
+    ...(Object.values(siteConfig.social).some(Boolean) && { sameAs: Object.values(siteConfig.social).filter(Boolean) }),
   };
 }
 

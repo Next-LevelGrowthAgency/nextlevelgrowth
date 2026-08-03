@@ -1,3 +1,6 @@
+import { getEmailAdapter, isEmailDeliveryActive } from "@/lib/growth-coach/adapters";
+import { verifyTurnstileToken } from "@/lib/growth-coach/spam-protection";
+import { siteConfig } from "@/lib/site-config";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -7,6 +10,9 @@ const contactSchema = z.object({
   name: z.string().min(1).max(200),
   email: z.string().email(),
   message: z.string().min(1).max(5000),
+  // Honeypot — real visitors never see or fill this field.
+  companyWebsite2: z.string().max(300).optional().or(z.literal("")),
+  turnstileToken: z.string().optional(),
 });
 
 // Extremely small in-memory rate limit (per server instance). For real
@@ -41,23 +47,30 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Please check your name, email, and message." }, { status: 400 });
   }
+  const data = parsed.data;
 
-  // ── Delivery step (not yet configured) ────────────────────────────
-  // Wire this up to your email provider or CRM once EMAIL_PROVIDER_API_KEY
-  // (see .env.example) is set. Never hard-code API keys in this file —
-  // always read from process.env so secrets stay out of source control.
-  //
-  // Example:
-  // await sendEmail({
-  //   to: process.env.EMAIL_TO_ADDRESS,
-  //   subject: `New contact form message from ${parsed.data.name}`,
-  //   body: parsed.data.message,
-  // });
+  // Honeypot: a real visitor never fills this field.
+  if (data.companyWebsite2) {
+    return NextResponse.json({ error: "Submission rejected." }, { status: 400 });
+  }
 
-  if (!process.env.EMAIL_PROVIDER_API_KEY) {
-    console.warn(
-      "[contact] EMAIL_PROVIDER_API_KEY is not set — submission was validated but not delivered anywhere. See .env.example."
-    );
+  const turnstile = await verifyTurnstileToken(data.turnstileToken, ip);
+  if (!turnstile.ok) {
+    return NextResponse.json({ error: "Spam check failed. Please reload and try again." }, { status: 400 });
+  }
+
+  try {
+    await getEmailAdapter().sendTransactional({
+      to: process.env.LEAD_NOTIFICATION_EMAIL || siteConfig.contact.email,
+      subject: `New contact form message from ${data.name}`,
+      body: `Name: ${data.name}\nEmail: ${data.email}\n\n${data.message}`,
+    });
+  } catch (error) {
+    console.error("[contact] Notification email failed:", error instanceof Error ? error.message : error);
+  }
+
+  if (!isEmailDeliveryActive()) {
+    console.warn("[contact] RESEND_API_KEY/EMAIL_FROM_ADDRESS not set — submission validated but logged to console only. See .env.example.");
   }
 
   return NextResponse.json({ ok: true });
