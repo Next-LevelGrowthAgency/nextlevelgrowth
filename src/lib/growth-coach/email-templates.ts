@@ -312,3 +312,65 @@ export function buildVisitorReportEmail(lead: LeadProfile): { subject: string; h
 
   return { subject: "Your Personalized Next Level Growth Plan", html, text };
 }
+
+// -----------------------------------------------------------------------
+// C) Contact form confirmation — transactional (confirms the specific
+// message the visitor just sent), not gated behind a marketing-consent
+// checkbox, the same way a "we got your message" receipt from any contact
+// form isn't a marketing send.
+// -----------------------------------------------------------------------
+
+export function buildContactConfirmationEmail(name: string): { subject: string; html: string; text: string } {
+  const firstName = name.trim().split(/\s+/)[0] || "there";
+  const subject = "We received your message — Next Level Growth";
+  const html = emailShell(
+    "Thanks for reaching out",
+    `
+    <p style="font-size:14px;line-height:1.6;">Hi ${escapeHtml(firstName)},</p>
+    <p style="font-size:14px;line-height:1.6;">
+      Thanks for contacting ${escapeHtml(siteConfig.name)}. Your message is in, and a real person will reply, usually
+      within one business day.
+    </p>
+    <p style="font-size:14px;line-height:1.6;">
+      Have something to add in the meantime? Just reply to this email.
+    </p>
+    `
+  );
+  const text = `Hi ${firstName},\n\nThanks for contacting ${siteConfig.name}. Your message is in, and a real person will reply, usually within one business day.\n\nHave something to add in the meantime? Just reply to this email.`;
+  return { subject, html, text };
+}
+
+// -----------------------------------------------------------------------
+// D) Growth Audit confirmation — transactional, same rationale as above.
+// -----------------------------------------------------------------------
+
+export function buildGrowthAuditConfirmationEmail(input: { name: string; businessName: string; preferredContact: "Email" | "Phone" | "Text" }): {
+  subject: string;
+  html: string;
+  text: string;
+} {
+  const firstName = input.name.trim().split(/\s+/)[0] || "there";
+  const subject = "Your Growth Audit request is in — Next Level Growth";
+  const contactLine =
+    input.preferredContact === "Email"
+      ? "by email"
+      : input.preferredContact === "Phone"
+        ? "by phone"
+        : "by text";
+  const html = emailShell(
+    "Your Growth Audit request is in",
+    `
+    <p style="font-size:14px;line-height:1.6;">Hi ${escapeHtml(firstName)},</p>
+    <p style="font-size:14px;line-height:1.6;">
+      Thanks for requesting a free Growth Audit for ${escapeHtml(input.businessName)}. We'll review what you shared
+      and follow up ${escapeHtml(contactLine)} within one business day with honest, specific observations, not a
+      generic sales pitch.
+    </p>
+    <p style="font-size:14px;line-height:1.6;">
+      Questions before then? Just reply to this email.
+    </p>
+    `
+  );
+  const text = `Hi ${firstName},\n\nThanks for requesting a free Growth Audit for ${input.businessName}. We'll review what you shared and follow up ${contactLine} within one business day with honest, specific observations, not a generic sales pitch.\n\nQuestions before then? Just reply to this email.`;
+  return { subject, html, text };
+}

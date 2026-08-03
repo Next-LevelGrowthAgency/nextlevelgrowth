@@ -1,86 +1,171 @@
-import { getEmailAdapter, isEmailDeliveryActive } from "@/lib/growth-coach/adapters";
+import { generateSubmissionId, type SubmissionResponse } from "@/lib/api/submission-response";
+import { getEmailAdapter, getLeadAdapter, isEmailDeliveryActive } from "@/lib/growth-coach/adapters";
+import { buildGrowthAuditConfirmationEmail } from "@/lib/growth-coach/email-templates";
 import { verifyTurnstileToken } from "@/lib/growth-coach/spam-protection";
 import { growthAuditSchema } from "@/lib/growth-audit-schema";
+import { CONSENT_LANGUAGE_VERSION } from "@/lib/consent";
+import { getCurrentUserId } from "@/lib/auth/portal-session";
+import { isRateLimited } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-// Same lightweight, per-instance rate limiter used by /api/contact.
-// Replace with a durable store (e.g. Upstash Redis) for real production
-// traffic, since serverless functions don't share memory across invocations.
-const submissionLog = new Map<string, number[]>();
-const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX = 5;
+const MAX_BODY_BYTES = 30_000;
 
-function isRateLimited(key: string) {
-  const now = Date.now();
-  const timestamps = (submissionLog.get(key) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  timestamps.push(now);
-  submissionLog.set(key, timestamps);
-  return timestamps.length > RATE_LIMIT_MAX;
+function json(body: SubmissionResponse, status: number) {
+  return NextResponse.json(body, { status });
 }
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "unknown";
-  if (isRateLimited(ip)) {
-    return NextResponse.json({ error: "Too many requests. Please try again shortly." }, { status: 429 });
+  const submissionId = generateSubmissionId("growth-audit");
+
+  if (isRateLimited("growth-audit", ip, 60_000, 5)) {
+    return json({ ok: false, code: "RATE_LIMITED", message: "Too many requests. Please try again shortly." }, 429);
+  }
+
+  const contentType = request.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) {
+    return json({ ok: false, code: "VALIDATION_ERROR", message: "Unexpected request format. Please refresh the page and try again." }, 400);
+  }
+
+  const rawBody = await request.text();
+  if (rawBody.length > MAX_BODY_BYTES) {
+    return json({ ok: false, code: "VALIDATION_ERROR", message: "Request too large." }, 413);
   }
 
   let body: unknown;
   try {
-    body = await request.json();
+    body = JSON.parse(rawBody);
   } catch {
-    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    return json({ ok: false, code: "VALIDATION_ERROR", message: "Please check your entries and try again." }, 400);
   }
 
   const parsed = growthAuditSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Please check your form entries and try again.", issues: parsed.error.flatten() },
-      { status: 400 }
+    const fieldErrors = parsed.error.flatten().fieldErrors as Record<string, string[]>;
+    return json(
+      {
+        ok: false,
+        code: "VALIDATION_ERROR",
+        message: "Please check the highlighted fields and try again.",
+        fieldErrors,
+      },
+      400
     );
   }
   const data = parsed.data;
 
   // Honeypot: a real visitor never fills this field.
-  if (data.companyWebsite2) {
-    return NextResponse.json({ error: "Submission rejected." }, { status: 400 });
+  if (data.hpToken) {
+    console.warn(`[growth-audit] Honeypot triggered, submission ${submissionId} rejected as spam.`);
+    return json({ ok: false, code: "SPAM_REJECTED", message: "Submission rejected." }, 400);
   }
 
   const turnstile = await verifyTurnstileToken(data.turnstileToken, ip);
   if (!turnstile.ok) {
-    return NextResponse.json({ error: "Spam check failed. Please reload and try again." }, { status: 400 });
+    return json({ ok: false, code: "SPAM_REJECTED", message: "Spam check failed. Please reload and try again." }, 400);
   }
 
+  const leadAdapter = getLeadAdapter();
+  const emailAdapter = getEmailAdapter();
+
+  // Best-effort persistence — see contact/route.ts for the same rationale:
+  // the historical contract here is "we email your request to the team,"
+  // which still happens below regardless of this outcome.
+  let leadId: string | null = null;
   try {
-    await getEmailAdapter().sendTransactional({
-      to: process.env.LEAD_NOTIFICATION_EMAIL || siteConfig.contact.email,
-      subject: `New Growth Audit request from ${data.businessName}`,
-      body: [
-        `Name: ${data.name}`,
-        `Business: ${data.businessName}`,
-        `Email: ${data.email}`,
-        `Phone: ${data.phone}`,
-        `Website: ${data.websiteUrl || "(none)"}`,
-        `Industry: ${data.industry}`,
-        `Location: ${data.location}`,
-        `Primary goal: ${data.primaryGoal}`,
-        `Biggest challenge: ${data.biggestChallenge}`,
-        `Services of interest: ${data.servicesOfInterest.join(", ")}`,
-        `Preferred contact: ${data.preferredContact}`,
-        data.additionalDetails ? `Additional details: ${data.additionalDetails}` : "",
-      ]
-        .filter(Boolean)
-        .join("\n"),
+    const lead = await leadAdapter.createLead({
+      sessionId: submissionId,
+      source: "growth-audit",
+      userId: await getCurrentUserId(),
+      firstName: data.name,
+      email: data.email,
+      phone: data.phone,
+      businessName: data.businessName,
+      websiteUrl: data.websiteUrl,
+      industry: data.industry,
+      city: data.location,
+      primaryGoal: data.primaryGoal,
+      primaryChallenge: data.biggestChallenge,
+      serviceInterests: data.servicesOfInterest,
+      preferredContactMethod: data.preferredContact,
+      message: data.additionalDetails,
+      consentToSaveReport: true,
+      consentToContact: true,
+      consentToEmailFollowUp: data.preferredContact === "Email",
+      consentToPhoneCall: data.preferredContact === "Phone",
+      consentToTextMessage: data.preferredContact === "Text",
+      consentToMarketing: false,
+      consentLanguageVersion: CONSENT_LANGUAGE_VERSION,
+      sourcePage: data.sourcePage,
+      referrer: data.referrer,
+      utmSource: data.utmSource,
+      utmMedium: data.utmMedium,
+      utmCampaign: data.utmCampaign,
+      followUpStatus: "new",
     });
+    leadId = lead.id;
   } catch (error) {
-    console.error("[growth-audit] Notification email failed:", error instanceof Error ? error.message : error);
+    console.error(`[growth-audit] ${submissionId}: Database write failed (email will still be sent):`, error instanceof Error ? error.message : error);
   }
 
-  if (!isEmailDeliveryActive()) {
-    console.warn("[growth-audit] RESEND_API_KEY/EMAIL_FROM_ADDRESS not set — submission validated but logged to console only. See .env.example.");
+  let emailStatus: "sent" | "skipped" | "failed" = "skipped";
+  if (isEmailDeliveryActive()) {
+    const notifyTo = process.env.LEAD_NOTIFICATION_EMAIL || siteConfig.contact.email;
+    try {
+      const result = await emailAdapter.sendTransactional({
+        to: notifyTo,
+        replyTo: data.email,
+        subject: `New Growth Audit request from ${data.businessName}`,
+        body: [
+          `Submission ID: ${submissionId}`,
+          `Name: ${data.name}`,
+          `Business: ${data.businessName}`,
+          `Email: ${data.email}`,
+          data.phone ? `Phone: ${data.phone}` : "",
+          `Website: ${data.websiteUrl || "(none)"}`,
+          `Industry: ${data.industry}`,
+          `Location: ${data.location}`,
+          `Primary goal: ${data.primaryGoal}`,
+          `Biggest challenge: ${data.biggestChallenge}`,
+          `Services of interest: ${data.servicesOfInterest.join(", ")}`,
+          `Preferred contact: ${data.preferredContact}`,
+          data.additionalDetails ? `Additional details: ${data.additionalDetails}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n"),
+      });
+      emailStatus = "sent";
+      await leadAdapter.recordEmailEvent({ leadId, emailType: "internal_notification", recipient: notifyTo, status: "sent", providerMessageId: result.previewId });
+    } catch (error) {
+      emailStatus = "failed";
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[growth-audit] ${submissionId}: Notification email failed:`, message);
+      await leadAdapter.recordEmailEvent({ leadId, emailType: "internal_notification", recipient: notifyTo, status: "failed", errorMessage: message });
+    }
+
+    try {
+      const confirmation = buildGrowthAuditConfirmationEmail({ name: data.name, businessName: data.businessName, preferredContact: data.preferredContact });
+      const result = await emailAdapter.sendTransactional({ to: data.email, subject: confirmation.subject, body: confirmation.text, html: confirmation.html });
+      await leadAdapter.recordEmailEvent({ leadId, emailType: "visitor_confirmation", recipient: data.email, status: "sent", providerMessageId: result.previewId });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[growth-audit] ${submissionId}: Visitor confirmation email failed:`, message);
+      await leadAdapter.recordEmailEvent({ leadId, emailType: "visitor_confirmation", recipient: data.email, status: "failed", errorMessage: message });
+    }
+  } else {
+    console.warn(`[growth-audit] ${submissionId}: RESEND_API_KEY/EMAIL_FROM_ADDRESS not set — logged to console only. See .env.example.`);
   }
 
-  return NextResponse.json({ ok: true });
+  return json(
+    {
+      ok: true,
+      submissionId,
+      message: "Your Growth Audit request is in. We'll follow up using your preferred contact method within one business day.",
+      emailStatus,
+    },
+    200
+  );
 }

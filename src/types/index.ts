@@ -318,6 +318,8 @@ export type LeadProfile = {
   recommendedPlan?: PlanRecommendation;
 
   conversationSummary?: string;
+  /** Free-text message — the generic "how can we help" field from the Contact form (Growth Coach/Growth Audit leads use the more structured fields above/below instead). */
+  message?: string;
   currentState?: string;
   idealState?: string;
   growthGap?: string;
@@ -326,6 +328,16 @@ export type LeadProfile = {
   thirtyDayPlan?: string[];
   ninetyDayRoadmap?: BusinessGrowthReport["ninetyDayRoadmap"];
   nextAction?: string;
+
+  /** Signed-in visitor this lead belongs to, once portal accounts exist — null for anonymous submissions. */
+  userId?: string | null;
+  /** Exact validated payload as submitted, for audit/debugging — never displayed to the visitor, admin-only. */
+  submissionPayload?: Record<string, unknown>;
+  sourcePage?: string;
+  referrer?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
 
   leadQualificationLevel?: LeadQualification;
   consultationRequested?: boolean;
@@ -350,11 +362,49 @@ export type LeadProfile = {
   contactConsentTimestamp?: number;
   marketingConsentTimestamp?: number;
 
+  /** Ties this consent capture to the exact disclosure text version shown at submission time — see CONSENT_LANGUAGE_VERSION in lead-profile.ts. */
+  consentLanguageVersion?: string;
+
   createdAt: number;
   updatedAt: number;
   followUpStatus?: "new" | "contacted" | "qualified" | "won" | "lost" | "follow-up-needed";
   assignedOwner?: string;
   internalNotes?: string;
+};
+
+// -----------------------------------------------------------------------
+// Email delivery tracking, and Growth Coach conversation transcripts
+// -----------------------------------------------------------------------
+
+export type EmailEventType = "internal_notification" | "visitor_confirmation" | "account_welcome" | "password_reset" | "other";
+export type EmailEventStatus = "sent" | "failed";
+
+export type EmailEvent = {
+  id: string;
+  leadId: string | null;
+  emailType: EmailEventType;
+  recipient: string;
+  status: EmailEventStatus;
+  providerMessageId?: string;
+  errorMessage?: string;
+  createdAt: number;
+};
+
+export type CoachTranscriptMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type GrowthCoachConversation = {
+  id: string;
+  leadId: string | null;
+  userId: string | null;
+  businessPath: string | null;
+  responseDepth: string | null;
+  summary: string | null;
+  messages: CoachTranscriptMessage[];
+  createdAt: number;
+  updatedAt: number;
 };
 
 export type OwnerLeadSummary = {

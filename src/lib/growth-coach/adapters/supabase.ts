@@ -3,33 +3,35 @@ import type { LeadProfile, LeadQualification } from "@/types";
 import type { LeadAdapter, LeadInput } from "./types";
 
 /**
- * PRODUCTION DATABASE ADAPTER — active only once SUPABASE_URL and
- * SUPABASE_SERVICE_ROLE_KEY are both set (see isSupabaseConfigured() and
- * ./index.ts's factory, which falls back to the in-memory local-mock
+ * PRODUCTION DATABASE ADAPTER — active only once NEXT_PUBLIC_SUPABASE_URL
+ * and SUPABASE_SERVICE_ROLE_KEY are both set (see isSupabaseConfigured()
+ * and ./index.ts's factory, which falls back to the in-memory local-mock
  * adapter otherwise so the app never silently loses submissions while
  * unconfigured).
  *
  * Talks to the `growth_coach_leads` table created by
- * supabase/migrations/0001_growth_coach_leads.sql — see that file for the
- * schema and RLS design. Always uses the SERVICE ROLE key (server-only,
- * bypasses RLS by design); this module must never be imported into
- * client-side code.
+ * supabase/migrations/0001_growth_coach_leads.sql — see that file (and
+ * 0002/0003) for the schema and RLS design. Always uses the SERVICE ROLE
+ * key (server-only, bypasses RLS by design); this module must never be
+ * imported into client-side code. The project URL itself is not a secret
+ * (it's the same NEXT_PUBLIC_SUPABASE_URL the browser client in
+ * src/lib/supabase/browser-client.ts uses) — only the service-role key is.
  */
 
 let client: SupabaseClient | null = null;
 
 function getClient(): SupabaseClient {
-  const url = process.env.SUPABASE_URL;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) {
-    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must both be set. See .env.example.");
+    throw new Error("NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must both be set. See .env.example.");
   }
   if (!client) client = createClient(url, serviceRoleKey, { auth: { persistSession: false } });
   return client;
 }
 
 export function isSupabaseConfigured(): boolean {
-  return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 
 // -----------------------------------------------------------------------
@@ -76,6 +78,15 @@ function toRow(input: Partial<LeadInput>): Row {
     recommended_services: input.recommendedServices ?? null,
     recommended_plan: input.recommendedPlan ?? null,
     conversation_summary: input.conversationSummary,
+    message: input.message,
+    user_id: input.userId ?? null,
+    submission_payload: input.submissionPayload ?? null,
+    source_page: input.sourcePage,
+    referrer: input.referrer,
+    utm_source: input.utmSource,
+    utm_medium: input.utmMedium,
+    utm_campaign: input.utmCampaign,
+    consent_language_version: input.consentLanguageVersion,
     current_state: input.currentState,
     ideal_state: input.idealState,
     growth_gap: input.growthGap,
@@ -146,6 +157,15 @@ function fromRow(row: Row): LeadProfile {
     weeklyTimeAvailable: row.weekly_time_available ?? undefined,
     desiredTimeline: row.desired_timeline ?? undefined,
     personalConstraints: row.personal_constraints ?? undefined,
+    message: row.message ?? undefined,
+    userId: row.user_id ?? undefined,
+    submissionPayload: row.submission_payload ?? undefined,
+    sourcePage: row.source_page ?? undefined,
+    referrer: row.referrer ?? undefined,
+    utmSource: row.utm_source ?? undefined,
+    utmMedium: row.utm_medium ?? undefined,
+    utmCampaign: row.utm_campaign ?? undefined,
+    consentLanguageVersion: row.consent_language_version ?? undefined,
     serviceInterests: row.service_interests ?? undefined,
     recommendedServices: row.recommended_services ?? undefined,
     recommendedPlan: row.recommended_plan ?? undefined,
@@ -285,5 +305,87 @@ export const supabaseLeadAdapter: LeadAdapter = {
 
   async exportLead(id) {
     return supabaseLeadAdapter.getLead(id);
+  },
+
+  async recordEmailEvent(event) {
+    const supabase = getClient();
+    const { data, error } = await supabase
+      .from("growth_coach_email_events")
+      .insert({
+        lead_id: event.leadId,
+        email_type: event.emailType,
+        recipient: event.recipient,
+        status: event.status,
+        provider_message_id: event.providerMessageId ?? null,
+        error_message: event.errorMessage ?? null,
+      })
+      .select("*")
+      .single();
+    if (error) {
+      // Email-event logging is best-effort observability, not the primary
+      // write — never let a logging failure surface as a request failure.
+      console.error("[supabase-adapter] Failed to record email event:", error.message);
+      return {
+        id: `unrecorded-${Date.now()}`,
+        leadId: event.leadId,
+        emailType: event.emailType,
+        recipient: event.recipient,
+        status: event.status,
+        providerMessageId: event.providerMessageId,
+        errorMessage: event.errorMessage,
+        createdAt: Date.now(),
+      };
+    }
+    return {
+      id: data.id,
+      leadId: data.lead_id,
+      emailType: data.email_type,
+      recipient: data.recipient,
+      status: data.status,
+      providerMessageId: data.provider_message_id ?? undefined,
+      errorMessage: data.error_message ?? undefined,
+      createdAt: fromIso(data.created_at) ?? Date.now(),
+    };
+  },
+
+  async saveConversationTranscript(input) {
+    const supabase = getClient();
+    const { error } = await supabase.from("growth_coach_conversations").upsert(
+      {
+        lead_id: input.leadId,
+        user_id: input.userId ?? null,
+        business_path: input.businessPath,
+        response_depth: input.responseDepth,
+        summary: input.summary,
+        messages: input.messages,
+      },
+      { onConflict: "lead_id" }
+    );
+    if (error) {
+      console.error("[supabase-adapter] Failed to save conversation transcript:", error.message);
+    }
+  },
+
+  async listEmailEvents(limit = 100) {
+    const supabase = getClient();
+    const { data, error } = await supabase.from("growth_coach_email_events").select("*").order("created_at", { ascending: false }).limit(limit);
+    if (error) throw new Error(`Supabase read failed: ${error.message}`);
+    return (data ?? []).map((row) => ({
+      id: row.id,
+      leadId: row.lead_id,
+      emailType: row.email_type,
+      recipient: row.recipient,
+      status: row.status,
+      providerMessageId: row.provider_message_id ?? undefined,
+      errorMessage: row.error_message ?? undefined,
+      createdAt: fromIso(row.created_at) ?? Date.now(),
+    }));
+  },
+
+  async getConversationTranscript(leadId) {
+    const supabase = getClient();
+    const { data, error } = await supabase.from("growth_coach_conversations").select("*").eq("lead_id", leadId).maybeSingle();
+    if (error || !data) return null;
+    return { messages: data.messages ?? [], businessPath: data.business_path ?? null, responseDepth: data.response_depth ?? null };
   },
 };

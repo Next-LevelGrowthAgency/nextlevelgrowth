@@ -226,6 +226,9 @@ export function GrowthCoach() {
           report={coachState.businessReport}
           context={coachState.context}
           sessionId={sessionId}
+          messages={messages}
+          businessPath={coachState.businessPath}
+          responseDepth={coachState.responseDepth}
           onCancel={() => {
             setLeadFormOpen(false);
             setReportViewOpen(true);

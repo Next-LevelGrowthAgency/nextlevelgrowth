@@ -1,4 +1,4 @@
-import type { LeadProfile } from "@/types";
+import type { EmailEvent, GrowthCoachConversation, LeadProfile } from "@/types";
 import type { EmailAdapter, LeadAdapter, LeadInput, OutboundEmail } from "./types";
 
 /**
@@ -19,9 +19,19 @@ import type { EmailAdapter, LeadAdapter, LeadInput, OutboundEmail } from "./type
  * dashboard page. `globalThis` is the standard workaround (the same
  * pattern commonly used for Prisma-client singletons in Next.js).
  */
-type MockStore = { leads: Map<string, LeadProfile>; idCounter: number };
+type MockStore = {
+  leads: Map<string, LeadProfile>;
+  emailEvents: EmailEvent[];
+  conversations: Map<string, GrowthCoachConversation>;
+  idCounter: number;
+};
 const globalForMockStore = globalThis as unknown as { __growthCoachMockStore?: MockStore };
-const mockStore: MockStore = globalForMockStore.__growthCoachMockStore ?? { leads: new Map<string, LeadProfile>(), idCounter: 0 };
+const mockStore: MockStore = globalForMockStore.__growthCoachMockStore ?? {
+  leads: new Map<string, LeadProfile>(),
+  emailEvents: [],
+  conversations: new Map<string, GrowthCoachConversation>(),
+  idCounter: 0,
+};
 globalForMockStore.__growthCoachMockStore = mockStore;
 const store = mockStore.leads;
 
@@ -122,6 +132,39 @@ export const localLeadAdapter: LeadAdapter = {
   async exportLead(id) {
     return store.get(id) ?? null;
   },
+
+  async recordEmailEvent(event) {
+    const record: EmailEvent = { id: `email-event-${Date.now()}-${mockStore.emailEvents.length + 1}`, createdAt: Date.now(), ...event };
+    mockStore.emailEvents.push(record);
+    return record;
+  },
+
+  async saveConversationTranscript(input) {
+    const id = input.leadId ? `conversation-${input.leadId}` : `conversation-${Date.now()}`;
+    const now = Date.now();
+    const existing = mockStore.conversations.get(id);
+    mockStore.conversations.set(id, {
+      id,
+      leadId: input.leadId,
+      userId: input.userId ?? null,
+      businessPath: input.businessPath,
+      responseDepth: input.responseDepth,
+      summary: input.summary,
+      messages: input.messages,
+      createdAt: existing?.createdAt ?? now,
+      updatedAt: now,
+    });
+  },
+
+  async listEmailEvents(limit = 100) {
+    return [...mockStore.emailEvents].sort((a, b) => b.createdAt - a.createdAt).slice(0, limit);
+  },
+
+  async getConversationTranscript(leadId) {
+    const conversation = mockStore.conversations.get(`conversation-${leadId}`);
+    if (!conversation) return null;
+    return { messages: conversation.messages, businessPath: conversation.businessPath, responseDepth: conversation.responseDepth };
+  },
 };
 
 export const consoleEmailAdapter: EmailAdapter = {
@@ -130,7 +173,7 @@ export const consoleEmailAdapter: EmailAdapter = {
     // while previewing the flow — real sends require an approved provider
     // (see Phase B recommendations) and must never log full email bodies
     // in a real deployment.
-    console.info(`[mock-email] Would send to ${email.to}: "${email.subject}"`);
+    console.info(`[mock-email] Would send to ${email.to}${email.replyTo ? ` (reply-to: ${email.replyTo})` : ""}: "${email.subject}"`);
     return { ok: true as const, previewId: `preview-${Date.now()}` };
   },
   async enqueueSequence(leadId: string, sequenceId: string) {

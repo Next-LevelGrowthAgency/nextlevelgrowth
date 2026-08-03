@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { TurnstileWidget } from "@/components/forms/TurnstileWidget";
+import { collectAttribution } from "@/lib/attribution";
 import { cn } from "@/lib/utils";
 import {
   growthAuditSchema,
@@ -10,6 +11,7 @@ import {
   servicesOfInterestOptions,
   type GrowthAuditFormValues,
 } from "@/lib/growth-audit-schema";
+import type { SubmissionResponse } from "@/lib/api/submission-response";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -26,7 +28,7 @@ const initialValues: GrowthAuditFormValues = {
   servicesOfInterest: [],
   preferredContact: "Email",
   additionalDetails: "",
-  companyWebsite2: "",
+  hpToken: "",
 };
 
 const stepFieldGroups: (keyof GrowthAuditFormValues)[][] = [
@@ -46,6 +48,7 @@ export function GrowthAuditForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof GrowthAuditFormValues, string>>>({});
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const turnstileTokenRef = useRef<string | null>(null);
   const submittingRef = useRef(false);
 
@@ -106,7 +109,7 @@ export function GrowthAuditForm() {
   async function handleSubmit() {
     if (!validateCurrentStep()) return;
     if (submittingRef.current) return; // prevents double-click double submission
-    if (values.companyWebsite2) return; // honeypot — silently drop, no error shown to a bot
+    if (values.hpToken) return; // honeypot — silently drop, no error shown to a bot
 
     const fullResult = growthAuditSchema.safeParse(values);
     if (!fullResult.success) {
@@ -121,18 +124,33 @@ export function GrowthAuditForm() {
       const res = await fetch("/api/growth-audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...fullResult.data, turnstileToken: turnstileTokenRef.current }),
+        body: JSON.stringify({ ...fullResult.data, turnstileToken: turnstileTokenRef.current, ...collectAttribution() }),
       });
-      const responseBody = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(responseBody.error ?? "Request failed");
+      const result = (await res.json().catch(() => null)) as SubmissionResponse | null;
+
+      if (!result || !result.ok) {
+        if (result?.code === "VALIDATION_ERROR" && result.fieldErrors) {
+          const nextErrors: Partial<Record<keyof GrowthAuditFormValues, string>> = {};
+          for (const [key, messages] of Object.entries(result.fieldErrors)) {
+            if (messages?.[0]) nextErrors[key as keyof GrowthAuditFormValues] = messages[0];
+          }
+          setErrors(nextErrors);
+          // Jump back to the earliest step containing an invalid field so
+          // the visitor actually sees what needs fixing, instead of a
+          // generic error on the final "submit" screen.
+          const invalidStepIndex = stepFieldGroups.findIndex((fields) => fields.some((f) => nextErrors[f]));
+          if (invalidStepIndex >= 0) setStep(invalidStepIndex);
+        }
+        setServerError(result?.message ?? "Something went wrong submitting your audit request. Please try again, or email us directly.");
+        setStatus("error");
+        return;
+      }
+
       setStatus("success");
-    } catch (err) {
+      setSubmissionId(result.submissionId);
+    } catch {
       setStatus("error");
-      setServerError(
-        err instanceof Error && err.message !== "Request failed"
-          ? err.message
-          : "Something went wrong submitting your audit request. Please try again, or email us directly."
-      );
+      setServerError("Couldn't reach the server. Please check your connection and try again.");
     } finally {
       submittingRef.current = false;
     }
@@ -149,6 +167,7 @@ export function GrowthAuditForm() {
           We&rsquo;ll review what you&rsquo;ve shared and follow up using your
           preferred contact method within one business day.
         </p>
+        {submissionId ? <p className="mt-3 text-xs text-ink-500">Reference: {submissionId}</p> : null}
       </div>
     );
   }
@@ -197,10 +216,12 @@ export function GrowthAuditForm() {
               id="phone"
               label="Phone number"
               type="tel"
-              value={values.phone}
+              value={values.phone ?? ""}
               onChange={(v) => updateField("phone", v)}
               error={errors.phone}
               autoComplete="tel"
+              required={false}
+              hint="Required only if you choose Phone or Text as your preferred contact method on the last step."
             />
           </fieldset>
         ) : null}
@@ -304,20 +325,20 @@ export function GrowthAuditForm() {
             </div>
             <TextAreaField
               id="additionalDetails"
-              label="Anything else we should know? (optional)"
+              label="Anything else we should know?"
               value={values.additionalDetails ?? ""}
               onChange={(v) => updateField("additionalDetails", v)}
               required={false}
             />
-            {/* Honeypot — hidden from real visitors, catches basic bots that fill every field. */}
+            {/* Honeypot — display:none (not sr-only) so autofill never reaches it; see ContactForm.tsx for the full rationale. */}
             <input
               type="text"
-              name="companyWebsite2"
-              value={values.companyWebsite2 ?? ""}
-              onChange={(e) => updateField("companyWebsite2", e.target.value)}
+              name="hpToken"
+              value={values.hpToken ?? ""}
+              onChange={(e) => updateField("hpToken", e.target.value)}
               tabIndex={-1}
               autoComplete="off"
-              className="sr-only"
+              className="hidden"
               aria-hidden="true"
             />
             <TurnstileWidget onToken={(token) => (turnstileTokenRef.current = token)} />
@@ -389,6 +410,7 @@ function TextField({
   type = "text",
   required = true,
   autoComplete,
+  hint,
 }: {
   id: string;
   label: string;
@@ -398,7 +420,11 @@ function TextField({
   type?: string;
   required?: boolean;
   autoComplete?: string;
+  /** Short helper text below the field — for context that isn't a validation error (e.g. "required only if..."). */
+  hint?: string;
 }) {
+  const hintId = hint ? `${id}-hint` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-ink-800">
@@ -411,14 +437,19 @@ function TextField({
         autoComplete={autoComplete}
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={!!error}
-        aria-describedby={error ? `${id}-error` : undefined}
+        aria-describedby={[hintId, errorId].filter(Boolean).join(" ") || undefined}
         className={cn(
           "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600",
           error ? "border-red-400" : "border-ink-200"
         )}
       />
+      {hint && !error ? (
+        <p id={hintId} className="mt-1.5 text-xs text-ink-500">
+          {hint}
+        </p>
+      ) : null}
       {error ? (
-        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm font-medium text-red-700">
+        <p id={errorId} role="alert" className="mt-1.5 text-sm font-medium text-red-700">
           {error}
         </p>
       ) : null}

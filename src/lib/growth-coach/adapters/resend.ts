@@ -25,10 +25,23 @@ export function isResendConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM_ADDRESS);
 }
 
+/**
+ * Builds the `from` header from EMAIL_FROM_ADDRESS (+ optional
+ * EMAIL_FROM_NAME) — this is the ONLY place the sender address is ever
+ * constructed. It is never derived from `email.replyTo` or any per-call
+ * argument, so a visitor's own address can never end up as the sender.
+ */
+function buildFromHeader(): string {
+  const address = process.env.EMAIL_FROM_ADDRESS;
+  if (!address) throw new Error("EMAIL_FROM_ADDRESS is not set. See .env.example.");
+  const name = process.env.EMAIL_FROM_NAME?.trim();
+  return name ? `${name} <${address}>` : address;
+}
+
 export const resendEmailAdapter: EmailAdapter = {
   async sendTransactional(email: OutboundEmail) {
-    const from = process.env.EMAIL_FROM_ADDRESS;
-    if (!from) throw new Error("EMAIL_FROM_ADDRESS is not set. See .env.example.");
+    const from = buildFromHeader();
+    const replyTo = email.replyTo || process.env.EMAIL_REPLY_TO || undefined;
 
     const result = await getClient().emails.send({
       from,
@@ -36,6 +49,7 @@ export const resendEmailAdapter: EmailAdapter = {
       subject: email.subject,
       html: email.html ?? `<pre style="white-space:pre-wrap;font-family:inherit;">${email.body}</pre>`,
       text: email.body,
+      ...(replyTo && { replyTo }),
     });
 
     if (result.error) {

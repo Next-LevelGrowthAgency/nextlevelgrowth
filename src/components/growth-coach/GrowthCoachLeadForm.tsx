@@ -2,9 +2,11 @@
 
 import { Button } from "@/components/ui/Button";
 import { TurnstileWidget } from "@/components/forms/TurnstileWidget";
+import type { SubmissionResponse } from "@/lib/api/submission-response";
 import { containsSensitiveData } from "@/lib/growth-coach/sensitive-data";
 import { cn } from "@/lib/utils";
-import type { BusinessGrowthReport, CoachContext } from "@/types";
+import { collectAttribution } from "@/lib/attribution";
+import type { BusinessGrowthReport, BusinessPath, CoachContext, CoachMessage, ResponseDepth } from "@/types";
 import { CheckCircle2, X } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 
@@ -22,7 +24,7 @@ type FormValues = {
   consentToTextMessage: boolean;
   consentToMarketing: boolean;
   consultationRequested: boolean;
-  companyWebsite2: string; // honeypot
+  hpToken: string; // honeypot
 };
 
 function guessBusinessName(report: BusinessGrowthReport): string {
@@ -44,7 +46,7 @@ const emptyValues = (report: BusinessGrowthReport): FormValues => ({
   consentToTextMessage: false,
   consentToMarketing: false,
   consultationRequested: false,
-  companyWebsite2: "",
+  hpToken: "",
 });
 
 function Field({
@@ -85,12 +87,18 @@ export function GrowthCoachLeadForm({
   report,
   context,
   sessionId,
+  messages,
+  businessPath,
+  responseDepth,
   onCancel,
   onSubmitted,
 }: {
   report: BusinessGrowthReport;
   context: CoachContext;
   sessionId: string;
+  messages: CoachMessage[];
+  businessPath: BusinessPath | null;
+  responseDepth: ResponseDepth | null;
   onCancel: () => void;
   onSubmitted: (result: { planName: string; consentToContact: boolean }) => void;
 }) {
@@ -101,6 +109,7 @@ export function GrowthCoachLeadForm({
   const [serverError, setServerError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const headingId = useId();
 
   useEffect(() => {
@@ -164,20 +173,37 @@ export function GrowthCoachLeadForm({
           consentToTextMessage: values.consentToTextMessage,
           consentToMarketing: values.consentToMarketing,
           consultationRequested: values.consultationRequested,
-          companyWebsite2: values.companyWebsite2,
+          hpToken: values.hpToken,
           turnstileToken,
           report,
           context,
+          messages: messages.map((m) => ({ role: m.role, content: m.content })),
+          businessPath,
+          responseDepth,
+          ...collectAttribution(),
         }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setServerError(data.error ?? "Something went wrong submitting this. Please try again.");
+      const result = (await res.json().catch(() => null)) as SubmissionResponse | null;
+      if (!result || !result.ok) {
+        if (result?.code === "VALIDATION_ERROR" && result.fieldErrors) {
+          const nextErrors: Partial<Record<keyof FormValues, string>> = {};
+          for (const [key, messages] of Object.entries(result.fieldErrors)) {
+            if (messages?.[0]) nextErrors[key as keyof FormValues] = messages[0];
+          }
+          setErrors(nextErrors);
+          if (nextErrors.firstName || nextErrors.email || nextErrors.businessName || nextErrors.cityState || nextErrors.websiteUrl || nextErrors.phone) {
+            setStep(1);
+          } else if (nextErrors.consentToSaveReport) {
+            setStep(2);
+          }
+        }
+        setServerError(result?.message ?? "Something went wrong submitting this. Please try again.");
         setStatus("error");
         return;
       }
       setStatus("success");
-      setEmailSent(Boolean(data.emailSent));
+      setSubmissionId(result.submissionId);
+      setEmailSent(result.emailStatus === "sent");
       const consentToContact = values.consentToEmailFollowUp || values.consentToPhoneCall || values.consentToTextMessage;
       onSubmitted({ planName: report.recommendedPlan.name, consentToContact });
     } catch {
@@ -211,6 +237,7 @@ export function GrowthCoachLeadForm({
                   ? `A copy has been sent to ${values.email}.`
                   : "Email delivery isn't fully configured yet, so no email was sent — your report is saved and visible to our team."}
               </p>
+              {submissionId ? <p className="text-xs text-ink-400">Reference: {submissionId}</p> : null}
             </div>
           ) : (
             <>
@@ -405,15 +432,15 @@ export function GrowthCoachLeadForm({
                     </span>
                   </label>
 
-                  {/* Honeypot — hidden from real visitors, catches basic bots that fill every field. */}
+                  {/* Honeypot — display:none (not sr-only) so autofill never reaches it; see ContactForm.tsx for the full rationale. */}
                   <input
                     type="text"
-                    name="companyWebsite2"
-                    value={values.companyWebsite2}
-                    onChange={(e) => set("companyWebsite2", e.target.value)}
+                    name="hpToken"
+                    value={values.hpToken}
+                    onChange={(e) => set("hpToken", e.target.value)}
                     tabIndex={-1}
                     autoComplete="off"
-                    className="sr-only"
+                    className="hidden"
                     aria-hidden="true"
                   />
                   <TurnstileWidget onToken={setTurnstileToken} />

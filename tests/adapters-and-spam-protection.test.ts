@@ -25,7 +25,7 @@ describe("Adapter factories fall back safely when unconfigured", () => {
   });
 
   it("getLeadAdapter() returns the in-memory store when Supabase env vars are unset", async () => {
-    vi.stubEnv("SUPABASE_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
     vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "");
     const { getLeadAdapter, isDurableStorageActive } = await import("@/lib/growth-coach/adapters");
     const { localLeadAdapter } = await import("@/lib/growth-coach/adapters/local-mock");
@@ -34,7 +34,7 @@ describe("Adapter factories fall back safely when unconfigured", () => {
   });
 
   it("getLeadAdapter() switches to Supabase once both env vars are set", async () => {
-    vi.stubEnv("SUPABASE_URL", "https://example.supabase.co");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
     vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "service-role-test-key");
     const { getLeadAdapter, isDurableStorageActive } = await import("@/lib/growth-coach/adapters");
     const { supabaseLeadAdapter } = await import("@/lib/growth-coach/adapters/supabase");
