@@ -41,6 +41,22 @@ describe("Adapter factories fall back safely when unconfigured", () => {
     expect(isDurableStorageActive()).toBe(true);
     expect(getLeadAdapter()).toBe(supabaseLeadAdapter);
   });
+
+  it("getAiUsageAdapter() returns the in-memory store when Supabase env vars are unset", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "");
+    const { getAiUsageAdapter } = await import("@/lib/growth-coach/adapters");
+    const { localAiUsageAdapter } = await import("@/lib/growth-coach/adapters/ai-usage-local-mock");
+    expect(getAiUsageAdapter()).toBe(localAiUsageAdapter);
+  });
+
+  it("getAiUsageAdapter() switches to Supabase once both env vars are set — same configured-check as the lead adapter, not a second one", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "service-role-test-key");
+    const { getAiUsageAdapter } = await import("@/lib/growth-coach/adapters");
+    const { supabaseAiUsageAdapter } = await import("@/lib/growth-coach/adapters/ai-usage-supabase");
+    expect(getAiUsageAdapter()).toBe(supabaseAiUsageAdapter);
+  });
 });
 
 describe("Turnstile verification no-ops safely when unconfigured", () => {

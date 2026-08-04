@@ -78,3 +78,49 @@ export interface EmailAdapter {
   /** Enqueue a lead into a marketing sequence — only ever called after explicit marketing consent. */
   enqueueSequence(leadId: string, sequenceId: string): Promise<{ ok: true }>;
 }
+
+// -----------------------------------------------------------------------
+// AI usage tracking — durable counters/log backing the Growth Coach's
+// per-visitor daily tier limits and the split monthly cost circuit
+// breaker (see src/lib/growth-coach/ai/circuit-breaker.ts, the only
+// caller of this adapter). Same fail-safe factory pattern as
+// Lead/EmailAdapter above: falls back to an in-memory mock when Supabase
+// isn't configured, rather than crashing or silently skipping tracking.
+// -----------------------------------------------------------------------
+
+/** 'guest' = not signed in. 'free' = signed in, role !== 'client'. 'client' = signed in with the 'client' profile role. */
+export type AiUsageTier = "guest" | "free" | "client";
+/** Budget pool a tier's cost counts against — guest and free share the 'free' pool; client has its own. */
+export type AiUsagePool = "free" | "client";
+
+export type AiMonthlyBudgetState = {
+  cumulativeCostUsd: number;
+  alert80Sent: boolean;
+  alert100Sent: boolean;
+};
+
+export interface AiUsageAdapter {
+  /** Atomically increments today's message count for this (tier, identity) and returns the new count — used to enforce the daily per-tier cap. */
+  incrementDailyTierUsage(tier: AiUsageTier, identityKey: string, dayKey: string): Promise<number>;
+
+  /** Current cumulative estimated cost + alert-sent flags for a budget pool this month (zeroed/false if no row exists yet). */
+  getMonthlyBudgetState(pool: AiUsagePool, monthKey: string): Promise<AiMonthlyBudgetState>;
+
+  /** Atomically adds cost to the pool's monthly total and returns the new cumulative total. */
+  incrementMonthlyBudgetUsage(pool: AiUsagePool, monthKey: string, costDeltaUsd: number): Promise<number>;
+
+  /** Atomically claims the right to send a threshold alert — true only for the single caller that should actually send the email, false for every other concurrent caller. */
+  claimBudgetAlert(pool: AiUsagePool, monthKey: string, threshold: "80" | "100"): Promise<boolean>;
+
+  /** Appends one row to the usage audit log. Never throws — a logging failure must not break the AI response that triggered it. */
+  recordUsageEvent(event: {
+    tier: AiUsageTier;
+    pool: AiUsagePool;
+    userId: string | null;
+    identityHash: string | null;
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    estimatedCostUsd: number;
+  }): Promise<void>;
+}

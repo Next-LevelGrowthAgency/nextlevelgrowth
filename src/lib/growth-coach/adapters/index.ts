@@ -1,7 +1,9 @@
+import { localAiUsageAdapter } from "./ai-usage-local-mock";
+import { supabaseAiUsageAdapter } from "./ai-usage-supabase";
 import { consoleEmailAdapter, localLeadAdapter } from "./local-mock";
 import { isResendConfigured, resendEmailAdapter } from "./resend";
 import { isSupabaseConfigured, supabaseLeadAdapter } from "./supabase";
-import type { EmailAdapter, LeadAdapter } from "./types";
+import type { AiUsageAdapter, EmailAdapter, LeadAdapter } from "./types";
 
 /**
  * Single seam every route/page should import through instead of reaching
@@ -26,4 +28,8 @@ export function isEmailDeliveryActive(): boolean {
 
 export function isDurableStorageActive(): boolean {
   return isSupabaseConfigured();
+}
+
+export function getAiUsageAdapter(): AiUsageAdapter {
+  return isSupabaseConfigured() ? supabaseAiUsageAdapter : localAiUsageAdapter;
 }

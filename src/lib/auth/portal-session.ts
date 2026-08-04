@@ -53,3 +53,27 @@ export async function getCurrentUserId(): Promise<string | null> {
     return null;
   }
 }
+
+/**
+ * Cheaper than getPortalSession() (selects only `role`, not the full
+ * profile) — used by the Growth Coach's AI usage tier resolution
+ * (src/lib/growth-coach/ai/tier.ts) to distinguish a signed-in 'client'
+ * from every other signed-in role, which get grouped into the 'free'
+ * tier. Returns null for anonymous visitors or when Supabase Auth isn't
+ * configured, same fail-safe contract as getCurrentUserId().
+ */
+export async function getCurrentUserRoleInfo(): Promise<{ id: string; role: PortalProfile["role"] } | null> {
+  if (!isSupabaseAuthConfigured()) return null;
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    if (!profile) return null;
+    return { id: user.id, role: profile.role };
+  } catch {
+    return null;
+  }
+}

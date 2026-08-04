@@ -376,7 +376,7 @@ export type LeadProfile = {
 // Email delivery tracking, and Growth Coach conversation transcripts
 // -----------------------------------------------------------------------
 
-export type EmailEventType = "internal_notification" | "visitor_confirmation" | "account_welcome" | "password_reset" | "other";
+export type EmailEventType = "internal_notification" | "visitor_confirmation" | "account_welcome" | "password_reset" | "ai_budget_alert" | "other";
 export type EmailEventStatus = "sent" | "failed";
 
 export type EmailEvent = {

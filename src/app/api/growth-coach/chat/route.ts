@@ -1,6 +1,8 @@
 import { callGrowthCoachAi } from "@/lib/growth-coach/ai/anthropic-client";
+import { checkAndConsumeDailyTierLimit, isMonthlyBudgetExhausted, recordUsageAndMaybeAlert } from "@/lib/growth-coach/ai/circuit-breaker";
 import { isAnthropicConfigured } from "@/lib/growth-coach/ai/config";
 import { MAX_HISTORY_MESSAGES, MAX_USER_MESSAGE_LENGTH } from "@/lib/growth-coach/ai/shared-config";
+import { resolveRequestTier } from "@/lib/growth-coach/ai/tier";
 import { isRateLimited } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -9,23 +11,24 @@ export const runtime = "nodejs";
 
 /**
  * THE ONE route that calls a real AI model for the Growth Coach — replaces
- * the old, never-actually-called /api/chat scaffold (deleted in this
- * stage) so there's exactly one AI-calling code path, not two.
+ * the old, never-actually-called /api/chat scaffold (deleted in Stage 2)
+ * so there's exactly one AI-calling code path, not two.
  *
  * Only ever hit for genuinely open-ended free-text turns — see
  * isOpenConversationTurn() in engine.ts, checked client-side before this
  * route is called at all, so structured flows/assessments never pay for
  * an API call they don't need. On ANY failure here (not configured,
- * rate-limited, timeout, API error), the client falls back to the
- * existing scripted engine — this route never leaves a visitor stuck.
+ * rate-limited, daily limit reached, monthly budget exhausted, timeout,
+ * API error), the client falls back to the existing scripted engine —
+ * this route never leaves a visitor stuck, and the lead-capture form is
+ * unaffected either way since it's part of that same scripted experience.
  *
- * Stage 3 hook: this route doesn't persist usage yet. Once Stage 3's
- * ai_usage_events/ai_daily_budget tables and the global cost circuit
- * breaker exist, this is where a) the breaker gets checked BEFORE calling
- * the model, and b) the real token counts already returned here get
- * written to those tables. The token/cost numbers are already extracted
- * and returned in this response specifically so that stage doesn't need
- * to touch anything in this file except adding those two things.
+ * Stage 3: every request is bucketed into a usage tier (guest/free/client
+ * — see resolveRequestTier) with its own daily message cap, and into a
+ * budget pool (free = guest+free combined, client = separate) with its
+ * own monthly cost circuit breaker — see circuit-breaker.ts for the full
+ * policy and supabase/migrations/0004_ai_usage_and_budget.sql for the
+ * durable counters backing both.
  */
 
 const messageSchema = z.object({
@@ -75,6 +78,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, reason: "not_configured" }, { status: 200 });
   }
 
+  const requestTier = await resolveRequestTier(ip);
+
+  // Monthly circuit breaker first (cheap read) — an already-exhausted pool
+  // should never pay for a daily-limit increment on its way to being
+  // rejected anyway.
+  if (await isMonthlyBudgetExhausted(requestTier.pool)) {
+    return NextResponse.json({ ok: false, reason: "budget_exhausted" }, { status: 200 });
+  }
+
+  const dailyLimit = await checkAndConsumeDailyTierLimit(requestTier.tier, requestTier.identityKey);
+  if (!dailyLimit.allowed) {
+    return NextResponse.json({ ok: false, reason: "daily_limit_reached" }, { status: 200 });
+  }
+
   const result = await callGrowthCoachAi(messages);
 
   if (!result.ok) {
@@ -83,6 +100,21 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json({ ok: false, reason: result.reason }, { status: 200 });
   }
+
+  // Awaited (not fire-and-forget) — a serverless function can be frozen or
+  // torn down immediately after the response is sent, so an un-awaited
+  // promise here risks the usage write and budget-alert check silently
+  // never completing.
+  await recordUsageAndMaybeAlert({
+    tier: requestTier.tier,
+    pool: requestTier.pool,
+    userId: requestTier.userId,
+    identityHash: requestTier.identityHash,
+    model: result.model,
+    inputTokens: result.inputTokens,
+    outputTokens: result.outputTokens,
+    estimatedCostUsd: result.estimatedCostUsd,
+  });
 
   return NextResponse.json({
     ok: true,

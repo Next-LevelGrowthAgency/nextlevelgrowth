@@ -374,3 +374,70 @@ export function buildGrowthAuditConfirmationEmail(input: { name: string; busines
   const text = `Hi ${firstName},\n\nThanks for requesting a free Growth Audit for ${input.businessName}. We'll review what you shared and follow up ${contactLine} within one business day with honest, specific observations, not a generic sales pitch.\n\nQuestions before then? Just reply to this email.`;
   return { subject, html, text };
 }
+
+// -----------------------------------------------------------------------
+// E) AI monthly budget alert — internal-only, sent to the owner inbox when
+// a Growth Coach cost pool crosses 80% or 100% of its monthly ceiling. See
+// src/lib/growth-coach/ai/circuit-breaker.ts for when/how this fires.
+// -----------------------------------------------------------------------
+
+export function buildAiBudgetAlertEmail(input: {
+  poolLabel: string;
+  threshold: "80" | "100";
+  cumulativeCostUsd: number;
+  budgetUsd: number;
+  monthKey: string;
+}): { subject: string; html: string; text: string } {
+  const percentLabel = input.threshold === "100" ? "100% — AI access is now paused" : "80%";
+  const cost = input.cumulativeCostUsd.toFixed(2);
+  const budget = input.budgetUsd.toFixed(2);
+  const subject =
+    input.threshold === "100"
+      ? `AI Growth Coach — ${input.poolLabel} budget exhausted for ${input.monthKey}`
+      : `AI Growth Coach — ${input.poolLabel} budget at 80% for ${input.monthKey}`;
+
+  const html = emailShell(
+    "Growth Coach AI Budget Alert",
+    `
+    <p style="font-size:14px;line-height:1.6;">
+      The <strong>${escapeHtml(input.poolLabel)}</strong> monthly AI budget has reached <strong>${escapeHtml(percentLabel)}</strong>
+      of its ${escapeHtml(input.monthKey)} ceiling.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+      ${row("Pool", input.poolLabel)}
+      ${row("Spent so far", `$${cost}`)}
+      ${row("Monthly budget", `$${budget}`)}
+      ${row("Month", input.monthKey)}
+    </table>
+    ${
+      input.threshold === "100"
+        ? `<p style="font-size:14px;line-height:1.6;margin-top:16px;">
+             AI replies for this pool are now paused for the rest of the month — visitors in it are getting the
+             scripted Growth Coach experience instead (lead capture still works normally), and the pool will resume
+             automatically on the 1st. Raise AI_MONTHLY_${input.poolLabel === "Client" ? "CLIENT" : "FREE"}_BUDGET_USD
+             if this ceiling should be higher.
+           </p>`
+        : `<p style="font-size:14px;line-height:1.6;margin-top:16px;">
+             AI replies are still active. You'll get one more alert if this pool reaches 100% this month.
+           </p>`
+    }
+    `
+  );
+
+  const text = [
+    `GROWTH COACH AI BUDGET ALERT`,
+    ``,
+    `The ${input.poolLabel} monthly AI budget has reached ${percentLabel} of its ${input.monthKey} ceiling.`,
+    ``,
+    `Pool: ${input.poolLabel}`,
+    `Spent so far: $${cost}`,
+    `Monthly budget: $${budget}`,
+    `Month: ${input.monthKey}`,
+    ``,
+    input.threshold === "100"
+      ? `AI replies for this pool are now paused for the rest of the month — visitors in it are getting the scripted Growth Coach experience instead (lead capture still works normally), and the pool will resume automatically on the 1st.`
+      : `AI replies are still active. You'll get one more alert if this pool reaches 100% this month.`,
+  ].join("\n");
+
+  return { subject, html, text };
+}

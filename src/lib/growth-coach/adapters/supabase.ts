@@ -1,5 +1,5 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { LeadProfile, LeadQualification } from "@/types";
+import { getServiceRoleClient, isSupabaseConfigured } from "./supabase-client";
 import type { LeadAdapter, LeadInput } from "./types";
 
 /**
@@ -12,27 +12,15 @@ import type { LeadAdapter, LeadInput } from "./types";
  * Talks to the `growth_coach_leads` table created by
  * supabase/migrations/0001_growth_coach_leads.sql — see that file (and
  * 0002/0003) for the schema and RLS design. Always uses the SERVICE ROLE
- * key (server-only, bypasses RLS by design); this module must never be
- * imported into client-side code. The project URL itself is not a secret
- * (it's the same NEXT_PUBLIC_SUPABASE_URL the browser client in
+ * key (server-only, bypasses RLS by design) via the shared client in
+ * ./supabase-client.ts; this module must never be imported into
+ * client-side code. The project URL itself is not a secret (it's the same
+ * NEXT_PUBLIC_SUPABASE_URL the browser client in
  * src/lib/supabase/browser-client.ts uses) — only the service-role key is.
  */
 
-let client: SupabaseClient | null = null;
-
-function getClient(): SupabaseClient {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !serviceRoleKey) {
-    throw new Error("NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must both be set. See .env.example.");
-  }
-  if (!client) client = createClient(url, serviceRoleKey, { auth: { persistSession: false } });
-  return client;
-}
-
-export function isSupabaseConfigured(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
-}
+export { isSupabaseConfigured };
+const getClient = getServiceRoleClient;
 
 // -----------------------------------------------------------------------
 // LeadProfile <-> growth_coach_leads row mapping
