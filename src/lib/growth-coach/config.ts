@@ -37,8 +37,16 @@ What are we working on today?`;
 export const disclaimerText =
   "Next Level Growth Coach provides educational business, marketing, and technology guidance. It does not provide legal, tax, investment, accounting, medical, or other licensed professional advice. Recommendations should be evaluated based on your specific circumstances.";
 
-export const previewNotice =
-  "Preview experience: responses are demonstration content, not a live AI connection.";
+/**
+ * STALE-COPY FIX (Stage 4): this used to read "Preview experience:
+ * responses are demonstration content, not a live AI connection" — no
+ * longer accurate since the Growth Coach was connected to a real Claude
+ * model (see src/lib/growth-coach/ai/). The replacement stays accurate in
+ * BOTH states (AI configured or not, since an unconfigured/failed AI call
+ * always falls back to the scripted engine automatically) rather than
+ * claiming either "live AI" or "not live AI" as an absolute.
+ */
+export const previewNotice = "You're chatting with an AI assistant, not a member of our team.";
 
 /**
  * Business-path entry points — "Start My Business" vs. "Grow My Business"

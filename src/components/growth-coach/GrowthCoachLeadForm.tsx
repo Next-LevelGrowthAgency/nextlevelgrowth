@@ -10,6 +10,21 @@ import type { BusinessGrowthReport, BusinessPath, CoachContext, CoachMessage, Re
 import { CheckCircle2, X } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 
+/**
+ * DRAFT — NEEDS HUMAN/LEGAL REVIEW: every consent checkbox's copy below
+ * (report delivery, email/phone/text follow-up, marketing) is working
+ * draft text, not attorney-reviewed language, same status as
+ * src/app/terms/page.tsx and src/app/privacy-policy/page.tsx. The
+ * text-message checkbox in particular carries standard TCPA-style
+ * disclosure boilerplate (rates may apply, reply STOP/HELP, consent not a
+ * condition of purchase) as a reasonable placeholder — TCPA compliance
+ * depends on how texts are actually sent (which provider, opt-out
+ * handling, quiet hours, etc., none of which exists yet — see
+ * resend.ts's enqueueSequence stub), so this must be reviewed by counsel
+ * before any real SMS sending is wired up, not treated as sufficient on
+ * its own. See src/lib/consent.ts's CONSENT_LANGUAGE_VERSION — bump it
+ * whenever this copy changes.
+ */
 type FormValues = {
   firstName: string;
   email: string;
@@ -396,7 +411,9 @@ export function GrowthCoachLeadForm({
                           onChange={(e) => set("consentToTextMessage", e.target.checked)}
                         />
                         <span className="text-sm text-ink-800">
-                          <span className="font-medium">Text message</span> — requires a phone number above.
+                          <span className="font-medium">Text message</span> — requires a phone number above. Message and data
+                          rates may apply. Message frequency varies. Reply STOP to opt out at any time, HELP for help. Consent
+                          to receive texts is not a condition of purchase.
                         </span>
                       </label>
                     </div>

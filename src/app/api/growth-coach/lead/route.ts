@@ -179,10 +179,23 @@ export async function POST(request: NextRequest) {
 
   // Visitor's personalized plan — never includes internal lead-scoring
   // labels, sales-qualification tiers, or private notes (see
-  // buildVisitorReportEmail's doc comment). Only sent when email-follow-up
-  // consent was actually given, per the "consent-aware confirmation" rule.
+  // buildVisitorReportEmail's doc comment).
+  //
+  // BUGFIX: this used to gate on `consentToEmailFollowUp` (the OPTIONAL
+  // "Email — additional follow-up beyond this report" checkbox), not on
+  // `consentToSaveReport` (the REQUIRED "Save and send me this report by
+  // email. This is required to deliver the report you requested."
+  // checkbox — see GrowthCoachLeadForm.tsx). Since consentToSaveReport is
+  // enforced server-side as always-true on any successful submission
+  // (lead-schema.ts), the old condition meant a visitor who left the
+  // optional follow-up box unchecked silently never got the report their
+  // required checkbox explicitly promised — with no visible error, since
+  // emailStatus only distinguishes "email not configured" from "sent".
+  // consentToSaveReport is the correct gate for THIS specific send;
+  // consentToEmailFollowUp is reserved for a separate, not-yet-built
+  // "additional follow-up beyond this report" send.
   let emailStatus: "sent" | "skipped" | "failed" = "skipped";
-  if (lead.email && lead.consentToEmailFollowUp !== false && isEmailDeliveryActive()) {
+  if (lead.email && lead.consentToSaveReport && isEmailDeliveryActive()) {
     try {
       const visitor = buildVisitorReportEmail(lead);
       const result = await emailAdapter.sendTransactional({ to: lead.email, subject: visitor.subject, body: visitor.text, html: visitor.html });

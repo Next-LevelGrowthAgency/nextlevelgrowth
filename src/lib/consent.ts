@@ -7,4 +7,4 @@
  * materially changes, so a later dispute can reconstruct exactly what the
  * visitor agreed to.
  */
-export const CONSENT_LANGUAGE_VERSION = "2026-08-03";
+export const CONSENT_LANGUAGE_VERSION = "2026-08-04";
