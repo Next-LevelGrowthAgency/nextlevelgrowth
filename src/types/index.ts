@@ -486,6 +486,8 @@ export type AnalyticsEvent =
   | "business_path_selected"
   | "ninety_day_plan_requested"
   | "ninety_day_plan_declined"
+  | "growth_coach_expanded"
+  | "growth_coach_restored"
   | "admin_login_success"
   | "admin_login_failed"
   | "admin_logout";

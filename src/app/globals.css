@@ -3,6 +3,18 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /*
+     * Growth Coach desktop panel offset — how far left of its default
+     * bottom-right corner (right-6, i.e. 1.5rem) the OPENED chat window
+     * sits. Adjust this one value to move it; nothing else needs to
+     * change. Only applied while the panel is open (see
+     * .growth-coach-panel-anchor below) — the launcher button always
+     * stays in its normal corner position.
+     */
+    --growth-coach-desktop-right-offset: 48px;
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -51,6 +63,17 @@
 
   .container-content {
     @apply mx-auto w-full max-w-content px-6 sm:px-8 lg:px-10;
+  }
+
+  /*
+   * Positions the OPENED Growth Coach panel — right-6 (1.5rem) plus the
+   * desktop offset above. On mobile the panel overrides its own position
+   * to fixed inset-0 regardless (see GrowthCoachPanel.tsx), so this only
+   * visibly affects desktop/tablet widths where the panel is sm:static
+   * and positioned by its fixed-position wrapper.
+   */
+  .growth-coach-panel-anchor {
+    right: calc(1.5rem + var(--growth-coach-desktop-right-offset));
   }
 }
 

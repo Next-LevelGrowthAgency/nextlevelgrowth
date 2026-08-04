@@ -1,16 +1,22 @@
 "use client";
 
 import { coachIdentity } from "@/lib/growth-coach/config";
-import { Maximize2, Minus, TrendingUp, X } from "lucide-react";
+import { Expand, Maximize2, Minus, Shrink, TrendingUp, X } from "lucide-react";
 
 export function GrowthCoachHeader({
   minimized,
+  expanded,
   onToggleMinimize,
+  onExpand,
+  onRestore,
   onClose,
   titleId,
 }: {
   minimized: boolean;
+  expanded: boolean;
   onToggleMinimize: () => void;
+  onExpand: () => void;
+  onRestore: () => void;
   onClose: () => void;
   titleId: string;
 }) {
@@ -40,17 +46,58 @@ export function GrowthCoachHeader({
         </div>
       </div>
       <div className="flex items-center gap-1">
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onToggleMinimize();
-          }}
-          aria-label={minimized ? "Expand Growth Coach" : "Minimize Growth Coach"}
-          className="rounded-full p-1.5 hover:bg-white/10"
-        >
-          {minimized ? <Maximize2 className="h-4 w-4" aria-hidden="true" /> : <Minus className="h-4 w-4" aria-hidden="true" />}
-        </button>
+        {minimized ? (
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onToggleMinimize();
+            }}
+            aria-label="Expand Growth Coach"
+            className="rounded-full p-1.5 hover:bg-white/10"
+          >
+            <Maximize2 className="h-4 w-4" aria-hidden="true" />
+          </button>
+        ) : expanded ? (
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onRestore();
+            }}
+            aria-label="Exit fullscreen"
+            title="Exit fullscreen"
+            className="rounded-full p-1.5 hover:bg-white/10"
+          >
+            <Shrink className="h-4 w-4" aria-hidden="true" />
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                onExpand();
+              }}
+              aria-label="Open fullscreen"
+              title="Open fullscreen"
+              className="rounded-full p-1.5 hover:bg-white/10"
+            >
+              <Expand className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                onToggleMinimize();
+              }}
+              aria-label="Minimize Growth Coach"
+              className="rounded-full p-1.5 hover:bg-white/10"
+            >
+              <Minus className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </>
+        )}
         <button
           type="button"
           onClick={(event) => {

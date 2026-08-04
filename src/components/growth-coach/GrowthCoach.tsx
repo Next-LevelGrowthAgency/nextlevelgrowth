@@ -3,6 +3,7 @@
 import { track } from "@/lib/growth-coach/analytics";
 import { suggestedPrompts } from "@/lib/growth-coach/config";
 import { getInitialState, respond, respondToLeadSubmission } from "@/lib/growth-coach/engine";
+import { cn } from "@/lib/utils";
 import type { CoachMessage, CoachState, QuickReplyAction } from "@/types";
 import { useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -33,6 +34,7 @@ export function GrowthCoach() {
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [messages, setMessages] = useState<CoachMessage[]>([]);
   const [coachState, setCoachState] = useState<CoachState>(() => getInitialState());
   const [inputValue, setInputValue] = useState("");
@@ -43,6 +45,10 @@ export function GrowthCoach() {
   const [scoreResultsOpen, setScoreResultsOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasOpenedRef = useRef(false);
+  // Whatever had focus right before the launcher was clicked (normally the
+  // launcher button itself) — restored on close, per the dialog a11y
+  // pattern ("focus returns to the trigger that opened it").
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(
     () => () => {
@@ -139,14 +145,35 @@ export function GrowthCoach() {
   function handleClose() {
     setOpen(false);
     setMinimized(false);
+    setExpanded(false);
+    // Give the DOM a tick to actually remove the panel before moving
+    // focus back, otherwise some browsers ignore the .focus() call.
+    requestAnimationFrame(() => previouslyFocusedRef.current?.focus());
   }
 
   function handleOpen() {
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
     if (!hasOpenedRef.current) {
       hasOpenedRef.current = true;
       track("coach_opened");
     }
     setOpen(true);
+  }
+
+  function handleToggleMinimize() {
+    setMinimized((value) => !value);
+    setExpanded(false); // minimized and expanded are mutually exclusive
+  }
+
+  function handleExpand() {
+    setExpanded(true);
+    setMinimized(false);
+    track("growth_coach_expanded");
+  }
+
+  function handleRestore() {
+    setExpanded(false);
+    track("growth_coach_restored");
   }
 
   function handleRequestSave() {
@@ -166,19 +193,28 @@ export function GrowthCoach() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div
+      className={cn(
+        "fixed z-50",
+        expanded ? "inset-0" : "bottom-6",
+        !expanded && (open ? "growth-coach-panel-anchor" : "right-6")
+      )}
+    >
       {open ? (
         <GrowthCoachErrorBoundary onReset={handleReset}>
           <GrowthCoachPanel
             messages={messages}
             sending={sending}
             minimized={minimized}
+            expanded={expanded}
             inputValue={inputValue}
             onInputChange={setInputValue}
             onSend={() => dispatch(inputValue)}
             onReset={handleReset}
             onClose={handleClose}
-            onToggleMinimize={() => setMinimized((value) => !value)}
+            onToggleMinimize={handleToggleMinimize}
+            onExpand={handleExpand}
+            onRestore={handleRestore}
             onSelectPrompt={handleSelectPrompt}
             onQuickReply={handleQuickReply}
             onScoreAnswer={handleScoreAnswer}
