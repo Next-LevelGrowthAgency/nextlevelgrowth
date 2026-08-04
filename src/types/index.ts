@@ -488,6 +488,7 @@ export type AnalyticsEvent =
   | "ninety_day_plan_declined"
   | "growth_coach_expanded"
   | "growth_coach_restored"
+  | "growth_coach_ai_fallback"
   | "admin_login_success"
   | "admin_login_failed"
   | "admin_logout";

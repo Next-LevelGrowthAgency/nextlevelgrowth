@@ -129,6 +129,19 @@ const SERVICE_CATALOG: Record<ServiceId, ServiceCatalogEntry> = {
   },
 };
 
+/**
+ * Read-only summary for the real-AI system prompt (see ai/system-prompt.ts)
+ * — name, the problem it solves, and the kind of benefit it produces.
+ * Deliberately the same catalog the deterministic recommendation engine
+ * below uses, so the AI's description of "what Next Level Growth offers"
+ * can never drift from the one place that list actually lives. Excludes
+ * internal fields (whatToMeasure) not needed for a conversational
+ * description.
+ */
+export function getServiceCatalogSummary(): { name: string; problem: string; benefitType: string }[] {
+  return Object.values(SERVICE_CATALOG).map((s) => ({ name: s.name, problem: s.problem, benefitType: s.benefitType }));
+}
+
 export type RecommendationSignals = {
   sourceFlow: "assessment" | "growth-plan" | "website-review";
   priorityKey: "website" | "leads" | "visibility";

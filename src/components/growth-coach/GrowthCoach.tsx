@@ -2,7 +2,9 @@
 
 import { track } from "@/lib/growth-coach/analytics";
 import { suggestedPrompts } from "@/lib/growth-coach/config";
-import { getInitialState, respond, respondToLeadSubmission } from "@/lib/growth-coach/engine";
+import { getInitialState, isOpenConversationTurn, respond, respondToLeadSubmission } from "@/lib/growth-coach/engine";
+import { requestGrowthCoachAiReply } from "@/lib/growth-coach/ai/client-request";
+import { MAX_HISTORY_MESSAGES } from "@/lib/growth-coach/ai/shared-config";
 import { cn } from "@/lib/utils";
 import type { CoachMessage, CoachState, QuickReplyAction } from "@/types";
 import { useReducedMotion } from "framer-motion";
@@ -23,9 +25,14 @@ function makeUserMessage(content: string): CoachMessage {
  * NEXT_PUBLIC_CHAT_ENABLED is not "true" — same "ship the architecture,
  * hide the UI until ready" switch the previous chat widget used.
  *
- * Phase 2 seam: `respond()` (src/lib/growth-coach/engine.ts) is the only
- * place that needs to change to call a real AI provider through
- * src/app/api/chat/route.ts instead of returning mock content.
+ * Two response paths, chosen per-turn by isOpenConversationTurn()
+ * (engine.ts): structured turns (prompt cards, quick replies, the Growth
+ * Score assessment, scripted flow steps) stay fully deterministic via
+ * respond(), unchanged. Genuinely open-ended free text goes to a real
+ * Claude model via POST /api/growth-coach/chat
+ * (src/lib/growth-coach/ai/), falling back to the same scripted
+ * respond() on any failure — see respondWithAi()/respondWithScriptedEngine()
+ * below.
  */
 export function GrowthCoach() {
   const enabled = process.env.NEXT_PUBLIC_CHAT_ENABLED === "true";
@@ -59,7 +66,71 @@ export function GrowthCoach() {
 
   if (!enabled) return null;
 
-  function dispatch(userText: string, promptId?: string) {
+  /** Applies a {state, message} result from either the scripted engine or a freshly-built AI reply — the one place that updates state/messages and fires the response-shape-driven analytics, so both paths stay in sync. */
+  function applyCoachResponse(nextState: CoachState, message: CoachMessage) {
+    setCoachState(nextState);
+    setMessages((prev) => [...prev, message]);
+
+    if (message.report?.title === "Business Assessment") track("assessment_completed");
+    if (message.quickReplies?.some((q) => q.action === "report-yes")) track("report_offered");
+    if (message.quickReplies?.some((q) => q.action === "consult-yes")) track("consultation_offered");
+    if (message.businessReport) {
+      track("report_generated");
+      track("service_recommendation_shown", { count: message.businessReport.recommendedServices.length });
+      track("plan_recommendation_shown", { plan: message.businessReport.recommendedPlan.planId });
+      setReportSaved(false);
+      setReportViewOpen(true);
+    }
+    if (message.growthScoreResult) {
+      track("growth_score_generated", { mode: message.growthScoreResult.mode, confidence: message.growthScoreResult.overallConfidenceLabel });
+      if (message.growthScoreResult.overallConfidenceLabel === "insufficient") track("growth_score_low_confidence");
+      setScoreResultsOpen(true);
+    }
+  }
+
+  /** The scripted engine, fully unchanged — used both for every structured turn AND as the automatic fallback when a real-AI call fails or is unavailable. */
+  function respondWithScriptedEngine(userText: string, promptId?: string) {
+    try {
+      const { state: nextState, message } = respond(coachState, userText, promptId);
+      applyCoachResponse(nextState, message);
+    } catch {
+      track("api_error");
+      setMessages((prev) => [
+        ...prev,
+        { id: `coach-error-${Date.now()}`, role: "assistant", content: "That didn't come through cleanly. Let's try that again." },
+      ]);
+    }
+  }
+
+  /**
+   * Real-AI path — only ever reached for genuinely open-ended free text
+   * (see isOpenConversationTurn, mirrored from engine.ts's own routing so
+   * this can never drift from what respond() would do). Falls back to the
+   * scripted engine on ANY failure (not configured, timeout, API error,
+   * network error) — the visitor always gets a real reply either way.
+   */
+  async function respondWithAi(historyIncludingNewTurn: CoachMessage[], userText: string, promptId?: string) {
+    const aiHistory = historyIncludingNewTurn
+      .slice(-MAX_HISTORY_MESSAGES)
+      .filter((m) => m.role === "user" || m.role === "assistant")
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    const result = await requestGrowthCoachAiReply(aiHistory);
+
+    if (result.ok) {
+      applyCoachResponse(coachState, {
+        id: `coach-msg-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        role: "assistant",
+        content: result.content,
+      });
+      return;
+    }
+
+    track("growth_coach_ai_fallback", { reason: result.reason });
+    respondWithScriptedEngine(userText, promptId);
+  }
+
+  async function dispatch(userText: string, promptId?: string) {
     if (sending) return;
 
     if (promptId === "analyze") track("assessment_started");
@@ -75,43 +146,33 @@ export function GrowthCoach() {
     if (promptId === "ninety-day-yes") track("ninety_day_plan_requested");
     if (promptId === "ninety-day-no") track("ninety_day_plan_declined");
 
-    if (userText.trim()) {
-      setMessages((prev) => [...prev, makeUserMessage(userText.trim())]);
+    const trimmed = userText.trim();
+    let historyIncludingNewTurn = messages;
+    if (trimmed) {
+      const userMessage = makeUserMessage(trimmed);
+      historyIncludingNewTurn = [...messages, userMessage];
+      setMessages(historyIncludingNewTurn);
     }
     setInputValue("");
     setSending(true);
 
-    const delay = prefersReducedMotion ? 150 : 650 + Math.random() * 650;
-    timeoutRef.current = setTimeout(() => {
+    if (isOpenConversationTurn(coachState, userText, promptId)) {
+      // Real network call — no artificial delay layered on top of it.
       try {
-        const { state: nextState, message } = respond(coachState, userText, promptId);
-        setCoachState(nextState);
-        setMessages((prev) => [...prev, message]);
-
-        if (message.report?.title === "Business Assessment") track("assessment_completed");
-        if (message.quickReplies?.some((q) => q.action === "report-yes")) track("report_offered");
-        if (message.quickReplies?.some((q) => q.action === "consult-yes")) track("consultation_offered");
-        if (message.businessReport) {
-          track("report_generated");
-          track("service_recommendation_shown", { count: message.businessReport.recommendedServices.length });
-          track("plan_recommendation_shown", { plan: message.businessReport.recommendedPlan.planId });
-          setReportSaved(false);
-          setReportViewOpen(true);
-        }
-        if (message.growthScoreResult) {
-          track("growth_score_generated", { mode: message.growthScoreResult.mode, confidence: message.growthScoreResult.overallConfidenceLabel });
-          if (message.growthScoreResult.overallConfidenceLabel === "insufficient") track("growth_score_low_confidence");
-          setScoreResultsOpen(true);
-        }
-      } catch {
-        track("api_error");
-        setMessages((prev) => [
-          ...prev,
-          { id: `coach-error-${Date.now()}`, role: "assistant", content: "That didn't come through cleanly. Let's try that again." },
-        ]);
+        await respondWithAi(historyIncludingNewTurn, userText, promptId);
       } finally {
         setSending(false);
       }
+      return;
+    }
+
+    // Structured/scripted turn — unchanged behavior, including the small
+    // simulated "thinking" delay so a purely local, instant response
+    // doesn't feel jarring next to the AI path's real latency.
+    const delay = prefersReducedMotion ? 150 : 650 + Math.random() * 650;
+    timeoutRef.current = setTimeout(() => {
+      respondWithScriptedEngine(userText, promptId);
+      setSending(false);
     }, delay);
   }
 

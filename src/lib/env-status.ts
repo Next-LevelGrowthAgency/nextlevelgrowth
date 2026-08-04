@@ -1,4 +1,5 @@
 import { isEmailDeliveryActive, isDurableStorageActive } from "@/lib/growth-coach/adapters";
+import { isAnthropicConfigured } from "@/lib/growth-coach/ai/config";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/config";
 import { isTurnstileConfigured } from "@/lib/growth-coach/spam-protection";
 
@@ -15,7 +16,8 @@ export type EnvironmentStatus = {
   databaseConfigured: boolean;
   authConfigured: boolean;
   turnstileConfigured: boolean;
-  aiChatConfigured: boolean;
+  /** Whether the Growth Coach's open-ended replies are backed by a real Claude call (see src/lib/growth-coach/ai/) — false means every free-text reply falls back to the scripted engine. */
+  growthCoachAiConfigured: boolean;
 };
 
 export function getEnvironmentStatus(): EnvironmentStatus {
@@ -26,7 +28,7 @@ export function getEnvironmentStatus(): EnvironmentStatus {
     databaseConfigured: isDurableStorageActive(),
     authConfigured: isSupabaseAuthConfigured(),
     turnstileConfigured: isTurnstileConfigured(),
-    aiChatConfigured: process.env.NEXT_PUBLIC_CHAT_ENABLED === "true" && Boolean(process.env.AI_CHAT_PROVIDER_API_KEY),
+    growthCoachAiConfigured: process.env.NEXT_PUBLIC_CHAT_ENABLED === "true" && isAnthropicConfigured(),
   };
 }
 

@@ -15,16 +15,23 @@ import { consultDeclineReply, consultOfferText, growthScoreIntro, ninetyDayPlanO
 import { buildQuestionQueue, calculateGrowthScore, getQuestionById, recordAnswer } from "./growth-score/engine";
 
 /**
- * NEXT LEVEL GROWTH COACH — MOCK CONVERSATION ENGINE (Phase 1)
+ * NEXT LEVEL GROWTH COACH — SCRIPTED CONVERSATION ENGINE
  * ------------------------------------------------------------------
  * Pure, synchronous, and entirely local — no network calls. Given the
  * current CoachState and either a suggested-prompt id or free-typed text,
  * `respond()` returns the next CoachState and the coach's next message.
  *
- * Phase 2: this is the seam to replace. Swap the body of `respond()` for a
- * call to POST /api/chat (already scaffolded in
- * src/app/api/chat/route.ts) once a real provider is wired up there —
- * the CoachMessage/CoachState shapes are designed to survive that change.
+ * Handles every STRUCTURED interaction (prompt cards, quick replies, the
+ * Growth Score assessment, the scripted assessment/growth-plan/website-
+ * review flows) deterministically — this stays true even now that a real
+ * AI model is connected (see src/lib/growth-coach/ai/), because letting an
+ * LLM generate scores, recommendations, or report content would be a
+ * reliability and hallucination risk this app is specifically designed to
+ * avoid. `isOpenConversationTurn()` below is the exported seam the real-AI
+ * integration uses to know when it's safe to hand a turn to Claude
+ * instead — and `respond()` is also the automatic fallback GrowthCoach.tsx
+ * calls when that real call fails or is unavailable, so this engine is
+ * never dead code even on a request the AI successfully handles.
  */
 
 let idCounter = 0;
@@ -1289,6 +1296,27 @@ function routeFreeText(state: CoachState, userText: string) {
 // ---------------------------------------------------------------------
 // Public entry point
 // ---------------------------------------------------------------------
+
+/**
+ * True exactly when respond() would fall all the way through to the
+ * free-text intent engine (routeFreeText) for this state/input — no
+ * active flow, topic, or growth assessment in progress, and no matched
+ * promptId. Exported so the real-AI integration (src/lib/growth-coach/ai/)
+ * can decide whether a turn is "open conversation" (eligible to ask a real
+ * model, falling back to this same scripted engine on any failure) versus
+ * a structured step that must stay fully deterministic — without
+ * re-implementing (and risking drifting from) this routing logic.
+ */
+export function isOpenConversationTurn(state: CoachState, userText: string, promptId?: string): boolean {
+  const trimmed = userText.trim();
+  if (!trimmed) return false;
+  if (promptId && promptId.startsWith("score:")) return false;
+  if (promptId && PROMPT_HANDLERS[promptId]) return false;
+  if (state.growthAssessment) return false;
+  if (state.flow) return false;
+  if (state.topic) return false;
+  return true;
+}
 
 export function respond(state: CoachState, userText: string, promptId?: string): { state: CoachState; message: CoachMessage } {
   const trimmed = userText.trim();

@@ -8,9 +8,10 @@ import type { CoachingMode, SuggestedPrompt } from "@/types";
  * keeping the two separate means the coach's voice can be tuned here
  * without touching UI or state-machine code.
  *
- * Phase 2 note: `personalityPrinciples` and `coachingModes` are written to
- * double as source material for a future system prompt once a real AI
- * provider is wired into src/app/api/chat/route.ts.
+ * `personalityPrinciples` doubles as source material for the real-AI
+ * system prompt (src/lib/growth-coach/ai/system-prompt.ts) — edit the
+ * voice here and both the scripted engine's copy and the AI's tone stay
+ * in sync.
  */
 
 export const coachIdentity = {

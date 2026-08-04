@@ -68,7 +68,11 @@ export default async function AdminDiagnosticsPage() {
         <h2 className="font-display text-lg font-semibold text-ink-900">Spam protection &amp; optional integrations</h2>
         <div className="mt-2">
           <StatusRow label="Cloudflare Turnstile" ok={status.turnstileConfigured} detail="Honeypot + rate limiting stay active either way." />
-          <StatusRow label="AI Chat provider" ok={status.aiChatConfigured} detail="Chat widget shows a safe fallback reply until this is configured." />
+          <StatusRow
+            label="Growth Coach AI (Anthropic Claude)"
+            ok={status.growthCoachAiConfigured}
+            detail="Open-ended replies fall back to the scripted engine until ANTHROPIC_API_KEY is set and NEXT_PUBLIC_CHAT_ENABLED is true."
+          />
         </div>
       </div>
     </div>
