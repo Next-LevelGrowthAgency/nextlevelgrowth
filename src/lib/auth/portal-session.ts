@@ -8,6 +8,10 @@ export type PortalProfile = {
   businessName: string | null;
   phone: string | null;
   role: "owner" | "admin" | "team" | "client" | "prospect";
+  /** Stage 5 client-access request/approval flow — see supabase/migrations/0007_client_access_requests.sql and src/app/portal/actions.ts. */
+  roleRequestStatus: "none" | "pending" | "approved" | "denied";
+  roleRequestedAt: number | null;
+  roleRequestNote: string | null;
 };
 
 /** Server Components / Server Actions only. Returns null for any anonymous visitor — every /portal/* page must redirect to /login when this is null. */
@@ -30,6 +34,9 @@ export async function getPortalSession(): Promise<PortalProfile | null> {
     businessName: profile.business_name ?? null,
     phone: profile.phone ?? null,
     role: profile.role,
+    roleRequestStatus: profile.role_request_status ?? "none",
+    roleRequestedAt: profile.role_requested_at ? new Date(profile.role_requested_at).getTime() : null,
+    roleRequestNote: profile.role_request_note ?? null,
   };
 }
 

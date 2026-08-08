@@ -686,7 +686,9 @@ export type AuditAction =
   | "lead_deleted"
   | "consent_changed"
   | "role_changed"
-  | "follow_up_status_changed";
+  | "follow_up_status_changed"
+  | "client_access_requested"
+  | "client_access_denied";
 
 export type AuditEvent = {
   id: string;
