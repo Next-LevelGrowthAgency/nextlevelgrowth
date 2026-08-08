@@ -60,3 +60,45 @@ export async function checkAuthMigrationStatus(): Promise<{ ok: boolean; detail:
     return { ok: false, detail: `Check failed: ${error instanceof Error ? error.message : "unknown error"}` };
   }
 }
+
+/** Same live-connectivity pattern as checkAuthMigrationStatus, for the Stage 3 AI usage/budget tables. */
+export async function checkAiUsageMigrationStatus(): Promise<{ ok: boolean; detail: string }> {
+  if (!isDurableStorageActive()) return { ok: false, detail: "Not configured." };
+  try {
+    const { getServiceRoleClient } = await import("@/lib/growth-coach/adapters/supabase-client");
+    const supabase = getServiceRoleClient();
+    const { error } = await supabase.from("ai_monthly_budget_usage").select("pool").limit(1);
+    if (error) return { ok: false, detail: `"ai_monthly_budget_usage" table not reachable — has migration 0004 been run? (${error.message})` };
+    return { ok: true, detail: "AI usage/budget tables reachable — migration 0004 appears to be applied." };
+  } catch (error) {
+    return { ok: false, detail: `Check failed: ${error instanceof Error ? error.message : "unknown error"}` };
+  }
+}
+
+/** Same pattern, for the Stage 4 follow-up consent-audit-trail columns (hashed IP, user agent, terms version). */
+export async function checkConsentAuditMigrationStatus(): Promise<{ ok: boolean; detail: string }> {
+  if (!isDurableStorageActive()) return { ok: false, detail: "Not configured." };
+  try {
+    const { getServiceRoleClient } = await import("@/lib/growth-coach/adapters/supabase-client");
+    const supabase = getServiceRoleClient();
+    const { error } = await supabase.from("growth_coach_leads").select("consent_ip_hash").limit(1);
+    if (error) return { ok: false, detail: `"consent_ip_hash" column not reachable — has migration 0005 been run? (${error.message})` };
+    return { ok: true, detail: "Consent audit-trail columns reachable — migration 0005 appears to be applied." };
+  } catch (error) {
+    return { ok: false, detail: `Check failed: ${error instanceof Error ? error.message : "unknown error"}` };
+  }
+}
+
+/** Same pattern, for the Stage 5 client-access request/approval columns on profiles. */
+export async function checkClientAccessMigrationStatus(): Promise<{ ok: boolean; detail: string }> {
+  if (!isSupabaseAuthConfigured()) return { ok: false, detail: "Not configured." };
+  try {
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server-client");
+    const supabase = await createSupabaseServerClient();
+    const { error } = await supabase.from("profiles").select("role_request_status").limit(1);
+    if (error) return { ok: false, detail: `"role_request_status" column not reachable — has migration 0007 been run? (${error.message})` };
+    return { ok: true, detail: "Client-access request columns reachable — migration 0007 appears to be applied." };
+  } catch (error) {
+    return { ok: false, detail: `Check failed: ${error instanceof Error ? error.message : "unknown error"}` };
+  }
+}

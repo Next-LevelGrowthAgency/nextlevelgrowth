@@ -1,4 +1,11 @@
-import { checkAuthMigrationStatus, checkDatabaseConnection, getEnvironmentStatus } from "@/lib/env-status";
+import {
+  checkAiUsageMigrationStatus,
+  checkAuthMigrationStatus,
+  checkClientAccessMigrationStatus,
+  checkConsentAuditMigrationStatus,
+  checkDatabaseConnection,
+  getEnvironmentStatus,
+} from "@/lib/env-status";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Diagnostics — Admin", robots: { index: false, follow: false } };
@@ -19,7 +26,13 @@ function StatusRow({ label, ok, detail }: { label: string; ok: boolean; detail?:
 
 export default async function AdminDiagnosticsPage() {
   const status = getEnvironmentStatus();
-  const [dbConnection, authMigration] = await Promise.all([checkDatabaseConnection(), checkAuthMigrationStatus()]);
+  const [dbConnection, authMigration, aiUsageMigration, consentAuditMigration, clientAccessMigration] = await Promise.all([
+    checkDatabaseConnection(),
+    checkAuthMigrationStatus(),
+    checkAiUsageMigrationStatus(),
+    checkConsentAuditMigrationStatus(),
+    checkClientAccessMigrationStatus(),
+  ]);
 
   return (
     <div>
@@ -53,6 +66,8 @@ export default async function AdminDiagnosticsPage() {
         <div className="mt-2">
           <StatusRow label="Supabase URL + service role key" ok={status.databaseConfigured} />
           <StatusRow label="Connection" ok={dbConnection.ok} detail={dbConnection.detail} />
+          <StatusRow label="Migration 0004 applied (AI usage/budget tables)" ok={aiUsageMigration.ok} detail={aiUsageMigration.detail} />
+          <StatusRow label="Migration 0005 applied (consent audit-trail columns)" ok={consentAuditMigration.ok} detail={consentAuditMigration.detail} />
         </div>
       </div>
 
@@ -61,6 +76,7 @@ export default async function AdminDiagnosticsPage() {
         <div className="mt-2">
           <StatusRow label="Supabase Auth (URL + anon key)" ok={status.authConfigured} />
           <StatusRow label="Migration 0003 applied (profiles table reachable)" ok={authMigration.ok} detail={authMigration.detail} />
+          <StatusRow label="Migration 0007 applied (client-access request columns)" ok={clientAccessMigration.ok} detail={clientAccessMigration.detail} />
         </div>
       </div>
 
