@@ -12,7 +12,6 @@ export type LeadFormValues = {
   consentToSaveReport: boolean;
   consentToEmailFollowUp: boolean;
   consentToPhoneCall: boolean;
-  consentToTextMessage: boolean;
   consentToMarketing: boolean;
   consultationRequested?: boolean;
 };
@@ -79,11 +78,10 @@ export function buildLeadInput(
     consentToSaveReport: form.consentToSaveReport,
     consentToEmailFollowUp: form.consentToEmailFollowUp,
     consentToPhoneCall: form.consentToPhoneCall,
-    consentToTextMessage: form.consentToTextMessage,
-    consentToContact: form.consentToEmailFollowUp || form.consentToPhoneCall || form.consentToTextMessage,
+    consentToContact: form.consentToEmailFollowUp || form.consentToPhoneCall,
     consentToMarketing: form.consentToMarketing,
     reportConsentTimestamp: form.consentToSaveReport ? now : undefined,
-    contactConsentTimestamp: form.consentToEmailFollowUp || form.consentToPhoneCall || form.consentToTextMessage ? now : undefined,
+    contactConsentTimestamp: form.consentToEmailFollowUp || form.consentToPhoneCall ? now : undefined,
     marketingConsentTimestamp: form.consentToMarketing ? now : undefined,
 
     followUpStatus: "new",
@@ -155,7 +153,6 @@ export function buildOwnerSummary(lead: LeadProfile): OwnerLeadSummary {
       contact: lead.consentToContact,
       emailFollowUp: lead.consentToEmailFollowUp ?? false,
       phoneCall: lead.consentToPhoneCall ?? false,
-      textMessage: lead.consentToTextMessage ?? false,
       marketing: lead.consentToMarketing,
     },
     consentTimestamps: {

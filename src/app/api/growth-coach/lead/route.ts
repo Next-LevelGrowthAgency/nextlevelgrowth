@@ -1,11 +1,13 @@
 import { getEmailAdapter, getLeadAdapter, isDurableStorageActive, isEmailDeliveryActive } from "@/lib/growth-coach/adapters";
 import { generateSubmissionId, type SubmissionResponse } from "@/lib/api/submission-response";
+import { assertConsent, ConsentNotGrantedError, sendToConsentedChannel } from "@/lib/growth-coach/consent-guard";
 import { buildInternalLeadEmail, buildInternalLeadEmailSubject, buildVisitorReportEmail } from "@/lib/growth-coach/email-templates";
 import { buildLeadInput, buildOwnerSummary, type LeadFormValues } from "@/lib/growth-coach/lead-profile";
 import { leadSubmissionSchema } from "@/lib/growth-coach/lead-schema";
 import { containsSensitiveData } from "@/lib/growth-coach/sensitive-data";
-import { CONSENT_LANGUAGE_VERSION } from "@/lib/consent";
+import { CONSENT_LANGUAGE_VERSION, TERMS_OF_SERVICE_VERSION } from "@/lib/consent";
 import { getCurrentUserId } from "@/lib/auth/portal-session";
+import { sha256Hex } from "@/lib/hash";
 import { isRateLimited } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
 import { verifyTurnstileToken } from "@/lib/growth-coach/spam-protection";
@@ -105,7 +107,6 @@ export async function POST(request: NextRequest) {
     consentToSaveReport: data.consentToSaveReport,
     consentToEmailFollowUp: data.consentToEmailFollowUp,
     consentToPhoneCall: data.consentToPhoneCall,
-    consentToTextMessage: data.consentToTextMessage,
     consentToMarketing: data.consentToMarketing,
     consultationRequested: data.consultationRequested,
   };
@@ -114,6 +115,9 @@ export async function POST(request: NextRequest) {
     ...buildLeadInput(formValues, data.report as unknown as BusinessGrowthReport, data.context as unknown as CoachContext, data.sessionId),
     userId: await getCurrentUserId(),
     consentLanguageVersion: CONSENT_LANGUAGE_VERSION,
+    consentTermsVersion: TERMS_OF_SERVICE_VERSION,
+    consentIpHash: sha256Hex(ip),
+    consentUserAgent: request.headers.get("user-agent") ?? undefined,
     sourcePage: data.sourcePage,
     referrer: data.referrer,
     utmSource: data.utmSource,
@@ -181,31 +185,42 @@ export async function POST(request: NextRequest) {
   // labels, sales-qualification tiers, or private notes (see
   // buildVisitorReportEmail's doc comment).
   //
-  // BUGFIX: this used to gate on `consentToEmailFollowUp` (the OPTIONAL
-  // "Email — additional follow-up beyond this report" checkbox), not on
-  // `consentToSaveReport` (the REQUIRED "Save and send me this report by
-  // email. This is required to deliver the report you requested."
-  // checkbox — see GrowthCoachLeadForm.tsx). Since consentToSaveReport is
-  // enforced server-side as always-true on any successful submission
-  // (lead-schema.ts), the old condition meant a visitor who left the
-  // optional follow-up box unchecked silently never got the report their
-  // required checkbox explicitly promised — with no visible error, since
-  // emailStatus only distinguishes "email not configured" from "sent".
-  // consentToSaveReport is the correct gate for THIS specific send;
-  // consentToEmailFollowUp is reserved for a separate, not-yet-built
-  // "additional follow-up beyond this report" send.
+  // BUGFIX (Stage 4): this used to gate on `consentToEmailFollowUp` (the
+  // OPTIONAL "Email — additional follow-up beyond this report" checkbox),
+  // not on `consentToSaveReport` (the REQUIRED "Save and send me this
+  // report by email. This is required to deliver the report you
+  // requested." checkbox — see GrowthCoachLeadForm.tsx). Since
+  // consentToSaveReport is enforced server-side as always-true on any
+  // successful submission (lead-schema.ts), the old condition meant a
+  // visitor who left the optional follow-up box unchecked silently never
+  // got the report their required checkbox explicitly promised.
+  //
+  // Routed through assertConsent()/sendToConsentedChannel()
+  // (consent-guard.ts) rather than an inline boolean check — the whole
+  // point of that module is that THIS is the pattern any future
+  // email/text/call feature should copy, so it's demonstrated here on the
+  // one send that already exists, not just described for later.
   let emailStatus: "sent" | "skipped" | "failed" = "skipped";
-  if (lead.email && lead.consentToSaveReport && isEmailDeliveryActive()) {
+  if (lead.email && isEmailDeliveryActive()) {
     try {
+      const proof = assertConsent(lead, "report");
       const visitor = buildVisitorReportEmail(lead);
-      const result = await emailAdapter.sendTransactional({ to: lead.email, subject: visitor.subject, body: visitor.text, html: visitor.html });
+      const result = await sendToConsentedChannel(proof, { to: lead.email, subject: visitor.subject, body: visitor.text, html: visitor.html });
       emailStatus = "sent";
       await leadAdapter.recordEmailEvent({ leadId: lead.id, emailType: "visitor_confirmation", recipient: lead.email, status: "sent", providerMessageId: result.previewId });
     } catch (error) {
-      emailStatus = "failed";
-      const message = error instanceof Error ? error.message : String(error);
-      console.error(`[growth-coach-lead] ${submissionId}: Visitor report email failed:`, message);
-      await leadAdapter.recordEmailEvent({ leadId: lead.id, emailType: "visitor_confirmation", recipient: lead.email, status: "failed", errorMessage: message });
+      if (error instanceof ConsentNotGrantedError) {
+        // Not a failure — this lead hasn't consented to the report send.
+        // Shouldn't happen via GrowthCoachLeadForm today (consentToSaveReport
+        // is enforced true at submission), but this guard also protects any
+        // future lead-creation path that doesn't go through that same
+        // validation (e.g. a CRM import, a future admin-created lead).
+      } else {
+        emailStatus = "failed";
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(`[growth-coach-lead] ${submissionId}: Visitor report email failed:`, message);
+        await leadAdapter.recordEmailEvent({ leadId: lead.id, emailType: "visitor_confirmation", recipient: lead.email, status: "failed", errorMessage: message });
+      }
     }
   }
 

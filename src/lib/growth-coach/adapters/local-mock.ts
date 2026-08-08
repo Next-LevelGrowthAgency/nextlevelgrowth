@@ -82,16 +82,14 @@ export const localLeadAdapter: LeadAdapter = {
     if (!existing) return null;
     const nextEmailFollowUp = consent.emailFollowUp ?? existing.consentToEmailFollowUp ?? false;
     const nextPhoneCall = consent.phoneCall ?? existing.consentToPhoneCall ?? false;
-    const nextTextMessage = consent.textMessage ?? existing.consentToTextMessage ?? false;
-    const contactFieldsChanged = consent.emailFollowUp !== undefined || consent.phoneCall !== undefined || consent.textMessage !== undefined;
+    const contactFieldsChanged = consent.emailFollowUp !== undefined || consent.phoneCall !== undefined;
     const updated: LeadProfile = {
       ...existing,
       ...(consent.saveReport !== undefined && { consentToSaveReport: consent.saveReport, reportConsentTimestamp: timestamp }),
       ...(contactFieldsChanged && {
         consentToEmailFollowUp: nextEmailFollowUp,
         consentToPhoneCall: nextPhoneCall,
-        consentToTextMessage: nextTextMessage,
-        consentToContact: nextEmailFollowUp || nextPhoneCall || nextTextMessage,
+        consentToContact: nextEmailFollowUp || nextPhoneCall,
         contactConsentTimestamp: timestamp,
       }),
       ...(consent.marketing !== undefined && { consentToMarketing: consent.marketing, marketingConsentTimestamp: timestamp }),

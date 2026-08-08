@@ -153,7 +153,6 @@ export function buildInternalLeadEmail(lead: LeadProfile, summary: OwnerLeadSumm
       ${row("Save & send report", summary.consent.saveReport ? "Yes" : "No")}
       ${row("Email follow-up", summary.consent.emailFollowUp ? "Yes" : "No")}
       ${row("Phone call", summary.consent.phoneCall ? "Yes" : "No")}
-      ${row("Text message", summary.consent.textMessage ? "Yes" : "No")}
       ${row("Marketing emails", summary.consent.marketing ? "Yes" : "No")}
     </table>
     <p style="font-size:11px;color:#9ca3af;margin:8px 0 0;">
@@ -211,7 +210,6 @@ export function buildInternalLeadEmail(lead: LeadProfile, summary: OwnerLeadSumm
     textRow("Save & send report", summary.consent.saveReport ? "Yes" : "No"),
     textRow("Email follow-up", summary.consent.emailFollowUp ? "Yes" : "No"),
     textRow("Phone call", summary.consent.phoneCall ? "Yes" : "No"),
-    textRow("Text message", summary.consent.textMessage ? "Yes" : "No"),
     textRow("Marketing emails", summary.consent.marketing ? "Yes" : "No"),
     ``,
     `Lead ID: ${lead.id}`,

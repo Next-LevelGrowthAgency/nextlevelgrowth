@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
+import { TERMS_OF_SERVICE_VERSION } from "@/lib/consent";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,6 +20,11 @@ export default function TermsPage() {
       />
       <Section tone="paper">
         <Container className="max-w-3xl space-y-6 text-ink-700">
+          <p className="text-xs text-ink-500">
+            Version {TERMS_OF_SERVICE_VERSION}. This version identifier is what gets recorded against a visitor's consent
+            at the moment they submit a form — it changes whenever this page's content changes, so a stored consent
+            record always points back to what this page said at the time.
+          </p>
           <p>
             This placeholder outlines the general structure terms of service
             for this site should cover: acceptable use of the site,

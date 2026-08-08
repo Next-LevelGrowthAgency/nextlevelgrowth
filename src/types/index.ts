@@ -350,20 +350,32 @@ export type LeadProfile = {
   growthCategorySnapshot?: { categoryId: GrowthScoreCategoryId; label: string; score: number }[];
 
   consentToSaveReport: boolean;
-  /** Derived: true if any of the three granular contact permissions below is true. Never collected directly from the visitor. */
+  /** Derived: true if any of the two granular contact permissions below is true. Never collected directly from the visitor. */
   consentToContact: boolean;
-  /** Separate, individually optional permissions — never combined into one checkbox. See GrowthCoachLeadForm.tsx. */
+  /**
+   * Separate, individually optional permissions — never combined into one
+   * checkbox. See GrowthCoachLeadForm.tsx. There is deliberately no
+   * consentToTextMessage: a text-message/SMS consent checkbox existed
+   * briefly and was removed since there is no texting feature (manual or
+   * automated) built or planned — re-add it, with wording matched to how
+   * texting is actually implemented, if/when that changes. See
+   * supabase/migrations/0006_remove_text_message_consent.sql.
+   */
   consentToEmailFollowUp?: boolean;
   consentToPhoneCall?: boolean;
-  consentToTextMessage?: boolean;
   consentToMarketing: boolean;
   reportConsentTimestamp?: number;
-  /** Shared timestamp for whichever of the three granular contact permissions were set — they're always submitted together in one request. */
+  /** Shared timestamp for whichever of the two granular contact permissions were set — they're always submitted together in one request. */
   contactConsentTimestamp?: number;
   marketingConsentTimestamp?: number;
 
-  /** Ties this consent capture to the exact disclosure text version shown at submission time — see CONSENT_LANGUAGE_VERSION in lead-profile.ts. */
+  /** Ties this consent capture to the exact disclosure text version shown at submission time — see CONSENT_LANGUAGE_VERSION in src/lib/consent.ts. */
   consentLanguageVersion?: string;
+  /** Which version of the Terms of Service document (src/app/terms/page.tsx) was live at submission time — see TERMS_OF_SERVICE_VERSION in src/lib/consent.ts. Distinct from consentLanguageVersion, which tracks the checkbox copy, not the full terms document. */
+  consentTermsVersion?: string;
+  /** SHA-256 hash of the submitting IP (never the raw IP — see sha256Hex in src/lib/hash.ts), plus the raw User-Agent header, both captured at submission time. Strengthens the consent audit trail if a visitor's consent is ever disputed. */
+  consentIpHash?: string;
+  consentUserAgent?: string;
 
   createdAt: number;
   updatedAt: number;
@@ -443,11 +455,10 @@ export type OwnerLeadSummary = {
   ninetyDayPlanRequested: boolean;
   consent: {
     saveReport: boolean;
-    /** Derived: true if any of the three below is true. */
+    /** Derived: true if any of the two below is true. */
     contact: boolean;
     emailFollowUp: boolean;
     phoneCall: boolean;
-    textMessage: boolean;
     marketing: boolean;
   };
   consentTimestamps: { report?: number; contact?: number; marketing?: number };

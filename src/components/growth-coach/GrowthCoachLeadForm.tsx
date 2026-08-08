@@ -12,18 +12,22 @@ import { useEffect, useId, useState } from "react";
 
 /**
  * DRAFT — NEEDS HUMAN/LEGAL REVIEW: every consent checkbox's copy below
- * (report delivery, email/phone/text follow-up, marketing) is working
- * draft text, not attorney-reviewed language, same status as
- * src/app/terms/page.tsx and src/app/privacy-policy/page.tsx. The
- * text-message checkbox in particular carries standard TCPA-style
- * disclosure boilerplate (rates may apply, reply STOP/HELP, consent not a
- * condition of purchase) as a reasonable placeholder — TCPA compliance
- * depends on how texts are actually sent (which provider, opt-out
- * handling, quiet hours, etc., none of which exists yet — see
- * resend.ts's enqueueSequence stub), so this must be reviewed by counsel
- * before any real SMS sending is wired up, not treated as sufficient on
- * its own. See src/lib/consent.ts's CONSENT_LANGUAGE_VERSION — bump it
- * whenever this copy changes.
+ * (report delivery, email/phone follow-up, marketing) is working draft
+ * text, not attorney-reviewed language, same status as
+ * src/app/terms/page.tsx and src/app/privacy-policy/page.tsx.
+ *
+ * There is deliberately no text-message/SMS consent checkbox: one existed
+ * briefly with TCPA-style disclosure boilerplate, then was removed —
+ * there is no texting feature (manual or automated) built or planned in
+ * this codebase, so the checkbox created legal exposure (an SMS consent
+ * record with nothing behind it) with no corresponding benefit. If a real
+ * texting feature is ever built, re-add this consent checkbox with
+ * wording matched specifically to how it's actually implemented, and
+ * have it reviewed before going live — see
+ * supabase/migrations/0006_remove_text_message_consent.sql.
+ *
+ * See src/lib/consent.ts's CONSENT_LANGUAGE_VERSION — bump it whenever
+ * this copy changes.
  */
 type FormValues = {
   firstName: string;
@@ -36,7 +40,6 @@ type FormValues = {
   consentToSaveReport: boolean;
   consentToEmailFollowUp: boolean;
   consentToPhoneCall: boolean;
-  consentToTextMessage: boolean;
   consentToMarketing: boolean;
   consultationRequested: boolean;
   hpToken: string; // honeypot
@@ -58,7 +61,6 @@ const emptyValues = (report: BusinessGrowthReport): FormValues => ({
   consentToSaveReport: false,
   consentToEmailFollowUp: false,
   consentToPhoneCall: false,
-  consentToTextMessage: false,
   consentToMarketing: false,
   consultationRequested: false,
   hpToken: "",
@@ -158,8 +160,8 @@ export function GrowthCoachLeadForm({
       setErrors({ consentToSaveReport: "Please check this box to save and send your report. It's how we know you want it." });
       return false;
     }
-    if ((values.consentToPhoneCall || values.consentToTextMessage) && !values.phone.trim()) {
-      setErrors({ phone: "A phone number is required to consent to a phone call or text message." });
+    if (values.consentToPhoneCall && !values.phone.trim()) {
+      setErrors({ phone: "A phone number is required to consent to a phone call." });
       return false;
     }
     setErrors({});
@@ -185,7 +187,6 @@ export function GrowthCoachLeadForm({
           consentToSaveReport: values.consentToSaveReport,
           consentToEmailFollowUp: values.consentToEmailFollowUp,
           consentToPhoneCall: values.consentToPhoneCall,
-          consentToTextMessage: values.consentToTextMessage,
           consentToMarketing: values.consentToMarketing,
           consultationRequested: values.consultationRequested,
           hpToken: values.hpToken,
@@ -219,7 +220,7 @@ export function GrowthCoachLeadForm({
       setStatus("success");
       setSubmissionId(result.submissionId);
       setEmailSent(result.emailStatus === "sent");
-      const consentToContact = values.consentToEmailFollowUp || values.consentToPhoneCall || values.consentToTextMessage;
+      const consentToContact = values.consentToEmailFollowUp || values.consentToPhoneCall;
       onSubmitted({ planName: report.recommendedPlan.name, consentToContact });
     } catch {
       setServerError("Couldn't reach the server. Please check your connection and try again.");
@@ -379,7 +380,7 @@ export function GrowthCoachLeadForm({
 
                   <div>
                     <p className="text-sm font-medium text-ink-800">Optional: Next Level Growth may follow up by</p>
-                    <p className="mt-0.5 text-xs text-ink-500">Each is separate and optional. You can decline all three and still get your report.</p>
+                    <p className="mt-0.5 text-xs text-ink-500">Each is separate and optional. You can decline both and still get your report.</p>
                     <div className="mt-2 space-y-2">
                       <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
                         <input
@@ -401,19 +402,6 @@ export function GrowthCoachLeadForm({
                         />
                         <span className="text-sm text-ink-800">
                           <span className="font-medium">Phone call</span> — requires a phone number above.
-                        </span>
-                      </label>
-                      <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
-                        <input
-                          type="checkbox"
-                          className="mt-0.5 h-4 w-4"
-                          checked={values.consentToTextMessage}
-                          onChange={(e) => set("consentToTextMessage", e.target.checked)}
-                        />
-                        <span className="text-sm text-ink-800">
-                          <span className="font-medium">Text message</span> — requires a phone number above. Message and data
-                          rates may apply. Message frequency varies. Reply STOP to opt out at any time, HELP for help. Consent
-                          to receive texts is not a condition of purchase.
                         </span>
                       </label>
                     </div>
@@ -527,10 +515,6 @@ export function GrowthCoachLeadForm({
                       <div className="flex justify-between">
                         <dt>Phone call</dt>
                         <dd className={values.consentToPhoneCall ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToPhoneCall ? "Yes" : "No"}</dd>
-                      </div>
-                      <div className="flex justify-between">
-                        <dt>Text message</dt>
-                        <dd className={values.consentToTextMessage ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToTextMessage ? "Yes" : "No"}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt>Marketing emails</dt>

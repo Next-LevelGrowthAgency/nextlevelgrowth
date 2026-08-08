@@ -32,7 +32,6 @@ function fakeLead(overrides: Partial<LeadProfile> = {}): LeadProfile {
     consentToContact: false,
     consentToEmailFollowUp: false,
     consentToPhoneCall: false,
-    consentToTextMessage: false,
     consentToMarketing: false,
     consultationRequested: false,
     ninetyDayPlanRequested: false,
@@ -67,7 +66,6 @@ function validBody(overrides: Record<string, unknown> = {}) {
     consentToSaveReport: true,
     consentToEmailFollowUp: false,
     consentToPhoneCall: false,
-    consentToTextMessage: false,
     consentToMarketing: false,
     hpToken: "",
     turnstileToken: null,
@@ -113,6 +111,26 @@ describe("POST /api/growth-coach/lead — report email is gated on consentToSave
     const data = await response.json();
 
     expect(data.emailStatus).toBe("sent");
+  });
+
+  it("skips the report email (no error, no crash) when the stored lead somehow lacks report consent — the consent-guard's structural check, not just the outer boolean", async () => {
+    // consentToSaveReport is enforced true by leadSubmissionSchema on every
+    // real GrowthCoachLeadForm submission — this simulates a lead created
+    // through some OTHER path (a future import, a directly-inserted row)
+    // that skipped that validation, to prove the route's assertConsent()
+    // call is the thing actually protecting the send, not just the schema.
+    mockCreateLead.mockResolvedValue(fakeLead({ consentToSaveReport: false }));
+    const { POST } = await import("@/app/api/growth-coach/lead/route");
+
+    const response = await POST(post(validBody({ consentToSaveReport: true })));
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.emailStatus).toBe("skipped");
+    // The internal owner notification is unrelated to this lead's consent
+    // and still sends — only the visitor-facing report send is guarded.
+    expect(mockSendTransactional).not.toHaveBeenCalledWith(expect.objectContaining({ to: "dana@example.com" }));
+    expect(mockRecordEmailEvent).not.toHaveBeenCalledWith(expect.objectContaining({ emailType: "visitor_confirmation" }));
   });
 
   it("skips the report email when the lead has no email on file, regardless of consent (the internal owner notification still sends)", async () => {

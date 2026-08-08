@@ -1,0 +1,23 @@
+-- Next Level Growth Coach — remove the text-message/SMS consent field
+-- =============================================================================
+-- Run AFTER 0001-0005. A text-message/SMS consent checkbox
+-- (consent_to_text_message, added in 0001) existed briefly on the Growth
+-- Coach lead form, along with draft TCPA-style disclosure copy — both were
+-- removed at the application layer because there is no texting feature
+-- (manual or automated) built or planned in this codebase, so the
+-- checkbox created legal exposure (an SMS consent record with nothing
+-- behind it) with no corresponding benefit.
+--
+-- This migration drops the column so the database schema doesn't keep
+-- carrying a field the application no longer reads or writes — full
+-- cleanup, not just hiding it in the UI. Any historical true/false values
+-- in this column are lost; that's acceptable since the field was never
+-- backing a real feature.
+--
+-- If a real texting feature is ever built, re-add this consent checkbox
+-- at the application layer with wording matched specifically to how it's
+-- actually implemented (which provider, opt-out handling, quiet hours),
+-- reviewed before going live, and a fresh migration to re-add the column.
+-- =============================================================================
+
+alter table growth_coach_leads drop column if exists consent_to_text_message;

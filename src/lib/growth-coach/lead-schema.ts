@@ -26,13 +26,14 @@ export const leadSubmissionSchema = z
     phone: optionalPhoneField,
     preferredContactMethod: z.enum(["Email", "Phone", "Text"]).optional(),
     consentToSaveReport: z.literal(true, { errorMap: () => ({ message: "Consent to save and send the report is required to continue." }) }),
-    // Three separate, individually optional contact permissions — never a
+    // Two separate, individually optional contact permissions — never a
     // single combined "may we contact you" checkbox. Each defaults to
-    // unchecked and the visitor may accept the report while declining all
-    // three.
+    // unchecked and the visitor may accept the report while declining
+    // both. (There was briefly a third, consentToTextMessage — removed:
+    // no texting feature, manual or automated, exists or is planned. See
+    // supabase/migrations/0006_remove_text_message_consent.sql.)
     consentToEmailFollowUp: z.boolean(),
     consentToPhoneCall: z.boolean(),
-    consentToTextMessage: z.boolean(),
     consentToMarketing: z.boolean(),
     consultationRequested: z.boolean().optional(),
     hpToken: honeypotField,
@@ -50,8 +51,8 @@ export const leadSubmissionSchema = z
     responseDepth: z.enum(["quick", "deep", "guide-me"]).nullable().optional(),
     ...attributionSchemaFields,
   })
-  .refine((data) => !(data.consentToPhoneCall || data.consentToTextMessage) || !!data.phone, {
-    message: "A phone number is required to consent to a phone call or text message.",
+  .refine((data) => !data.consentToPhoneCall || !!data.phone, {
+    message: "A phone number is required to consent to a phone call.",
     path: ["phone"],
   });
 

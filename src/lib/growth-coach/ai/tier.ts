@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { getCurrentUserRoleInfo } from "@/lib/auth/portal-session";
 import type { AiUsagePool, AiUsageTier } from "@/lib/growth-coach/adapters/types";
+import { sha256Hex } from "@/lib/hash";
 
 /**
  * Resolves which AI usage tier/budget pool a request belongs to. Server-only
@@ -30,10 +30,12 @@ export type RequestTier = {
  * (analytics events avoid PII; see track() in src/lib/growth-coach/analytics.ts). It's
  * still just a pseudonym for the IP, not real anonymization, which is fine
  * here since it exists purely to count messages per day, not to identify
- * anyone.
+ * anyone. Delegates to the shared sha256Hex() (src/lib/hash.ts) — the same
+ * hashing also backs the consent-audit IP record in the lead-capture
+ * routes, so there's one hashing implementation, not two.
  */
 export function hashGuestIdentity(ip: string): string {
-  return createHash("sha256").update(ip).digest("hex");
+  return sha256Hex(ip);
 }
 
 export async function resolveRequestTier(ip: string): Promise<RequestTier> {

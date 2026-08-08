@@ -255,7 +255,6 @@ export default async function GrowthCoachLeadsPage({ searchParams }: { searchPar
               <SummaryRow label="Save-report consent" value={summary.consent.saveReport ? "Yes" : "No"} />
               <SummaryRow label="Email follow-up consent" value={summary.consent.emailFollowUp ? "Yes" : "No"} />
               <SummaryRow label="Phone call consent" value={summary.consent.phoneCall ? "Yes" : "No"} />
-              <SummaryRow label="Text message consent" value={summary.consent.textMessage ? "Yes" : "No"} />
               <SummaryRow label="Marketing consent" value={summary.consent.marketing ? "Yes" : "No"} />
             </dl>
 

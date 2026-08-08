@@ -75,6 +75,9 @@ function toRow(input: Partial<LeadInput>): Row {
     utm_medium: input.utmMedium,
     utm_campaign: input.utmCampaign,
     consent_language_version: input.consentLanguageVersion,
+    consent_terms_version: input.consentTermsVersion,
+    consent_ip_hash: input.consentIpHash,
+    consent_user_agent: input.consentUserAgent,
     current_state: input.currentState,
     ideal_state: input.idealState,
     growth_gap: input.growthGap,
@@ -93,7 +96,6 @@ function toRow(input: Partial<LeadInput>): Row {
     consent_to_save_report: input.consentToSaveReport ?? false,
     consent_to_email_follow_up: input.consentToEmailFollowUp ?? false,
     consent_to_phone_call: input.consentToPhoneCall ?? false,
-    consent_to_text_message: input.consentToTextMessage ?? false,
     consent_to_marketing: input.consentToMarketing ?? false,
     report_consent_timestamp: toIso(input.reportConsentTimestamp),
     contact_consent_timestamp: toIso(input.contactConsentTimestamp),
@@ -154,6 +156,9 @@ function fromRow(row: Row): LeadProfile {
     utmMedium: row.utm_medium ?? undefined,
     utmCampaign: row.utm_campaign ?? undefined,
     consentLanguageVersion: row.consent_language_version ?? undefined,
+    consentTermsVersion: row.consent_terms_version ?? undefined,
+    consentIpHash: row.consent_ip_hash ?? undefined,
+    consentUserAgent: row.consent_user_agent ?? undefined,
     serviceInterests: row.service_interests ?? undefined,
     recommendedServices: row.recommended_services ?? undefined,
     recommendedPlan: row.recommended_plan ?? undefined,
@@ -174,10 +179,9 @@ function fromRow(row: Row): LeadProfile {
     biggestGrowthGap: row.biggest_growth_gap ?? undefined,
     growthCategorySnapshot: row.growth_category_snapshot ?? undefined,
     consentToSaveReport: row.consent_to_save_report ?? false,
-    consentToContact: Boolean(row.consent_to_email_follow_up || row.consent_to_phone_call || row.consent_to_text_message),
+    consentToContact: Boolean(row.consent_to_email_follow_up || row.consent_to_phone_call),
     consentToEmailFollowUp: row.consent_to_email_follow_up ?? false,
     consentToPhoneCall: row.consent_to_phone_call ?? false,
-    consentToTextMessage: row.consent_to_text_message ?? false,
     consentToMarketing: row.consent_to_marketing ?? false,
     reportConsentTimestamp: fromIso(row.report_consent_timestamp),
     contactConsentTimestamp: fromIso(row.contact_consent_timestamp),
@@ -245,10 +249,9 @@ export const supabaseLeadAdapter: LeadAdapter = {
       patch.consent_to_save_report = consent.saveReport;
       patch.report_consent_timestamp = new Date(timestamp).toISOString();
     }
-    if (consent.emailFollowUp !== undefined || consent.phoneCall !== undefined || consent.textMessage !== undefined) {
+    if (consent.emailFollowUp !== undefined || consent.phoneCall !== undefined) {
       if (consent.emailFollowUp !== undefined) patch.consent_to_email_follow_up = consent.emailFollowUp;
       if (consent.phoneCall !== undefined) patch.consent_to_phone_call = consent.phoneCall;
-      if (consent.textMessage !== undefined) patch.consent_to_text_message = consent.textMessage;
       patch.contact_consent_timestamp = new Date(timestamp).toISOString();
     }
     if (consent.marketing !== undefined) {

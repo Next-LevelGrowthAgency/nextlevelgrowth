@@ -50,7 +50,7 @@ describe("Regression: business-name extraction must not store a full raw sentenc
   it("falls back to nothing (not the sentence) when the form field is blank and context.business is a long description", () => {
     const report = fakeReport({ businessName: "I run a bakery in Austin, my biggest challenge is my outdated website." });
     const input = buildLeadInput(
-      { firstName: "Dana", email: "dana@example.com", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToTextMessage: false, consentToMarketing: false },
+      { firstName: "Dana", email: "dana@example.com", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToMarketing: false },
       report,
       emptyContext,
       "session-1"
@@ -61,7 +61,7 @@ describe("Regression: business-name extraction must not store a full raw sentenc
   it("uses the form field when provided", () => {
     const report = fakeReport({ businessName: "Some long raw sentence that is not a name at all." });
     const input = buildLeadInput(
-      { firstName: "Dana", email: "dana@example.com", businessName: "Dana's Bakery", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToTextMessage: false, consentToMarketing: false },
+      { firstName: "Dana", email: "dana@example.com", businessName: "Dana's Bakery", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToMarketing: false },
       report,
       emptyContext,
       "session-1"
@@ -72,7 +72,7 @@ describe("Regression: business-name extraction must not store a full raw sentenc
   it("uses a short, clean business name from context when the form is blank", () => {
     const report = fakeReport({ businessName: "Dana's Bakery" });
     const input = buildLeadInput(
-      { firstName: "Dana", email: "dana@example.com", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToTextMessage: false, consentToMarketing: false },
+      { firstName: "Dana", email: "dana@example.com", consentToSaveReport: true, consentToEmailFollowUp: false, consentToPhoneCall: false, consentToMarketing: false },
       report,
       emptyContext,
       "session-1"
@@ -105,7 +105,6 @@ describe("Regression: lead schema validation fails clearly", () => {
     consentToSaveReport: true as const,
     consentToEmailFollowUp: false,
     consentToPhoneCall: false,
-    consentToTextMessage: false,
     consentToMarketing: false,
     report: {},
     context: {},
@@ -136,17 +135,17 @@ describe("Regression: lead schema validation fails clearly", () => {
     expect(result.success).toBe(false);
   });
 
-  it("consenting to a text message without a phone number is rejected", () => {
-    const result = leadSubmissionSchema.safeParse({ ...base, consentToTextMessage: true, phone: "" });
-    expect(result.success).toBe(false);
-  });
-
   it("consenting to a phone call WITH a phone number passes", () => {
     const result = leadSubmissionSchema.safeParse({ ...base, consentToPhoneCall: true, phone: "555-123-4567" });
     expect(result.success).toBe(true);
   });
 
-  it("the three contact permissions are independent — email-only consent doesn't require a phone number", () => {
+  it("REGRESSION: there is no consentToTextMessage field anymore — passing one is silently ignored (not an error), and doesn't trigger the phone-required rule the way consentToPhoneCall does. A text-consent checkbox existed briefly and was removed (no texting feature exists); this guards against it quietly reappearing via a stray field on the schema.", () => {
+    const result = leadSubmissionSchema.safeParse({ ...base, consentToTextMessage: true, phone: "" });
+    expect(result.success).toBe(true);
+  });
+
+  it("the two contact permissions are independent — email-only consent doesn't require a phone number", () => {
     const result = leadSubmissionSchema.safeParse({ ...base, consentToEmailFollowUp: true });
     expect(result.success).toBe(true);
   });

@@ -1,5 +1,6 @@
 import { getLeadAdapter } from "@/lib/growth-coach/adapters";
 import { buildOwnerSummary } from "@/lib/growth-coach/lead-profile";
+import { cn } from "@/lib/utils";
 import type { LeadProfile } from "@/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -104,7 +105,7 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
         </div>
 
         <div className="rounded-2xl border border-ink-100 bg-white p-6">
-          <h2 className="font-display text-lg font-semibold text-ink-900">Assessment &amp; Consent</h2>
+          <h2 className="font-display text-lg font-semibold text-ink-900">Assessment</h2>
           <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
             <Row label="Primary goal" value={summary.primaryGoal} />
             <Row label="Primary challenge" value={summary.primaryChallenge} />
@@ -112,10 +113,45 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
             <Row label="Recommended plan" value={summary.recommendedPlan} />
             <Row label="Qualification" value={summary.qualification} />
             <Row label="Consultation requested" value={summary.consultationRequested ? "Yes" : "No"} />
-            <Row label="Email follow-up consent" value={summary.consent.emailFollowUp ? "Yes" : "No"} />
-            <Row label="Phone call consent" value={summary.consent.phoneCall ? "Yes" : "No"} />
-            <Row label="Text message consent" value={summary.consent.textMessage ? "Yes" : "No"} />
-            <Row label="Marketing consent" value={summary.consent.marketing ? "Yes" : "No"} />
+          </dl>
+        </div>
+
+        <div className="rounded-2xl border border-ink-100 bg-white p-6 lg:col-span-2">
+          <h2 className="font-display text-lg font-semibold text-ink-900">Consent Record</h2>
+          <p className="mt-1 text-xs text-ink-500">
+            The full record of what this visitor opted into, when, and against which disclosure/terms version — kept
+            for dispute resolution, not just display.
+          </p>
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="border-b border-ink-100 text-xs uppercase tracking-wide text-ink-500">
+                <tr>
+                  <th className="py-2 pr-4">Channel</th>
+                  <th className="py-2 pr-4">Consented</th>
+                  <th className="py-2 pr-4">When</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { label: "Report delivery (required at submission)", granted: lead.consentToSaveReport, when: lead.reportConsentTimestamp },
+                  { label: "Email follow-up (beyond the report)", granted: lead.consentToEmailFollowUp ?? false, when: lead.contactConsentTimestamp },
+                  { label: "Phone call", granted: lead.consentToPhoneCall ?? false, when: lead.contactConsentTimestamp },
+                  { label: "Marketing emails", granted: lead.consentToMarketing, when: lead.marketingConsentTimestamp },
+                ].map((row) => (
+                  <tr key={row.label} className="border-b border-ink-50 last:border-0">
+                    <td className="py-2 pr-4">{row.label}</td>
+                    <td className={cn("py-2 pr-4 font-medium", row.granted ? "text-grove-700" : "text-ink-400")}>{row.granted ? "Yes" : "No"}</td>
+                    <td className="py-2 pr-4 text-ink-500">{row.granted && row.when ? new Date(row.when).toISOString() : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <Row label="Consent language version" value={lead.consentLanguageVersion} />
+            <Row label="Terms of Service version accepted" value={lead.consentTermsVersion} />
+            <Row label="Submission IP (hashed, not raw)" value={lead.consentIpHash} />
+            <Row label="Submission user agent" value={lead.consentUserAgent} />
           </dl>
         </div>
 

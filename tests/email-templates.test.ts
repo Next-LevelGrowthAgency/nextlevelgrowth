@@ -35,7 +35,6 @@ function fakeLead(overrides: Partial<LeadProfile> = {}): LeadProfile {
     consentToContact: true,
     consentToEmailFollowUp: true,
     consentToPhoneCall: false,
-    consentToTextMessage: false,
     consentToMarketing: false,
     followUpStatus: "new",
     createdAt: Date.now(),
@@ -84,13 +83,20 @@ describe("Internal lead notification email", () => {
     expect(text.toLowerCase()).toContain("system_derived");
   });
 
-  it("includes consent status for all three granular contact permissions", () => {
+  it("includes consent status for both granular contact permissions", () => {
     const lead = fakeLead();
     const summary = buildOwnerSummary(lead);
     const { html } = buildInternalLeadEmail(lead, summary);
     expect(html).toContain("Email follow-up");
     expect(html).toContain("Phone call");
-    expect(html).toContain("Text message");
+  });
+
+  it("REGRESSION: no longer mentions text-message consent — that checkbox/channel was removed (no texting feature exists)", () => {
+    const lead = fakeLead();
+    const summary = buildOwnerSummary(lead);
+    const { html, text } = buildInternalLeadEmail(lead, summary);
+    expect(html).not.toContain("Text message");
+    expect(text).not.toContain("Text message");
   });
 });
 

@@ -17,7 +17,7 @@ export interface LeadAdapter {
   listLeads(): Promise<LeadProfile[]>;
   recordConsent(
     id: string,
-    consent: { saveReport?: boolean; emailFollowUp?: boolean; phoneCall?: boolean; textMessage?: boolean; marketing?: boolean },
+    consent: { saveReport?: boolean; emailFollowUp?: boolean; phoneCall?: boolean; marketing?: boolean },
     timestamp: number
   ): Promise<LeadProfile | null>;
   saveReport(id: string, reportSummary: string): Promise<LeadProfile | null>;

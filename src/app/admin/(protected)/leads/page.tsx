@@ -8,6 +8,16 @@ export const metadata: Metadata = { title: "Leads — Admin", robots: { index: f
 const SOURCE_LABEL: Record<string, string> = { contact: "Contact form", "growth-audit": "Growth Audit", "growth-coach": "Growth Coach" };
 const STATUS_OPTIONS: NonNullable<LeadProfile["followUpStatus"]>[] = ["new", "contacted", "qualified", "follow-up-needed", "won", "lost"];
 
+/** Compact "which channels did they opt into" summary for the list view — see the lead detail page for the full consent record with timestamps and the audit trail (IP hash, user agent, terms/language versions). */
+function consentSummary(lead: LeadProfile): string {
+  const granted = [
+    lead.consentToEmailFollowUp ? "Email" : null,
+    lead.consentToPhoneCall ? "Phone" : null,
+    lead.consentToMarketing ? "Marketing" : null,
+  ].filter((v): v is string => Boolean(v));
+  return granted.length > 0 ? granted.join(", ") : "Report only";
+}
+
 export default async function AdminLeadsPage({ searchParams }: { searchParams: Promise<{ source?: string; status?: string; q?: string }> }) {
   const { source, status, q } = await searchParams;
   const allLeads = await getLeadAdapter().listLeads();
@@ -71,12 +81,13 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: P
               <th className="px-5 py-3">Source</th>
               <th className="px-5 py-3">Status</th>
               <th className="px-5 py-3">Qualification</th>
+              <th className="px-5 py-3">Consented to</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-5 py-8 text-center text-ink-500">
+                <td colSpan={7} className="px-5 py-8 text-center text-ink-500">
                   No leads match these filters.
                 </td>
               </tr>
@@ -93,6 +104,7 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: P
                   <td className="px-5 py-3">{SOURCE_LABEL[lead.source] ?? lead.source}</td>
                   <td className="px-5 py-3">{lead.followUpStatus ?? "new"}</td>
                   <td className="px-5 py-3">{lead.leadQualificationLevel ?? "—"}</td>
+                  <td className="px-5 py-3 text-ink-600">{consentSummary(lead)}</td>
                 </tr>
               ))
             )}

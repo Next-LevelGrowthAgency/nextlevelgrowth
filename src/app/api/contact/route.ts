@@ -3,8 +3,9 @@ import { getEmailAdapter, getLeadAdapter, isEmailDeliveryActive } from "@/lib/gr
 import { buildContactConfirmationEmail } from "@/lib/growth-coach/email-templates";
 import { verifyTurnstileToken } from "@/lib/growth-coach/spam-protection";
 import { contactSchema } from "@/lib/contact-schema";
-import { CONSENT_LANGUAGE_VERSION } from "@/lib/consent";
+import { CONSENT_LANGUAGE_VERSION, TERMS_OF_SERVICE_VERSION } from "@/lib/consent";
 import { getCurrentUserId } from "@/lib/auth/portal-session";
+import { sha256Hex } from "@/lib/hash";
 import { isRateLimited } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
 import { NextRequest, NextResponse } from "next/server";
@@ -92,6 +93,9 @@ export async function POST(request: NextRequest) {
       consentToEmailFollowUp: true,
       consentToMarketing: false,
       consentLanguageVersion: CONSENT_LANGUAGE_VERSION,
+      consentTermsVersion: TERMS_OF_SERVICE_VERSION,
+      consentIpHash: sha256Hex(ip),
+      consentUserAgent: request.headers.get("user-agent") ?? undefined,
       sourcePage: data.sourcePage,
       referrer: data.referrer,
       utmSource: data.utmSource,
