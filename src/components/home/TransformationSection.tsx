@@ -17,9 +17,9 @@ const before = [
 const after = [
   "Strong online credibility",
   "Easier discovery",
-  "Better lead capture",
+  "More customers reach out",
   "Clearer messaging",
-  "A unified growth strategy",
+  "One clear plan for growth",
   "Confidence about what comes next",
 ];
 
@@ -30,7 +30,7 @@ export function TransformationSection() {
         <SectionHeading
           eyebrow="The Shift"
           title="From Overlooked Online to Impossible to Miss"
-          description="A clear before-and-after view of what changes when your digital presence finally matches the quality of your business."
+          description="Here's what changes when your website finally matches how good your business really is."
         />
 
         <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-2">

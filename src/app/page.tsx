@@ -1,15 +1,15 @@
-import { ConceptPortfolio } from "@/components/home/ConceptPortfolio";
 import { EmpathySection } from "@/components/home/EmpathySection";
 import { FAQSection } from "@/components/home/FAQSection";
 import { FinalCTA } from "@/components/home/FinalCTA";
-import { GrowthFramework } from "@/components/home/GrowthFramework";
 import { Hero } from "@/components/home/Hero";
+import { HomeConceptPortfolio } from "@/components/home/HomeConceptPortfolio";
+import { HomeGrowthFramework } from "@/components/home/HomeGrowthFramework";
+import { HomeWhyUs } from "@/components/home/HomeWhyUs";
 import { Industries } from "@/components/home/Industries";
 import { ProofSection } from "@/components/home/ProofSection";
 import { ServicesOverview } from "@/components/home/ServicesOverview";
 import { Testimonials } from "@/components/home/Testimonials";
 import { TransformationSection } from "@/components/home/TransformationSection";
-import { WhyUs } from "@/components/home/WhyUs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema } from "@/lib/schema";
 import { faqs, siteConfig } from "@/lib/site-config";
@@ -30,9 +30,9 @@ export default function HomePage() {
       <EmpathySection />
       <TransformationSection />
       <ServicesOverview />
-      <GrowthFramework />
-      <WhyUs />
-      <ConceptPortfolio />
+      <HomeGrowthFramework />
+      <HomeWhyUs />
+      <HomeConceptPortfolio />
       <ProofSection />
       <Industries />
       {/* Renders nothing until real, verified testimonials exist in site-config.ts */}

@@ -8,8 +8,8 @@ export function FinalCTA() {
       <Container className="max-w-2xl text-center">
         <h2 className="balance text-display-lg">Your Next Chapter Won&rsquo;t Build Itself.</h2>
         <p className="mt-5 text-lg leading-relaxed text-paper-300">
-          Let&rsquo;s identify what is holding your online presence back and
-          create a clearer path toward growth.
+          Let&rsquo;s find out what&rsquo;s holding your business back online,
+          and fix it.
         </p>
         <div className="mt-8 flex justify-center">
           <Button href={primaryCta.href} size="lg">

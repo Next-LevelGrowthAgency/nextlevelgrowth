@@ -9,14 +9,30 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
+/**
+ * Homepage-only description overrides, keyed by service slug — the
+ * `services` array itself (site-config.ts) is also rendered verbatim on
+ * /services and each /services/[slug] page, so it stays untouched. Any
+ * slug not listed here (currently just "growth-strategy", whose original
+ * description already passed the copy review) falls back to
+ * `service.description` below.
+ */
+const homeServiceDescriptions: Record<string, string> = {
+  "website-design": "A website that makes people trust you and makes it easy to reach out.",
+  "local-seo": "Local SEO and Google Business Profile work that helps customers actually find you.",
+  "digital-marketing": "Digital marketing that turns more visitors into calls, forms, and booked jobs.",
+  "automation-ai-chat": "AI chat that answers questions and grabs customer info, even after hours.",
+  "ongoing-support": "We keep your site running fast, updated, and working the way it should.",
+};
+
 export function ServicesOverview() {
   return (
     <section className="bg-paper-100 py-20 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="How We Help"
-          title="Everything Your Business Needs to Grow Online, Organized Around Outcomes"
-          description="Not a menu of technical deliverables. A set of tools built to move your business forward."
+          title="The Tools Your Business Actually Needs to Grow"
+          description="We don&rsquo;t sell technology for technology&rsquo;s sake. Everything here exists to bring in more customers."
         />
 
         <motion.div
@@ -39,7 +55,7 @@ export function ServicesOverview() {
                   {service.headline}
                 </h3>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-600">
-                  {service.description}
+                  {homeServiceDescriptions[service.slug] ?? service.description}
                 </p>
                 <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-grove-700">
                   Learn more

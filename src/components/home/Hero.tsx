@@ -31,7 +31,7 @@ export function Hero() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-grove-300"
           >
-            Digital Strategy for Ambitious Local Businesses
+            For Local Businesses Ready to Grow
           </motion.p>
 
           <motion.h1
@@ -40,8 +40,8 @@ export function Hero() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
             className="balance text-display-2xl"
           >
-            Your Business Has More Potential.{" "}
-            <span className="text-grove-300">Let&rsquo;s Build What Comes Next.</span>
+            More Customers Start With a Better Website.{" "}
+            <span className="text-grove-300">Let&rsquo;s Build Yours.</span>
           </motion.h1>
 
           <motion.p
@@ -50,9 +50,8 @@ export function Hero() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
             className="mt-6 max-w-xl text-lg leading-relaxed text-paper-300"
           >
-            Next Level Growth helps local businesses attract more customers,
-            strengthen their online presence, and grow with confidence
-            through powerful websites and smarter digital strategy.
+            We build websites, get you found on Google, and handle the
+            marketing that brings customers in.
           </motion.p>
 
           <motion.div

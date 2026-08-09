@@ -69,7 +69,7 @@ export const primaryCta = {
 };
 
 export const secondaryCta = {
-  label: "Explore How We Help",
+  label: "See What We Do",
   href: "/services",
 };
 
@@ -305,14 +305,14 @@ export const conceptProjects: ConceptProject[] = [
 ];
 
 export const capabilityProofs: CapabilityProof[] = [
-  { title: "Mobile-first design", description: "Built for how your customers actually browse.", icon: "Smartphone" },
-  { title: "Conversion-focused structure", description: "Every page has a clear next step.", icon: "MousePointerClick" },
+  { title: "Works great on phones", description: "Built for how your customers actually browse.", icon: "Smartphone" },
+  { title: "Built to turn visitors into customers", description: "Every page has a clear next step.", icon: "MousePointerClick" },
   { title: "Clear calls to action", description: "No confusing menus of options.", icon: "ArrowUpRight" },
-  { title: "Search-friendly technical foundation", description: "Built to be found, not just to look good.", icon: "Search" },
-  { title: "Fast performance", description: "Speed is a trust signal and a ranking factor.", icon: "Gauge" },
+  { title: "Built to show up on Google", description: "Built to be found, not just to look good.", icon: "Search" },
+  { title: "Fast performance", description: "A slow site loses customers. Ours are fast.", icon: "Gauge" },
   { title: "Accessible experience", description: "Usable for every visitor, on every device.", icon: "Accessibility" },
-  { title: "Analytics readiness", description: "Set up to measure what actually matters.", icon: "BarChart3" },
-  { title: "Lead-capture systems", description: "Built in from day one, not bolted on later.", icon: "Inbox" },
+  { title: "You'll know what's working", description: "Set up to measure what actually matters.", icon: "BarChart3" },
+  { title: "Never miss a customer inquiry", description: "Built in from day one, not bolted on later.", icon: "Inbox" },
 ];
 
 export const industries: IndustryTag[] = [
@@ -383,7 +383,7 @@ export const faqs: FaqItem[] = [
   {
     question: "How much do your services cost?",
     answer:
-      "Pricing depends on scope. A single-page site and a full multi-service engagement aren't priced the same way. We'll give you clear, itemized pricing after understanding your goals, with no obligation.",
+      "Pricing depends on scope. A single-page site and a full multi-service project aren't priced the same way. We'll give you clear, itemized pricing after understanding your goals, with no obligation.",
   },
   {
     question: "Can we start small and expand later?",
@@ -405,7 +405,7 @@ export const faqs: FaqItem[] = [
 export const testimonials: Testimonial[] = [];
 
 export const trustStatement =
-  "Clear strategy. Honest communication. Solutions built around your business.";
+  "No fluff. No fake promises. Just honest work that helps your business grow.";
 
 export const announcementBarMessage =
   "Growth strategies built for ambitious local businesses.";

@@ -18,8 +18,8 @@ export function ProofSection() {
       <Container>
         <SectionHeading
           eyebrow="Built to Perform"
-          title="A Foundation Designed for Real Business Results"
-          description="We don't publish invented statistics. Here's what every Next Level Growth build is engineered to deliver from day one."
+          title="Built to Actually Work for Your Business"
+          description="We don't publish invented statistics. Here's what you actually get, starting on day one."
           tone="dark"
         />
 
