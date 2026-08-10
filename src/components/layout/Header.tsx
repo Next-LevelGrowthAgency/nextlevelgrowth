@@ -43,7 +43,11 @@ export function Header() {
         )}
       >
         <div className="container-content flex h-16 items-center justify-between">
-          <Link href="/" className="font-display text-lg font-semibold tracking-tight text-ink-900">
+          <Link
+            id="site-logo"
+            href="/"
+            className="font-display text-lg font-semibold tracking-tight text-ink-900"
+          >
             {siteConfig.shortName}
           </Link>
 

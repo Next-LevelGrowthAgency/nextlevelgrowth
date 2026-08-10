@@ -13,6 +13,26 @@
      * stays in its normal corner position.
      */
     --growth-coach-desktop-right-offset: 48px;
+
+    /*
+     * Site-wide stacking order — every top-level fixed/sticky layer's
+     * z-index, listed once, in ascending order. Existing values
+     * (header/growth-coach launcher at 50, Growth Coach's own report/
+     * score/lead-form sub-modals at 60/65/70) were already in the
+     * codebase as bare Tailwind classes with no single place explaining
+     * the hierarchy between them — documented here now rather than
+     * changed, since they're not the source of any known bug. --z-mobile-nav
+     * is new: it must sit above literally everything else, including
+     * Growth Coach's highest sub-modal, because opening the hamburger
+     * menu is a full-screen takeover regardless of what else happens to
+     * be open. Anything new that needs to float above normal page
+     * content should pick a value here rather than reaching for an
+     * arbitrary one-off number.
+     */
+    --z-header: 50;
+    --z-growth-coach-launcher: 50;
+    --z-growth-coach-modal: 70; /* highest of Growth Coach's own 60/65/70 sub-modals */
+    --z-mobile-nav: 100;
   }
 
   html {

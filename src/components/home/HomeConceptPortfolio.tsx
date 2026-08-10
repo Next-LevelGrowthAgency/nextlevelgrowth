@@ -40,12 +40,19 @@ export function HomeConceptPortfolio() {
           </Button>
         </div>
 
+        {/*
+          items-start below: cards report their own natural height instead
+          of CSS grid's default row-stretch — a card whose title wraps to
+          2-3 lines no longer forces every other card in that row to match
+          its height, which was leaving noticeable empty space at the
+          bottom of the shorter cards.
+        */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={viewportOnce}
           variants={staggerChildren()}
-          className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-14 grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {conceptProjects.map((project) => (
             <motion.article
@@ -55,12 +62,27 @@ export function HomeConceptPortfolio() {
             >
               <div className={`h-32 bg-gradient-to-br ${accentClasses[project.accentColor]}`} aria-hidden="true" />
               <div className="flex flex-1 flex-col p-6">
-                {/* items-start (not items-center): if a longer industry name wraps to two lines against the badge, the badge stays pinned to the first line instead of drifting to the vertical middle of both. */}
+                {/*
+                  items-start (not items-center): if a longer industry name
+                  wraps to two lines against the badge, the badge stays
+                  pinned to the first line instead of drifting to the
+                  vertical middle of both.
+                  min-w-0 on the title: without it, a flex child's default
+                  min-width is `auto` (its own content's intrinsic width),
+                  which can stop it from ever wrapping and push the badge
+                  out toward/past the card edge instead — min-w-0 lets the
+                  title actually shrink and wrap within the space the badge
+                  (shrink-0, so IT never gets squeezed) leaves available.
+                  break-words is a safety net for a single word longer than
+                  the card is wide.
+                */}
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-display text-display-md font-semibold text-ink-900">
+                  <h3 className="min-w-0 flex-1 break-words font-display text-display-md font-semibold text-ink-900">
                     {project.industry}
                   </h3>
-                  <Badge tone="ink">{project.label}</Badge>
+                  <Badge tone="ink" className="shrink-0">
+                    {project.label}
+                  </Badge>
                 </div>
 
                 <dl className="mt-4 space-y-3">

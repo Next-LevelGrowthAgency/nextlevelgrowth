@@ -255,6 +255,7 @@ export function GrowthCoach() {
 
   return (
     <div
+      id="growth-coach-root"
       className={cn(
         "fixed z-50",
         expanded ? "inset-0" : "bottom-6",
