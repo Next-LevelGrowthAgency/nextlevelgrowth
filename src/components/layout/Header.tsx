@@ -13,12 +13,23 @@ export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
+  // BUGFIX: re-sync on every route change, not just on mount. Header lives
+  // in the root layout and never remounts between pages, so this effect
+  // used to run exactly once (empty deps) and then depend entirely on a
+  // future 'scroll' event to correct `scrolled` after a client-side
+  // navigation. That's usually fine, but Next.js's own dev warning
+  // ("Detected scroll-behavior: smooth... will no longer automatically
+  // disable smooth scrolling during route transitions") confirms this
+  // exact combination — smooth-scroll CSS (globals.css) plus App Router
+  // route transitions — is a known timing-sensitive area. Explicitly
+  // reading window.scrollY the instant the route changes removes the
+  // race entirely, instead of trusting a scroll event to arrive in time.
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [pathname]);
 
   return (
     <div className="sticky top-0 z-50">

@@ -27,10 +27,10 @@ export function WhyUs() {
           {differentiators.map((item) => (
             <motion.div key={item.title} variants={fadeUp} className="rounded-2xl bg-white p-6">
               <Icon name={item.icon} className="h-5 w-5 text-grove-600" />
-              <h3 className="mt-4 font-display text-base font-semibold text-ink-900">
+              <h3 className="mt-4 font-display text-display-md font-semibold text-ink-900">
                 {item.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-600">{item.description}</p>
+              <p className="mt-2 text-body text-ink-600">{item.description}</p>
             </motion.div>
           ))}
         </motion.div>

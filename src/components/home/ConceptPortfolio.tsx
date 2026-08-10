@@ -51,25 +51,26 @@ export function ConceptPortfolio() {
             >
               <div className={`h-32 bg-gradient-to-br ${accentClasses[project.accentColor]}`} aria-hidden="true" />
               <div className="flex flex-1 flex-col p-6">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="font-display text-lg font-semibold text-ink-900">
+                {/* items-start (not items-center): if a longer industry name wraps to two lines against the badge, the badge stays pinned to the first line instead of drifting to the vertical middle of both. */}
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-display text-display-md font-semibold text-ink-900">
                     {project.industry}
                   </h3>
                   <Badge tone="ink">{project.label}</Badge>
                 </div>
 
-                <dl className="mt-4 space-y-3 text-sm">
+                <dl className="mt-4 space-y-3">
                   <div>
-                    <dt className="font-semibold text-ink-700">Challenge</dt>
-                    <dd className="text-ink-600">{project.challenge}</dd>
+                    <dt className="text-sm font-semibold text-ink-700">Challenge</dt>
+                    <dd className="text-body text-ink-600">{project.challenge}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-ink-700">Strategic Direction</dt>
-                    <dd className="text-ink-600">{project.strategy}</dd>
+                    <dt className="text-sm font-semibold text-ink-700">Strategic Direction</dt>
+                    <dd className="text-body text-ink-600">{project.strategy}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-ink-700">Objective</dt>
-                    <dd className="text-ink-600">{project.objective}</dd>
+                    <dt className="text-sm font-semibold text-ink-700">Objective</dt>
+                    <dd className="text-body text-ink-600">{project.objective}</dd>
                   </div>
                 </dl>
 

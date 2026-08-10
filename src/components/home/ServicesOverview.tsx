@@ -51,10 +51,10 @@ export function ServicesOverview() {
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-grove-100 text-grove-700">
                   <Icon name={service.icon} className="h-5 w-5" />
                 </div>
-                <h3 className="mt-5 text-lg font-display font-semibold text-ink-900">
+                <h3 className="mt-5 text-display-md font-display font-semibold text-ink-900">
                   {service.headline}
                 </h3>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-600">
+                <p className="mt-2 flex-1 text-body text-ink-600">
                   {homeServiceDescriptions[service.slug] ?? service.description}
                 </p>
                 <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-grove-700">

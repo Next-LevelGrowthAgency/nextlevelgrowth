@@ -41,7 +41,7 @@ export function EmpathySection() {
               className="flex items-start gap-3 rounded-2xl border border-ink-100 bg-white p-5"
             >
               <Icon name={item.icon} className="mt-0.5 h-5 w-5 shrink-0 text-ink-500" />
-              <span className="text-sm leading-relaxed text-ink-700">{item.text}</span>
+              <span className="text-body text-ink-700">{item.text}</span>
             </motion.li>
           ))}
         </motion.ul>

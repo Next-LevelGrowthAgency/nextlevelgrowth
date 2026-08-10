@@ -14,11 +14,11 @@ export function PageHero({ eyebrow, title, description, ctaLabel, ctaHref }: Pag
   return (
     <section className="border-b border-ink-100 bg-ink-900 py-20 text-paper-100 sm:py-28">
       <Container className="max-w-3xl">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-grove-300">
+        <p className="text-eyebrow mb-4 text-grove-300">
           {eyebrow}
         </p>
         <h1 className="balance text-display-xl">{title}</h1>
-        <p className="mt-5 max-w-2xl text-lg leading-relaxed text-paper-300">{description}</p>
+        <p className="mt-5 max-w-2xl text-subhead text-paper-300">{description}</p>
         {ctaLabel && ctaHref ? (
           <div className="mt-8">
             <Button href={ctaHref} size="lg">

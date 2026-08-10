@@ -29,7 +29,7 @@ export function Hero() {
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-grove-300"
+            className="text-eyebrow mb-6 text-grove-300"
           >
             For Local Businesses Ready to Grow
           </motion.p>
@@ -48,7 +48,7 @@ export function Hero() {
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
-            className="mt-6 max-w-xl text-lg leading-relaxed text-paper-300"
+            className="mt-6 max-w-xl text-subhead text-paper-300"
           >
             We build websites, get you found on Google, and handle the
             marketing that brings customers in.
@@ -72,7 +72,7 @@ export function Hero() {
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="mt-6 text-sm text-paper-400"
+            className="mt-6 text-body text-paper-400"
           >
             {trustStatement}
           </motion.p>

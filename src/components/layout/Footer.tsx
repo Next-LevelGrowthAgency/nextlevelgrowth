@@ -22,7 +22,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="col-span-2">
             <p className="font-display text-lg font-semibold text-paper-100">{siteConfig.shortName}</p>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-paper-400">
+            <p className="mt-3 max-w-xs text-body text-paper-400">
               Helping local businesses reach their next level through modern
               websites, local SEO, and smarter digital strategy.
             </p>
@@ -32,7 +32,12 @@ export function Footer() {
                   const Icon = SOCIAL_ICON[platform as keyof typeof SOCIAL_ICON];
                   if (!Icon) return null;
                   return (
-                    <a key={platform} href={href} aria-label={`${siteConfig.name} on ${platform}`} className="text-paper-400 hover:text-paper-100">
+                    <a
+                      key={platform}
+                      href={href}
+                      aria-label={`${siteConfig.name} on ${platform}`}
+                      className="-m-3 inline-flex items-center justify-center p-3 text-paper-400 hover:text-paper-100"
+                    >
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </a>
                   );
@@ -42,11 +47,11 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-paper-500">Navigate.</p>
+            <p className="text-eyebrow text-paper-500">Navigate.</p>
             <ul className="mt-4 space-y-3">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-paper-300 hover:text-paper-100">
+                  <Link href={link.href} className="-my-3 inline-block py-3 text-sm text-paper-300 hover:text-paper-100">
                     {link.label}
                   </Link>
                 </li>
@@ -55,11 +60,11 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-paper-500">Services</p>
+            <p className="text-eyebrow text-paper-500">Services</p>
             <ul className="mt-4 space-y-3">
               {footerServiceLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-paper-300 hover:text-paper-100">
+                  <Link href={link.href} className="-my-3 inline-block py-3 text-sm text-paper-300 hover:text-paper-100">
                     {link.label}
                   </Link>
                 </li>
@@ -68,16 +73,16 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-paper-500">Contact</p>
+            <p className="text-eyebrow text-paper-500">Contact</p>
             <ul className="mt-4 space-y-3 text-sm text-paper-300">
               <li>
-                <a href={`mailto:${siteConfig.contact.email}`} className="hover:text-paper-100">
+                <a href={`mailto:${siteConfig.contact.email}`} className="-my-3 inline-block py-3 hover:text-paper-100">
                   {siteConfig.contact.email}
                 </a>
               </li>
               {hasPhone ? (
                 <li>
-                  <a href={`tel:${siteConfig.contact.phoneHref}`} className="hover:text-paper-100">
+                  <a href={`tel:${siteConfig.contact.phoneHref}`} className="-my-3 inline-block py-3 hover:text-paper-100">
                     {siteConfig.contact.phone}
                   </a>
                 </li>
@@ -92,7 +97,7 @@ export function Footer() {
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {footerLegalLinks.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="hover:text-paper-100">
+                <Link href={link.href} className="-my-3 inline-block py-3 hover:text-paper-100">
                   {link.label}
                 </Link>
               </li>

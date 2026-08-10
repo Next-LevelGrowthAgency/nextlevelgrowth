@@ -31,8 +31,8 @@ export function GrowthFramework() {
               className="relative rounded-2xl border border-ink-700 bg-ink-800/60 p-6"
             >
               <span className="font-display text-3xl text-grove-400">{stage.number}</span>
-              <h3 className="mt-4 text-lg font-display font-semibold">{stage.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-paper-400">{stage.description}</p>
+              <h3 className="mt-4 text-display-md font-display font-semibold">{stage.title}</h3>
+              <p className="mt-2 text-body text-paper-400">{stage.description}</p>
               {index < frameworkStages.length - 1 ? (
                 <span
                   aria-hidden="true"

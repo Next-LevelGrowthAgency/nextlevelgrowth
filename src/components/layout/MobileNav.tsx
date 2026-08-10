@@ -33,7 +33,7 @@ export function MobileNav() {
         aria-controls="mobile-nav-panel"
         aria-label={open ? "Close menu" : "Open menu"}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-10 w-10 items-center justify-center rounded-full text-ink-900"
+        className="flex h-11 w-11 items-center justify-center rounded-full text-ink-900"
       >
         {open ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
       </button>
@@ -68,7 +68,7 @@ export function MobileNav() {
             {hasPhone ? (
               <a
                 href={`tel:${siteConfig.contact.phoneHref}`}
-                className="text-center text-sm text-ink-600 underline underline-offset-4"
+                className="-my-3 inline-block py-3 text-center text-sm text-ink-600 underline underline-offset-4"
               >
                 or call {siteConfig.contact.phone}
               </a>

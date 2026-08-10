@@ -66,6 +66,20 @@
   }
 
   /*
+   * The small uppercase label above a headline ("How We Help", "Our
+   * Work") — formalizes a pattern that used to be copy-pasted with a
+   * real inconsistency baked in: SectionHeading/PageHero used
+   * tracking-[0.18em], Footer's column labels used the built-in
+   * tracking-wide (0.025em) — visibly less spaced out for no reason.
+   * One definition now; color is still set by the caller, since it
+   * varies (grove-700 on light sections, grove-300/paper-500 on dark
+   * ones) — this utility only owns the type-level properties.
+   */
+  .text-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em];
+  }
+
+  /*
    * Positions the OPENED Growth Coach panel — right-6 (1.5rem) plus the
    * desktop offset above. On mobile the panel overrides its own position
    * to fixed inset-0 regardless (see GrowthCoachPanel.tsx), so this only

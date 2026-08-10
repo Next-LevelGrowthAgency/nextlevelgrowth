@@ -33,8 +33,8 @@ export function ProofSection() {
           {capabilityProofs.map((item) => (
             <motion.div key={item.title} variants={fadeUp} className="rounded-2xl border border-ink-700 p-6">
               <Icon name={item.icon} className="h-5 w-5 text-grove-400" />
-              <h3 className="mt-4 font-display text-base font-semibold">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-paper-400">{item.description}</p>
+              <h3 className="mt-4 font-display text-display-md font-semibold">{item.title}</h3>
+              <p className="mt-2 text-body text-paper-400">{item.description}</p>
             </motion.div>
           ))}
         </motion.div>

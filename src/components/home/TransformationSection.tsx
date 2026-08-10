@@ -41,7 +41,7 @@ export function TransformationSection() {
             variants={fadeUp}
             className="rounded-3xl border border-ink-200 bg-white p-8"
           >
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">Before</p>
+            <p className="text-eyebrow text-ink-500">Before</p>
             <ul className="mt-5 space-y-4">
               {before.map((item) => (
                 <li key={item} className="flex items-center gap-3 text-ink-600">
@@ -60,7 +60,7 @@ export function TransformationSection() {
             transition={{ delay: 0.1 }}
             className="rounded-3xl border border-grove-200 bg-grove-50 p-8"
           >
-            <p className="text-xs font-semibold uppercase tracking-wide text-grove-700">After</p>
+            <p className="text-eyebrow text-grove-700">After</p>
             <ul className="mt-5 space-y-4">
               {after.map((item) => (
                 <li key={item} className="flex items-center gap-3 text-ink-800">

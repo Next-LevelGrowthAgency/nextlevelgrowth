@@ -87,11 +87,43 @@ const config: Config = {
         display: ["var(--font-display)", "Georgia", "serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
+      /**
+       * The type scale. Four tiers, each with one clear job — pick the
+       * token for the ROLE the text plays, not the pixel size you want:
+       *
+       *   display-*  Page/section headlines (H1s, SectionHeading's H2).
+       *              Fluid (clamp), tight line-height (1.02-1.15) — big,
+       *              confident, and not meant to be read at length.
+       *              display-md doubles as the CARD-TITLE tier (service
+       *              cards, differentiator cards, framework stages,
+       *              capability cards) — one clear size step above body
+       *              copy, distinct from both the H2 above it and the
+       *              body text inside the same card.
+       *   subhead    Section intro paragraphs (SectionHeading's
+       *              `description`, PageHero's description) — one step
+       *              larger than body copy, generous line-height, meant
+       *              to be skimmed as a single short paragraph.
+       *   body       The default for actual reading copy: card
+       *              descriptions, list items, anything longer than a
+       *              short label. 16px is a deliberate floor, not a
+       *              starting point — mobile body text below this size
+       *              fails a real readability/accessibility bar, not
+       *              just a style preference.
+       *   (unnamed)  Short UI chrome — nav links, footer link lists,
+       *              badges, tags, eyebrow labels — stays on Tailwind's
+       *              built-in text-xs/text-sm. Those are conventionally
+       *              smaller than body copy on every reference site
+       *              (Stripe, Linear, Notion, Apple included) and aren't
+       *              meant to be read at paragraph length, so the 16px
+       *              floor doesn't apply to them.
+       */
       fontSize: {
         "display-2xl": ["clamp(2.75rem, 2.1rem + 3vw, 5rem)", { lineHeight: "1.02", letterSpacing: "-0.02em" }],
         "display-xl": ["clamp(2.25rem, 1.8rem + 2.2vw, 3.75rem)", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
         "display-lg": ["clamp(1.875rem, 1.6rem + 1.4vw, 2.75rem)", { lineHeight: "1.1", letterSpacing: "-0.01em" }],
         "display-md": ["clamp(1.5rem, 1.35rem + 0.8vw, 2rem)", { lineHeight: "1.15" }],
+        subhead: ["1.125rem", { lineHeight: "1.6" }],
+        body: ["1rem", { lineHeight: "1.6" }],
       },
       maxWidth: {
         content: "1200px",

@@ -18,8 +18,12 @@ const variantStyles: Record<Variant, string> = {
     "bg-paper-100 text-ink-900 hover:bg-white shadow-soft hover:shadow-lifted focus-visible:outline-paper-100",
 };
 
+// py-3 + text-sm's 20px line-height = 44px tall — the minimum tap-target
+// size (was py-2.5, computing to 40px; the only two mobile-visible size="md"
+// buttons on the site, both "View All Work" in Concept Portfolio, were
+// under the floor).
 const sizeStyles: Record<Size, string> = {
-  md: "px-5 py-2.5 text-sm",
+  md: "px-5 py-3 text-sm",
   lg: "px-7 py-3.5 text-base",
 };
 
