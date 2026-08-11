@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { conceptProjects } from "@/lib/site-config";
 import { fadeUp, staggerChildren, viewportOnce } from "@/lib/motion";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const accentClasses = {
   signal: "from-signal-500 to-signal-700",
@@ -56,7 +57,20 @@ export function ConceptPortfolio() {
               variants={fadeUp}
               className="flex flex-col overflow-hidden rounded-2xl border border-ink-100 bg-white"
             >
-              <div className={`h-32 bg-gradient-to-br ${accentClasses[project.accentColor]}`} aria-hidden="true" />
+              {project.image ? (
+                <div className="relative h-32 w-full overflow-hidden">
+                  <Image
+                    src={project.image}
+                    alt={project.imageAlt ?? ""}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                    style={{ objectPosition: project.imagePosition ?? "center" }}
+                  />
+                </div>
+              ) : (
+                <div className={`h-32 bg-gradient-to-br ${accentClasses[project.accentColor]}`} aria-hidden="true" />
+              )}
               <div className="flex flex-1 flex-col p-6">
                 {/*
                   items-start (not items-center): if a longer industry name

@@ -32,6 +32,15 @@ export type ConceptProject = {
   services: string[];
   objective: string;
   accentColor: "signal" | "grove" | "ember" | "ink";
+  // Card visual. Optional: projects without a clean image (nothing baked
+  // into the photo that could read as a real business name) fall back to
+  // the accentColor gradient block instead.
+  image?: string;
+  imageAlt?: string;
+  // CSS object-position value (e.g. "50% 60%"), tuned per photo so the
+  // card's short 128px-tall crop favors the subject over incidental wall
+  // text/signage. Defaults to "center" when omitted.
+  imagePosition?: string;
 };
 
 export type CapabilityProof = {

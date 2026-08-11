@@ -241,6 +241,9 @@ export const conceptProjects: ConceptProject[] = [
     services: ["Website Design", "Local SEO", "Google Business Profile"],
     objective: "Increase reservation requests and walk-in confidence from mobile search.",
     accentColor: "ember",
+    image: "/images/concepts/restaurant.png",
+    imageAlt: "Warm, softly lit restaurant dining room set for service",
+    imagePosition: "50% 55%",
   },
   {
     slug: "concept-dental-practice",
@@ -253,6 +256,9 @@ export const conceptProjects: ConceptProject[] = [
     services: ["Website Design", "Local SEO", "Lead Capture"],
     objective: "Convert more searchers into scheduled new-patient appointments.",
     accentColor: "signal",
+    image: "/images/concepts/dental.png",
+    imageAlt: "Clean, modern dental treatment room with chair and equipment",
+    imagePosition: "50% 60%",
   },
   {
     slug: "concept-home-services",
@@ -265,6 +271,9 @@ export const conceptProjects: ConceptProject[] = [
     services: ["Website Design", "Automation & AI Chat", "Digital Marketing"],
     objective: "Create a steady, predictable pipeline of qualified service requests.",
     accentColor: "grove",
+    image: "/images/concepts/home-services.png",
+    imageAlt: "Unbranded work van parked in a residential driveway",
+    imagePosition: "50% 55%",
   },
   {
     slug: "concept-fitness-studio",
@@ -277,6 +286,9 @@ export const conceptProjects: ConceptProject[] = [
     services: ["Website Design", "Digital Marketing"],
     objective: "Turn website visits into trial-class signups.",
     accentColor: "ember",
+    image: "/images/concepts/fitness.png",
+    imageAlt: "Modern strength-training studio with racks, benches, and free weights",
+    imagePosition: "50% 65%",
   },
   {
     slug: "concept-local-retailer",
@@ -289,6 +301,9 @@ export const conceptProjects: ConceptProject[] = [
     services: ["Website Design", "Local SEO"],
     objective: "Increase in-store visits driven by local search discovery.",
     accentColor: "signal",
+    image: "/images/concepts/retail.png",
+    imageAlt: "Boutique clothing shop with folded apparel displayed on a wooden table",
+    imagePosition: "50% 55%",
   },
   {
     slug: "concept-professional-services",
@@ -301,6 +316,9 @@ export const conceptProjects: ConceptProject[] = [
     services: ["Website Design", "Digital Marketing", "Ongoing Support"],
     objective: "Generate more qualified consultation requests from organic search.",
     accentColor: "ink",
+    image: "/images/concepts/professional-services.png",
+    imageAlt: "Modern office conference room and reception area with glass walls",
+    imagePosition: "50% 60%",
   },
 ];
 
