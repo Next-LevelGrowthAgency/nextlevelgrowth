@@ -5,6 +5,14 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
 import { primaryCta } from "@/lib/site-config";
 import type { Metadata } from "next";
+import Image from "next/image";
+
+const founderDetails = [
+  "Nevada Based",
+  "Lean Six Sigma Mindset",
+  "Ultramarathon Runner",
+  "Husband & Father",
+];
 
 export const metadata: Metadata = {
   title: "About",
@@ -49,37 +57,65 @@ export default function AboutPage() {
       </Section>
 
       <Section tone="paper">
-        <Container className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-wide text-grove-700">Founder</p>
-          <h2 className="mt-2 font-display text-display-md text-ink-900">Dimitri Del Peloso</h2>
-          <p className="mt-1 text-ink-600">Founder, Next Level Growth</p>
+        <Container className="max-w-5xl">
+          <p className="text-xs font-semibold uppercase tracking-wide text-grove-700">Meet the Founder</p>
 
-          <div className="mt-6 space-y-5 text-lg leading-relaxed text-ink-700">
-            <p>
-              Dimitri Del Peloso founded Next Level Growth with a belief that small and growing businesses deserve
-              access to strong strategy, modern technology, and practical digital-growth systems.
-            </p>
-            <p>
-              His professional background is rooted in leadership, operations, continuous improvement,
-              problem-solving, and developing high-performing teams. Throughout his career, Dimitri has focused on
-              identifying gaps, improving systems, measuring results, and helping people turn uncertainty into clear
-              action.
-            </p>
-            <p>
-              That approach shapes Next Level Growth. Rather than offering generic websites or one-size-fits-all
-              marketing, every engagement begins by understanding the business, its customers, its goals, and the
-              obstacles preventing growth.
-            </p>
-            <p>
-              Next Level Growth combines custom website development, digital strategy, SEO, lead generation,
-              automation, and AI-powered tools to help businesses create stronger foundations and move confidently
-              toward their next level.
-            </p>
-            <p>
-              Dimitri&rsquo;s leadership philosophy centers on accountability, discipline, practical execution,
-              continuous improvement, and genuine service. His goal is not simply to deliver a website. It is to
-              help business owners build a stronger system for long-term growth.
-            </p>
+          <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[340px_1fr] lg:gap-16">
+            <div className="mx-auto w-full max-w-xs lg:mx-0 lg:max-w-none">
+              <div className="relative aspect-square overflow-hidden rounded-3xl shadow-lifted">
+                <Image
+                  src="/images/brand/founder-dimitri.jpg"
+                  alt="Dimitri Del Peloso, founder of Next Level Growth"
+                  fill
+                  sizes="(min-width: 1024px) 340px, (min-width: 640px) 384px, 80vw"
+                  className="object-cover"
+                />
+              </div>
+
+              <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-ink-100 pt-6 text-sm text-ink-600 lg:grid-cols-1">
+                {founderDetails.map((detail) => (
+                  <li key={detail} className="flex items-center gap-2">
+                    <span className="h-1 w-1 shrink-0 rounded-full bg-grove-500" aria-hidden="true" />
+                    {detail}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="font-display text-display-md text-ink-900">Dimitri Del Peloso</h2>
+              <p className="mt-1 text-ink-600">Founder, Next Level Growth</p>
+
+              <div className="mt-6 max-w-prose space-y-5 text-lg leading-relaxed text-ink-700">
+                <p>
+                  I&rsquo;m a husband, father of two, Christian, ultramarathon runner, and someone who has called
+                  Nevada home for more than a decade. My faith in Jesus Christ and my family are a big part of who I
+                  am and how I try to lead, serve, and do business.
+                </p>
+                <p>
+                  Professionally, much of my background has centered around leadership, continuous improvement, and
+                  Lean Six Sigma principles. I&rsquo;ve spent years learning how to look at a process, find what is
+                  holding it back, remove unnecessary waste, and build better systems that produce better results.
+                  That same mindset is at the heart of Next Level Growth.
+                </p>
+                <p>
+                  Running ultramarathons teaches you that meaningful progress rarely comes from one huge
+                  breakthrough. It comes through discipline, solving problems as they come, and continuing to move
+                  forward. That&rsquo;s the same mindset I bring into the work I do with businesses.
+                </p>
+                <p>
+                  My mission with Next Level Growth is simple: help businesses get more exposure, reach more of the
+                  right people, and create better opportunities to grow. Whether that means improving your website,
+                  strengthening your online presence, or helping you use better systems and technology, the goal is
+                  always the same: move your business forward.
+                </p>
+                <p>
+                  I want people to know who they&rsquo;re working with. I&rsquo;m not interested in building
+                  something and disappearing. I want to understand your business, what matters to you, and where
+                  you&rsquo;re trying to go, then help you build toward that next level.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="mt-10 rounded-2xl border border-ink-100 bg-white p-8 shadow-soft">

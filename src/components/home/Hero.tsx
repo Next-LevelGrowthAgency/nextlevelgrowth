@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { primaryCta, secondaryCta, trustStatement } from "@/lib/site-config";
 import { motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 
 /**
- * Hero — the highest-stakes section on the site. Deliberately avoids stock
- * photography of people pointing at laptops, handshakes, or rockets/mountains.
- * The visual is an abstract "scattered signals becoming one growth path"
- * composition, built entirely in CSS/SVG so it stays fast and on-brand
- * without depending on a licensed photo.
+ * Hero — the highest-stakes section on the site. Background is the Reno
+ * skyline photo (public/images/brand/hero-reno-growth.png); its own dark
+ * negative space sits on the left, so the gradient overlay below only needs
+ * to reinforce contrast at narrow viewports where that dark zone compresses.
  */
 export function Hero() {
   const prefersReducedMotion = useReducedMotion();
@@ -18,9 +18,16 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden bg-ink-900 text-paper-100">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 right-[-10%] h-[520px] w-[520px] rounded-full bg-grove-600/20 blur-3xl" />
-        <div className="absolute bottom-[-20%] left-[-10%] h-[420px] w-[420px] rounded-full bg-signal-500/15 blur-3xl" />
-        <GrowthPathway reduced={!!prefersReducedMotion} />
+        <Image
+          src="/images/brand/hero-reno-growth.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[78%_center] sm:object-[65%_center] lg:object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink-900 via-ink-900/70 to-transparent sm:via-ink-900/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent" />
       </div>
 
       <Container className="relative py-28 sm:py-36 lg:py-44">
@@ -79,55 +86,5 @@ export function Hero() {
         </div>
       </Container>
     </section>
-  );
-}
-
-/** Abstract, decorative "scattered points converging into one path" visual. */
-function GrowthPathway({ reduced }: { reduced: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 800 600"
-      className="absolute -right-24 top-1/2 hidden h-[600px] w-[800px] -translate-y-1/2 opacity-70 lg:block"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="pathGradient" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#3FBE8F" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="#3FBE8F" stopOpacity="0.9" />
-        </linearGradient>
-      </defs>
-      {[
-        "M60,480 C220,460 260,380 400,340",
-        "M40,360 C200,380 260,340 400,320",
-        "M80,220 C220,260 280,300 400,320",
-        "M120,120 C240,180 300,260 400,300",
-      ].map((d, i) => (
-        <path
-          key={d}
-          d={d}
-          fill="none"
-          stroke="url(#pathGradient)"
-          strokeWidth={1.5}
-          strokeDasharray="4 6"
-          className={reduced ? undefined : "animate-fade-in"}
-          style={{ animationDelay: `${i * 0.15}s` }}
-        />
-      ))}
-      <path
-        d="M400,320 C520,300 560,260 700,240"
-        fill="none"
-        stroke="#3FBE8F"
-        strokeWidth={2.5}
-      />
-      <circle cx="700" cy="240" r="6" fill="#3FBE8F" />
-      {[
-        [60, 480],
-        [40, 360],
-        [80, 220],
-        [120, 120],
-      ].map(([cx, cy]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="4" fill="#5C82F2" opacity={0.6} />
-      ))}
-    </svg>
   );
 }
