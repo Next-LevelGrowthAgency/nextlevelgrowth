@@ -707,3 +707,64 @@ export type AuditEvent = {
   detail?: string;
   timestamp: number;
 };
+
+// -----------------------------------------------------------------------
+// Pricing page
+// -----------------------------------------------------------------------
+
+export type PricingPackageId = "foundation" | "launch" | "growth" | "nextLevel";
+
+/** Reusable teal/blue/purple accent treatment, one per package, matching the approved pricing artwork. */
+export type PricingAccent = {
+  /** Tailwind gradient stop classes, e.g. "from-teal-500 to-cyan-500" — used on buttons, badges, dividers. */
+  gradient: string;
+  /** Tailwind text color class for inline accent words and icons. */
+  text: string;
+  /** Tailwind bg color class (solid, no opacity) for icon chips. */
+  solidBg: string;
+  /** Tailwind bg color class at low opacity for soft section tints/glows. */
+  softBg: string;
+  /** Tailwind border color class matched to the accent. */
+  border: string;
+};
+
+export type PricingPackage = {
+  id: PricingPackageId;
+  slug: string;
+  name: string;
+  /** One-line summary shown on the quick-overview card. */
+  tagline: string;
+  /** One or two short positioning lines shown large under the package name. */
+  positioning: string[];
+  price: number;
+  setupPrice: number;
+  description: string;
+  features: string[];
+  cta: string;
+  image: string;
+  imageAlt: string;
+  icon: string;
+  accent: PricingAccent;
+  popular?: boolean;
+  /** Optional short, non-alarming scope clarification shown after the feature list. */
+  scopeNote?: string;
+};
+
+export type CustomService = {
+  name: string;
+  startingPrice: string;
+  optionalMonthly: string;
+  description: string;
+};
+
+export type CustomServiceCategory = {
+  id: string;
+  label: string;
+  icon: string;
+  services: CustomService[];
+};
+
+export type ComparisonRow = {
+  label: string;
+  included: Record<PricingPackageId, boolean>;
+};

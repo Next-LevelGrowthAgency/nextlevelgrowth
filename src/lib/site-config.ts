@@ -76,6 +76,7 @@ export const secondaryCta = {
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
+  { label: "Pricing", href: "/pricing" },
   { label: "Our Approach", href: "/approach" },
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },

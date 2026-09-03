@@ -10,7 +10,7 @@ import { useId, useRef, useState, type FormEvent } from "react";
 type Status = "idle" | "submitting" | "success" | "error";
 type FieldErrors = Partial<Record<"name" | "email" | "message" | "phone" | "companyName", string>>;
 
-const initialValues = { name: "", email: "", message: "", phone: "", companyName: "" };
+const blankValues = { name: "", email: "", message: "", phone: "", companyName: "" };
 
 /**
  * Lightweight contact form (separate from the multi-step Growth Audit form).
@@ -18,7 +18,8 @@ const initialValues = { name: "", email: "", message: "", phone: "", companyName
  * shape — a database/email/config failure is never shown as "you entered
  * something wrong," and field-level errors point at the exact field.
  */
-export function ContactForm() {
+export function ContactForm({ initialMessage }: { initialMessage?: string } = {}) {
+  const initialValues = initialMessage ? { ...blankValues, message: initialMessage } : blankValues;
   const [status, setStatus] = useState<Status>("idle");
   const [values, setValues] = useState(initialValues);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});

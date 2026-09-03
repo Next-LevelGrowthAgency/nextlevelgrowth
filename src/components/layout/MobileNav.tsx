@@ -217,7 +217,11 @@ export function MobileNav() {
                         href={link.href}
                         className={cn(
                           "block rounded-lg px-3 py-4 text-xl font-display",
-                          pathname === link.href ? "text-grove-700" : "text-ink-900"
+                          pathname === link.href
+                            ? link.href === "/pricing"
+                              ? "bg-gradient-to-r from-teal-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
+                              : "text-grove-700"
+                            : "text-ink-900"
                         )}
                       >
                         {link.label}

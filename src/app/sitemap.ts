@@ -9,6 +9,7 @@ const staticRoutes = [
   "/services/local-seo",
   "/services/digital-marketing",
   "/services/automation-ai-chat",
+  "/pricing",
   "/approach",
   "/work",
   "/about",
@@ -25,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${siteConfig.url}${route}`,
     lastModified: new Date(),
     changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : route === "/growth-audit" ? 0.9 : 0.6,
+    priority: route === "" ? 1 : route === "/growth-audit" || route === "/pricing" ? 0.9 : 0.6,
   }));
 
   const insightEntries: MetadataRoute.Sitemap = insightPosts.map((post) => ({

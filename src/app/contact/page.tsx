@@ -12,7 +12,22 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-export default function ContactPage() {
+const packageLabels: Record<string, string> = {
+  foundation: "Foundation",
+  launch: "Launch",
+  growth: "Growth",
+  "next-level": "Next Level",
+};
+
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ package?: string }>;
+}) {
+  const { package: packageSlug } = await searchParams;
+  const packageLabel = packageSlug ? packageLabels[packageSlug] : undefined;
+  const initialMessage = packageLabel ? `I'm interested in the ${packageLabel} package.` : undefined;
+
   return (
     <>
       <PageHero
@@ -26,7 +41,7 @@ export default function ContactPage() {
           <div>
             <h2 className="text-display-md">Send a Message</h2>
             <div className="mt-6">
-              <ContactForm />
+              <ContactForm initialMessage={initialMessage} />
             </div>
           </div>
 
