@@ -8,9 +8,10 @@ import { motion } from "framer-motion";
 import type { Differentiator } from "@/types";
 
 /**
- * Homepage-only copy variant of WhyUs.tsx — see HomeGrowthFramework.tsx's
- * doc comment for why this split exists (WhyUs.tsx and the differentiators
- * data are also rendered on /approach, unchanged).
+ * Homepage-only "why us" card grid. /approach has its own distinct
+ * 4-card version (src/components/approach/ApproachWhyUs.tsx) with
+ * different copy — this component and its local homeDifferentiators
+ * data are homepage-only, not shared with that page.
  */
 const homeDifferentiators: Differentiator[] = [
   {

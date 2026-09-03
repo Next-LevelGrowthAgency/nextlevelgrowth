@@ -1,9 +1,7 @@
 import type {
   CapabilityProof,
   ConceptProject,
-  Differentiator,
   FaqItem,
-  FrameworkStage,
   IndustryTag,
   NavLink,
   ServiceOutcome,
@@ -144,77 +142,6 @@ export const services: ServiceOutcome[] = [
       "Ongoing maintenance, optimization, performance monitoring, and support.",
     icon: "ShieldCheck",
     href: "/services",
-  },
-];
-
-export const frameworkStages: FrameworkStage[] = [
-  {
-    number: "01",
-    title: "Discover",
-    description: "We learn your business, your goals, and where you stand online today.",
-  },
-  {
-    number: "02",
-    title: "Clarify",
-    description: "Together we build a clear message and growth strategy that works.",
-  },
-  {
-    number: "03",
-    title: "Build",
-    description: "We build your website and digital foundation, made for your business.",
-  },
-  {
-    number: "04",
-    title: "Launch",
-    description: "We test everything, connect analytics, and launch with confidence.",
-  },
-  {
-    number: "05",
-    title: "Grow",
-    description: "We track results and keep creating momentum. Growth never stops.",
-  },
-];
-
-export const differentiators: Differentiator[] = [
-  {
-    title: "Strategy First",
-    description: "We start with your goals and your customers, not a template.",
-    icon: "Compass",
-  },
-  {
-    title: "Results That Matter",
-    description: "Focused on leads, calls, and booked business, not just good looks.",
-    icon: "Target",
-  },
-  {
-    title: "Clear Communication",
-    description: "You'll always know what's happening and why.",
-    icon: "MessagesSquare",
-  },
-  {
-    title: "Built Around Your Business",
-    description: "No unnecessary complexity, no generic playbooks.",
-    icon: "Puzzle",
-  },
-  {
-    title: "Modern & Mobile-First",
-    description: "Built the way your customers actually browse.",
-    icon: "Smartphone",
-  },
-  {
-    title: "Honest Recommendations",
-    description: "What your business actually needs, not what's easiest to sell.",
-    icon: "BadgeCheck",
-  },
-  {
-    title: "Long-Term Partnership",
-    description: "Invested in where your business is headed, not just launch day.",
-    icon: "Handshake",
-  },
-  {
-    title: "Plain-English Guidance",
-    description: "Technology explained clearly, never jargon.",
-    icon: "Lightbulb",
   },
 ];
 

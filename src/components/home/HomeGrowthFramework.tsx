@@ -9,14 +9,10 @@ import type { FrameworkStage } from "@/types";
 const stageColors = ["text-teal-400", "text-cyan-400", "text-blue-400", "text-violet-400", "text-purple-400"];
 
 /**
- * Homepage-only copy variant of GrowthFramework.tsx — same structure and
- * styling, different (plainer) text. Exists because GrowthFramework.tsx
- * itself, and the frameworkStages data it reads from site-config.ts, are
- * also rendered on /approach — this component lets the homepage copy
- * pass differ without touching that shared component or shared data, so
- * /approach stays exactly as it was. See the homepage copy-rewrite
- * conversation for why this split exists; revisit /approach's own copy
- * as a separate pass later.
+ * Homepage-only 5-stage process card grid. /approach has its own distinct
+ * journey/path visual (src/components/approach/ApproachProcess.tsx) with
+ * different copy and layout — this component and its local
+ * homeFrameworkStages data are homepage-only, not shared with that page.
  */
 const homeFrameworkStages: FrameworkStage[] = [
   {
