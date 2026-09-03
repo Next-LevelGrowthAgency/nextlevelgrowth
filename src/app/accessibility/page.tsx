@@ -29,7 +29,7 @@ export default function AccessibilityPage() {
           <p>
             If you experience any difficulty accessing content on this site,
             please contact us at{" "}
-            <a href={`mailto:${siteConfig.contact.email}`} className="text-grove-700 underline">
+            <a href={`mailto:${siteConfig.contact.email}`} className="text-blue-600 underline">
               {siteConfig.contact.email}
             </a>{" "}
             and we will work to address it.

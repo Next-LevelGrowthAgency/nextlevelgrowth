@@ -6,6 +6,8 @@ import { frameworkStages } from "@/lib/site-config";
 import { fadeUp, staggerChildren, viewportOnce } from "@/lib/motion";
 import { motion } from "framer-motion";
 
+const stageColors = ["text-teal-400", "text-cyan-400", "text-blue-400", "text-violet-400", "text-purple-400"];
+
 export function GrowthFramework() {
   return (
     <section className="bg-ink-900 py-20 text-paper-100 sm:py-28">
@@ -30,7 +32,7 @@ export function GrowthFramework() {
               variants={fadeUp}
               className="relative rounded-2xl border border-ink-700 bg-ink-800/60 p-6"
             >
-              <span className="font-display text-3xl text-grove-400">{stage.number}</span>
+              <span className={`font-display text-3xl ${stageColors[index % stageColors.length]}`}>{stage.number}</span>
               <h3 className="mt-4 text-display-md font-display font-semibold">{stage.title}</h3>
               <p className="mt-2 text-body text-paper-400">{stage.description}</p>
               {index < frameworkStages.length - 1 ? (

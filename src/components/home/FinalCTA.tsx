@@ -4,7 +4,8 @@ import { primaryCta } from "@/lib/site-config";
 
 export function FinalCTA() {
   return (
-    <section className="bg-ink-900 py-20 text-paper-100 sm:py-28">
+    <section className="relative overflow-hidden bg-ink-900 py-20 text-paper-100 sm:py-28">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600" />
       <Container className="max-w-2xl text-center">
         <h2 className="balance text-display-lg">Your Next Chapter Won&rsquo;t Build Itself.</h2>
         <p className="mt-5 text-subhead text-paper-300">

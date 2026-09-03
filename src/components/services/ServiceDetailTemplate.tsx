@@ -46,8 +46,10 @@ export function ServiceDetailTemplate({ service }: { service: ServiceDetail }) {
           <h2 className="text-display-md">What&rsquo;s Included</h2>
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {service.pillars.map((pillar) => (
-              <div key={pillar.title} className="rounded-2xl border border-ink-100 bg-white p-6">
-                <Icon name={pillar.icon} className="h-5 w-5 text-grove-600" />
+              <div key={pillar.title} className="rounded-2xl border border-ink-100 bg-white p-6 shadow-soft transition-shadow duration-300 hover:shadow-lifted">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                  <Icon name={pillar.icon} className="h-5 w-5" />
+                </div>
                 <h3 className="mt-4 font-display text-base font-semibold text-ink-900">
                   {pillar.title}
                 </h3>
@@ -69,7 +71,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceDetail }) {
             <ul className="mt-8 space-y-4">
               {service.outcomes.map((outcome) => (
                 <li key={outcome} className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-grove-600" aria-hidden="true" />
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
                   <span className="text-ink-700">{outcome}</span>
                 </li>
               ))}

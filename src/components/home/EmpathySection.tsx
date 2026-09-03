@@ -4,17 +4,33 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { fadeUp, staggerChildren, viewportOnce } from "@/lib/motion";
 import { motion } from "framer-motion";
-import { Icon } from "@/components/ui/Icon";
+import { Compass, Inbox, LayoutTemplate, Search, type LucideIcon } from "lucide-react";
 
-const frustrations = [
-  { icon: "GlobeLock", text: "An outdated or nonexistent website" },
-  { icon: "TrendingDown", text: "Inconsistent leads" },
-  { icon: "SearchX", text: "Poor visibility on Google" },
-  { icon: "HelpCircle", text: "Confusing marketing advice" },
-  { icon: "MailQuestion", text: "Missed inquiries" },
-  { icon: "Blocks", text: "Too many disconnected tools" },
-  { icon: "MegaphoneOff", text: "Agencies that overpromise and undercommunicate" },
-  { icon: "SignpostBig", text: "Uncertainty about what to do next" },
+const frustrations: { label: string; statement: string; icon: LucideIcon; gradient: string }[] = [
+  {
+    label: "Website",
+    statement: "Outdated or nonexistent online presence.",
+    icon: LayoutTemplate,
+    gradient: "from-teal-500 to-cyan-500",
+  },
+  {
+    label: "Visibility",
+    statement: "Hard to get found by the right customers.",
+    icon: Search,
+    gradient: "from-cyan-500 to-blue-600",
+  },
+  {
+    label: "Leads",
+    statement: "Inconsistent inquiries and missed opportunities.",
+    icon: Inbox,
+    gradient: "from-blue-600 to-violet-600",
+  },
+  {
+    label: "Direction",
+    statement: "Disconnected tools and unclear next steps.",
+    icon: Compass,
+    gradient: "from-violet-600 to-purple-700",
+  },
 ];
 
 export function EmpathySection() {
@@ -32,16 +48,19 @@ export function EmpathySection() {
           whileInView="visible"
           viewport={viewportOnce}
           variants={staggerChildren()}
-          className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
         >
           {frustrations.map((item) => (
             <motion.li
-              key={item.text}
+              key={item.label}
               variants={fadeUp}
-              className="flex items-start gap-3 rounded-2xl border border-ink-100 bg-white p-5"
+              className="rounded-2xl border border-ink-100 bg-white p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted"
             >
-              <Icon name={item.icon} className="mt-0.5 h-5 w-5 shrink-0 text-ink-500" />
-              <span className="text-body text-ink-700">{item.text}</span>
+              <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br text-white ${item.gradient}`}>
+                <item.icon className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <p className="mt-4 text-eyebrow text-ink-500">{item.label}</p>
+              <p className="mt-1.5 font-display text-base font-semibold leading-snug text-ink-900">{item.statement}</p>
             </motion.li>
           ))}
         </motion.ul>

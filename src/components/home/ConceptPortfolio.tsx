@@ -11,7 +11,7 @@ import Image from "next/image";
 
 const accentClasses = {
   signal: "from-signal-500 to-signal-700",
-  grove: "from-grove-500 to-grove-700",
+  grove: "from-teal-500 to-blue-600",
   ember: "from-ember-400 to-ember-600",
   ink: "from-ink-600 to-ink-900",
 } as const;

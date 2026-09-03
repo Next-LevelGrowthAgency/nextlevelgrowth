@@ -72,7 +72,7 @@ export function GrowthCoachInput({
           type="submit"
           aria-label="Send message"
           disabled={disabled || !value.trim()}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-grove-600 text-white transition-colors hover:bg-grove-700 disabled:opacity-50"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
         >
           <Send className="h-4 w-4" aria-hidden="true" />
         </button>

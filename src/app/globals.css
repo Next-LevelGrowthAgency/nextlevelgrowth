@@ -61,7 +61,7 @@
 
   /* Visible, on-brand focus states for keyboard users everywhere */
   :focus-visible {
-    outline: 2px solid theme("colors.grove.600");
+    outline: 2px solid theme("colors.blue.600");
     outline-offset: 3px;
     border-radius: 2px;
   }
@@ -72,7 +72,7 @@
   }
 
   ::selection {
-    @apply bg-grove-200 text-ink-900;
+    @apply bg-blue-100 text-ink-900;
   }
 }
 
@@ -92,11 +92,26 @@
    * tracking-[0.18em], Footer's column labels used the built-in
    * tracking-wide (0.025em) — visibly less spaced out for no reason.
    * One definition now; color is still set by the caller, since it
-   * varies (grove-700 on light sections, grove-300/paper-500 on dark
-   * ones) — this utility only owns the type-level properties.
+   * varies (a teal/blue/purple gradient on light sections, a solid
+   * teal-300 on dark ones) — this utility only owns the type-level
+   * properties.
    */
   .text-eyebrow {
     @apply text-xs font-semibold uppercase tracking-[0.18em];
+  }
+
+  /*
+   * Brand gradient — teal → blue → purple, the accent language introduced
+   * on /pricing and now shared site-wide. Used sparingly: eyebrow labels,
+   * selected headline words, buttons, thin section dividers, small glow
+   * accents. Never as a full section background.
+   */
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-teal-600 via-blue-600 to-purple-600 bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-brand {
+    @apply bg-gradient-to-r from-teal-500 via-blue-600 to-purple-600;
   }
 
   /*

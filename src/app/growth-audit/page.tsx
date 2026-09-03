@@ -43,7 +43,7 @@ export default function GrowthAuditPage() {
             <ul className="space-y-6">
               {whatYouGet.map((item) => (
                 <li key={item.title} className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-grove-100 text-grove-700">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
                     <Icon name={item.icon} className="h-5 w-5" />
                   </div>
                   <div>

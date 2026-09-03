@@ -21,7 +21,7 @@ export function BulletList({ items }: { items: string[] }) {
     <ul className="space-y-1.5">
       {items.map((item, index) => (
         <li key={index} className="flex gap-2">
-          <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-grove-600" />
+          <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-blue-600" />
           <span>{item}</span>
         </li>
       ))}

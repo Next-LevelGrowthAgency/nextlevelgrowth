@@ -59,11 +59,7 @@ export function Header() {
                     href={link.href}
                     className={cn(
                       "text-sm font-medium",
-                      pathname === link.href
-                        ? link.href === "/pricing"
-                          ? "bg-gradient-to-r from-teal-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
-                          : "text-grove-700"
-                        : "text-ink-700 hover:text-ink-900"
+                      pathname === link.href ? "text-blue-600" : "text-ink-700 hover:text-ink-900"
                     )}
                   >
                     {link.label}

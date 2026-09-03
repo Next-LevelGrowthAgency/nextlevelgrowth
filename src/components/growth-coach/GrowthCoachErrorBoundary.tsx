@@ -35,7 +35,7 @@ export class GrowthCoachErrorBoundary extends Component<Props, State> {
           <button
             type="button"
             onClick={this.handleReset}
-            className="rounded-full bg-grove-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-grove-700"
+            className="rounded-full bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
           >
             Reset conversation
           </button>

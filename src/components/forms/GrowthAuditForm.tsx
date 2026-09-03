@@ -158,8 +158,8 @@ export function GrowthAuditForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-3xl border border-grove-200 bg-grove-50 p-8 text-center" role="status">
-        <CheckCircle2 className="mx-auto h-10 w-10 text-grove-600" aria-hidden="true" />
+      <div className="rounded-3xl border border-teal-200 bg-teal-50 p-8 text-center" role="status">
+        <CheckCircle2 className="mx-auto h-10 w-10 text-blue-600" aria-hidden="true" />
         <h3 className="mt-4 font-display text-2xl font-semibold text-ink-900">
           Your Growth Audit request is in.
         </h3>
@@ -279,11 +279,11 @@ export function GrowthAuditForm() {
                 {servicesOfInterestOptions.map((service) => (
                   <label
                     key={service}
-                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-ink-200 px-3 py-2.5 text-sm text-ink-800 has-[:checked]:border-grove-500 has-[:checked]:bg-grove-50"
+                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-ink-200 px-3 py-2.5 text-sm text-ink-800 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"
                   >
                     <input
                       type="checkbox"
-                      className="h-4 w-4 rounded border-ink-300 text-grove-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-grove-600"
+                      className="h-4 w-4 rounded border-ink-300 text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"
                       checked={values.servicesOfInterest.includes(service)}
                       onChange={() => toggleService(service)}
                     />
@@ -309,12 +309,12 @@ export function GrowthAuditForm() {
                 {(["Email", "Phone", "Text"] as const).map((method) => (
                   <label
                     key={method}
-                    className="flex cursor-pointer items-center gap-2 rounded-full border border-ink-200 px-4 py-2 text-sm has-[:checked]:border-grove-500 has-[:checked]:bg-grove-50"
+                    className="flex cursor-pointer items-center gap-2 rounded-full border border-ink-200 px-4 py-2 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"
                   >
                     <input
                       type="radio"
                       name="preferredContact"
-                      className="h-4 w-4 text-grove-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-grove-600"
+                      className="h-4 w-4 text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"
                       checked={values.preferredContact === method}
                       onChange={() => updateField("preferredContact", method)}
                     />
@@ -366,7 +366,7 @@ export function GrowthAuditForm() {
       </form>
 
       <p className="mt-6 flex items-center gap-2 text-xs text-ink-500">
-        <ShieldCheck className="h-4 w-4 shrink-0 text-grove-600" aria-hidden="true" />
+        <ShieldCheck className="h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
         Your information is only used to prepare your Growth Audit and is never sold.
       </p>
     </div>
@@ -386,14 +386,14 @@ function ProgressIndicator({
     <div>
       <div className="flex justify-between text-xs font-medium text-ink-500">
         {labels.map((label, index) => (
-          <span key={label} className={index <= step ? "text-grove-700" : undefined}>
+          <span key={label} className={index <= step ? "text-blue-700" : undefined}>
             {label}
           </span>
         ))}
       </div>
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-ink-100" role="progressbar" aria-valuenow={step + 1} aria-valuemin={1} aria-valuemax={totalSteps}>
         <div
-          className="h-full rounded-full bg-grove-600 transition-all duration-300 ease-confident"
+          className="h-full rounded-full bg-blue-600 transition-all duration-300 ease-confident"
           style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
         />
       </div>
@@ -439,7 +439,7 @@ function TextField({
         aria-invalid={!!error}
         aria-describedby={[hintId, errorId].filter(Boolean).join(" ") || undefined}
         className={cn(
-          "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600",
+          "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
           error ? "border-red-400" : "border-ink-200"
         )}
       />
@@ -485,7 +485,7 @@ function TextAreaField({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
         className={cn(
-          "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600",
+          "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
           error ? "border-red-400" : "border-ink-200"
         )}
       />
@@ -525,7 +525,7 @@ function SelectField({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
         className={cn(
-          "w-full rounded-lg border bg-white px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600",
+          "w-full rounded-lg border bg-white px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
           error ? "border-red-400" : "border-ink-200"
         )}
       >

@@ -17,6 +17,7 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden bg-ink-900 text-paper-100">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-10 h-1 bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600" />
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <Image
           src="/images/brand/hero-reno-growth.png"
@@ -36,7 +37,7 @@ export function Hero() {
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="text-eyebrow mb-6 text-grove-300"
+            className="text-eyebrow mb-6 text-teal-300"
           >
             For Local Businesses Ready to Grow
           </motion.p>
@@ -48,7 +49,9 @@ export function Hero() {
             className="balance text-display-2xl"
           >
             More Customers Start With a Better Website.{" "}
-            <span className="text-grove-300">Let&rsquo;s Build Yours.</span>
+            <span className="bg-gradient-to-r from-teal-300 via-blue-300 to-purple-300 bg-clip-text text-transparent">
+              Let&rsquo;s Build Yours.
+            </span>
           </motion.h1>
 
           <motion.p

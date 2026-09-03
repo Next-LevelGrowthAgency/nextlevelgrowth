@@ -23,7 +23,7 @@ export function GrowthCoachButton({ onClick }: { onClick: () => void }) {
       whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
       whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
       title={coachIdentity.fabTooltip}
-      className="group flex h-[68px] w-[68px] items-center justify-center gap-3 rounded-full bg-grove-600 pl-0 pr-0 text-white shadow-lifted transition-all duration-200 ease-confident hover:bg-grove-700 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-700 motion-safe:active:scale-[0.97] sm:w-auto sm:justify-start sm:pl-3 sm:pr-6"
+      className="group flex h-[68px] w-[68px] items-center justify-center gap-3 rounded-full bg-gradient-to-br from-teal-500 to-blue-600 pl-0 pr-0 text-white shadow-lifted transition-all duration-200 ease-confident hover:opacity-90 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 motion-safe:active:scale-[0.97] sm:w-auto sm:justify-start sm:pl-3 sm:pr-6"
       aria-label={`Open ${coachIdentity.name}`}
     >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/15">

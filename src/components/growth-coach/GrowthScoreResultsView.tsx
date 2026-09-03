@@ -18,7 +18,7 @@ function CategoryBar({ label, score, confidenceLabel }: { label: string; score: 
         </span>
       </div>
       <div className="mt-1 h-2 rounded-full bg-paper-200" role="img" aria-label={`${label}: ${Math.round(score)} out of 100`}>
-        <div className="h-2 rounded-full bg-grove-600" style={{ width: `${Math.max(2, Math.round(score))}%` }} />
+        <div className="h-2 rounded-full bg-blue-600" style={{ width: `${Math.max(2, Math.round(score))}%` }} />
       </div>
     </div>
   );
@@ -87,7 +87,7 @@ export function GrowthScoreResultsView({
 
       <div className="mx-auto max-w-3xl px-6 py-10 print:max-w-none print:px-0 print:py-0 sm:px-8">
         <div className="rounded-2xl border border-ink-100 bg-ink-900 p-8 text-paper-100 shadow-soft print:rounded-none print:border print:border-ink-200 print:bg-white print:text-ink-900">
-          <div className="flex items-center gap-2 text-grove-300 print:text-grove-700">
+          <div className="flex items-center gap-2 text-teal-300 print:text-blue-700">
             <Sparkles className="h-5 w-5" aria-hidden="true" />
             <span className="text-xs font-semibold uppercase tracking-wide">{siteConfig.name}</span>
           </div>

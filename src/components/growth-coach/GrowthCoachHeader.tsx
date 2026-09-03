@@ -35,7 +35,7 @@ export function GrowthCoachHeader({
       }
     >
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-grove-600/20 text-grove-300">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-500/20 text-teal-300">
           <TrendingUp className="h-[18px] w-[18px]" aria-hidden="true" />
         </span>
         <div>

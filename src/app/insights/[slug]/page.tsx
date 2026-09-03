@@ -41,7 +41,7 @@ export default async function InsightPostPage({
     <>
       <Section tone="paper" className="pb-0">
         <Container className="max-w-2xl">
-          <Link href="/insights" className="text-sm font-medium text-grove-700">
+          <Link href="/insights" className="text-sm font-medium text-blue-600">
             ← Back to Insights
           </Link>
           <Badge tone="signal" className="mt-6 w-fit">

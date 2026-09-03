@@ -7,7 +7,7 @@ function ReportBody({ body }: { body: string | string[] }) {
       <ul className="mt-1 space-y-1.5">
         {body.map((item, index) => (
           <li key={index} className="flex gap-2 text-sm leading-relaxed text-ink-700">
-            <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-grove-600" />
+            <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-blue-600" />
             <span>{item}</span>
           </li>
         ))}
@@ -28,7 +28,7 @@ export function GrowthCoachReport({ report }: { report: StructuredReport }) {
       <div className="mt-3 space-y-3 divide-y divide-ink-100">
         {report.sections.map((section) => (
           <div key={section.heading} className="pt-3 first:pt-0">
-            <p className="text-xs font-semibold uppercase tracking-wide text-grove-700">{section.heading}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">{section.heading}</p>
             <ReportBody body={section.body} />
           </div>
         ))}

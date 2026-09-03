@@ -7,12 +7,12 @@ type Size = "md" | "lg";
 
 const variantStyles: Record<Variant, string> = {
   primary:
-    "bg-grove-600 text-white hover:bg-grove-700 shadow-soft hover:shadow-lifted focus-visible:outline-grove-700",
+    "bg-gradient-to-r from-teal-500 to-blue-600 text-white hover:opacity-90 shadow-soft hover:shadow-lifted focus-visible:outline-blue-700",
   secondary:
-    "bg-transparent text-ink-900 border border-ink-400 hover:border-ink-900 hover:bg-ink-50 focus-visible:outline-grove-700",
-  ghost: "bg-transparent text-ink-700 hover:text-ink-900 hover:bg-ink-100 focus-visible:outline-grove-700",
-  // Used on dark/colored surfaces (e.g. inside CTABanner's grove-700 band) —
-  // needs its own light-colored ring rather than the site's default grove
+    "bg-transparent text-ink-900 border border-blue-200 hover:border-blue-400 hover:bg-blue-50/60 focus-visible:outline-blue-700",
+  ghost: "bg-transparent text-ink-700 hover:text-blue-700 hover:bg-blue-50 focus-visible:outline-blue-700",
+  // Used on dark/colored surfaces (e.g. inside CTABanner's ink-900 band) —
+  // needs its own light-colored ring rather than the site's default blue
   // one, which would nearly disappear against a similarly-dark backdrop.
   inverse:
     "bg-paper-100 text-ink-900 hover:bg-white shadow-soft hover:shadow-lifted focus-visible:outline-paper-100",

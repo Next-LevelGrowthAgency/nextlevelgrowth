@@ -64,7 +64,7 @@ export function GrowthCoachReportView({
       <div className="mx-auto max-w-3xl px-6 py-10 print:max-w-none print:px-0 print:py-0 sm:px-8">
         {/* Cover */}
         <div className="rounded-2xl border border-ink-100 bg-white p-8 shadow-soft print:rounded-none print:border-0 print:p-0 print:shadow-none">
-          <div className="flex items-center gap-2 text-grove-700">
+          <div className="flex items-center gap-2 text-blue-700">
             <Sparkles className="h-5 w-5" aria-hidden="true" />
             <span className="text-xs font-semibold uppercase tracking-wide">{siteConfig.name}</span>
           </div>
@@ -92,7 +92,7 @@ export function GrowthCoachReportView({
 
         {report.growthScore ? (
           <div className="mt-6 rounded-2xl border border-ink-100 bg-ink-900 p-8 text-paper-100 shadow-soft print:rounded-none print:border print:border-ink-200 print:bg-white print:text-ink-900">
-            <p className="text-xs font-semibold uppercase tracking-wide text-grove-300 print:text-grove-700">Next Level Growth Score</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-teal-300 print:text-blue-700">Next Level Growth Score</p>
             <div className="mt-2 flex items-baseline gap-3">
               <span className="font-display text-5xl font-semibold">{report.growthScore.overallScore ?? "–"}</span>
               <span className="text-paper-400 print:text-ink-500">/ 100</span>
@@ -229,7 +229,7 @@ export function GrowthCoachReportView({
 
         <div className="mt-6 flex flex-col items-center gap-3 pb-10 print:hidden sm:flex-row sm:justify-center">
           {alreadySaved ? (
-            <p className="text-sm font-medium text-grove-700">This report has been saved and sent.</p>
+            <p className="text-sm font-medium text-teal-700">This report has been saved and sent.</p>
           ) : (
             <Button variant="primary" onClick={onRequestSave}>
               Save &amp; email me this report

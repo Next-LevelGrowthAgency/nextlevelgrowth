@@ -58,7 +58,7 @@ export default function AboutPage() {
 
       <Section tone="paper">
         <Container className="max-w-5xl">
-          <p className="text-xs font-semibold uppercase tracking-wide text-grove-700">Meet the Founder</p>
+          <p className="text-eyebrow text-gradient-brand">Meet the Founder</p>
 
           <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[340px_1fr] lg:gap-16">
             <div className="mx-auto w-full max-w-xs lg:mx-0 lg:max-w-none">
@@ -75,7 +75,7 @@ export default function AboutPage() {
               <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-ink-100 pt-6 text-sm text-ink-600 lg:grid-cols-1">
                 {founderDetails.map((detail) => (
                   <li key={detail} className="flex items-center gap-2">
-                    <span className="h-1 w-1 shrink-0 rounded-full bg-grove-500" aria-hidden="true" />
+                    <span className="h-1 w-1 shrink-0 rounded-full bg-blue-500" aria-hidden="true" />
                     {detail}
                   </li>
                 ))}

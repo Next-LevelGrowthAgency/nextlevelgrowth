@@ -12,9 +12,10 @@ type PageHeroProps = {
 /** Compact hero used on every interior page (everything except the homepage). */
 export function PageHero({ eyebrow, title, description, ctaLabel, ctaHref }: PageHeroProps) {
   return (
-    <section className="border-b border-ink-100 bg-ink-900 py-20 text-paper-100 sm:py-28">
+    <section className="relative overflow-hidden border-b border-ink-100 bg-ink-900 py-20 text-paper-100 sm:py-28">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600" />
       <Container className="max-w-3xl">
-        <p className="text-eyebrow mb-4 text-grove-300">
+        <p className="text-eyebrow mb-4 text-teal-300">
           {eyebrow}
         </p>
         <h1 className="balance text-display-xl">{title}</h1>

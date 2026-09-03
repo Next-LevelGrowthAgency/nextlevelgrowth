@@ -71,7 +71,7 @@ export function GrowthCoachMessage({
           // Capped independently of the panel's own width so lines stay a
           // comfortable reading length even at the ~600px desktop size.
           "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed sm:max-w-[440px]",
-          isAssistant ? "bg-paper-200 text-ink-800" : "bg-grove-600 text-white"
+          isAssistant ? "bg-paper-200 text-ink-800" : "bg-blue-600 text-white"
         )}
       >
         {renderContent(message.content)}
@@ -82,7 +82,7 @@ export function GrowthCoachMessage({
       {isAssistant && message.cta ? (
         <a
           href={message.cta.href}
-          className="mt-2 inline-flex items-center justify-center rounded-full bg-grove-600 px-5 py-2.5 text-sm font-medium text-white shadow-soft transition-all duration-200 ease-confident hover:bg-grove-700 hover:shadow-lifted"
+          className="mt-2 inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-soft transition-all duration-200 ease-confident hover:bg-blue-700 hover:shadow-lifted"
         >
           {message.cta.label}
         </a>
@@ -97,7 +97,7 @@ export function GrowthCoachMessage({
           </div>
           <div className="h-1 w-full rounded-full bg-paper-200" role="img" aria-label={`Progress: ${message.scoreQuestion.progress.answered} of ${message.scoreQuestion.progress.total} answered`}>
             <div
-              className="h-1 rounded-full bg-grove-600 transition-all duration-300 motion-reduce:transition-none"
+              className="h-1 rounded-full bg-blue-600 transition-all duration-300 motion-reduce:transition-none"
               style={{ width: `${(message.scoreQuestion.progress.answered / message.scoreQuestion.progress.total) * 100}%` }}
             />
           </div>

@@ -96,7 +96,7 @@ function Field({
 
 const inputClasses = (hasError: boolean) =>
   cn(
-    "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600",
+    "w-full rounded-lg border px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
     hasError ? "border-red-400" : "border-ink-200"
   );
 
@@ -246,7 +246,7 @@ export function GrowthCoachLeadForm({
 
           {status === "success" ? (
             <div role="status" className="mt-8 flex flex-col items-center gap-3 py-6 text-center">
-              <CheckCircle2 className="h-10 w-10 text-grove-600" aria-hidden="true" />
+              <CheckCircle2 className="h-10 w-10 text-teal-600" aria-hidden="true" />
               <p className="font-medium text-ink-900">Saved. Your report has been recorded.</p>
               <p className="text-sm text-ink-500">
                 {emailSent
@@ -320,7 +320,7 @@ export function GrowthCoachLeadForm({
                         <label
                           key={method}
                           className={cn(
-                            "cursor-pointer rounded-full border border-ink-200 px-3 py-1.5 text-sm has-[:checked]:border-grove-500 has-[:checked]:bg-grove-50"
+                            "cursor-pointer rounded-full border border-ink-200 px-3 py-1.5 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"
                           )}
                         >
                           <input
@@ -506,19 +506,19 @@ export function GrowthCoachLeadForm({
                     <dl className="mt-3 space-y-1">
                       <div className="flex justify-between">
                         <dt>Save &amp; send report</dt>
-                        <dd className="font-medium text-grove-700">Yes</dd>
+                        <dd className="font-medium text-teal-700">Yes</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt>Email follow-up</dt>
-                        <dd className={values.consentToEmailFollowUp ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToEmailFollowUp ? "Yes" : "No"}</dd>
+                        <dd className={values.consentToEmailFollowUp ? "font-medium text-teal-700" : "text-ink-500"}>{values.consentToEmailFollowUp ? "Yes" : "No"}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt>Phone call</dt>
-                        <dd className={values.consentToPhoneCall ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToPhoneCall ? "Yes" : "No"}</dd>
+                        <dd className={values.consentToPhoneCall ? "font-medium text-teal-700" : "text-ink-500"}>{values.consentToPhoneCall ? "Yes" : "No"}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt>Marketing emails</dt>
-                        <dd className={values.consentToMarketing ? "font-medium text-grove-700" : "text-ink-500"}>{values.consentToMarketing ? "Yes" : "No"}</dd>
+                        <dd className={values.consentToMarketing ? "font-medium text-teal-700" : "text-ink-500"}>{values.consentToMarketing ? "Yes" : "No"}</dd>
                       </div>
                     </dl>
                   </div>

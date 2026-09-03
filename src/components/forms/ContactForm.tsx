@@ -96,10 +96,10 @@ export function ContactForm({ initialMessage }: { initialMessage?: string } = {}
 
   if (status === "success") {
     return (
-      <div role="status" className="rounded-2xl border border-grove-200 bg-grove-50 p-6 text-grove-800">
+      <div role="status" className="rounded-2xl border border-teal-200 bg-teal-50 p-6 text-teal-800">
         <p className="font-semibold">Thanks. Your message is in.</p>
         <p className="mt-1 text-sm">We&rsquo;ll get back to you shortly.</p>
-        {submissionId ? <p className="mt-2 text-xs text-grove-600">Reference: {submissionId}</p> : null}
+        {submissionId ? <p className="mt-2 text-xs text-teal-600">Reference: {submissionId}</p> : null}
       </div>
     );
   }
@@ -139,7 +139,7 @@ export function ContactForm({ initialMessage }: { initialMessage?: string } = {}
               firstErrorAssigned = true;
             }
           }}
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600 aria-[invalid=true]:border-red-400"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-[invalid=true]:border-red-400"
         />
         {fieldErrors.name ? (
           <p id="name-error" role="alert" className="mt-1.5 text-sm font-medium text-red-700">
@@ -167,7 +167,7 @@ export function ContactForm({ initialMessage }: { initialMessage?: string } = {}
               firstErrorAssigned = true;
             }
           }}
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600 aria-[invalid=true]:border-red-400"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-[invalid=true]:border-red-400"
         />
         {fieldErrors.email ? (
           <p id="email-error" role="alert" className="mt-1.5 text-sm font-medium text-red-700">
@@ -189,7 +189,7 @@ export function ContactForm({ initialMessage }: { initialMessage?: string } = {}
           onChange={(e) => set("phone", e.target.value)}
           aria-invalid={!!fieldErrors.phone}
           aria-describedby={fieldErrors.phone ? "phone-error" : undefined}
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600 aria-[invalid=true]:border-red-400"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-[invalid=true]:border-red-400"
         />
         {fieldErrors.phone ? (
           <p id="phone-error" role="alert" className="mt-1.5 text-sm font-medium text-red-700">
@@ -209,7 +209,7 @@ export function ContactForm({ initialMessage }: { initialMessage?: string } = {}
           autoComplete="organization"
           value={values.companyName}
           onChange={(e) => set("companyName", e.target.value)}
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         />
       </div>
 
@@ -231,7 +231,7 @@ export function ContactForm({ initialMessage }: { initialMessage?: string } = {}
               firstErrorAssigned = true;
             }
           }}
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600 aria-[invalid=true]:border-red-400"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-[invalid=true]:border-red-400"
         />
         {fieldErrors.message ? (
           <p id="message-error" role="alert" className="mt-1.5 text-sm font-medium text-red-700">

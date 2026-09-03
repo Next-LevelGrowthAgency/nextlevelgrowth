@@ -31,8 +31,10 @@ export function ProofSection() {
           className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
           {capabilityProofs.map((item) => (
-            <motion.div key={item.title} variants={fadeUp} className="rounded-2xl border border-ink-700 p-6">
-              <Icon name={item.icon} className="h-5 w-5 text-grove-400" />
+            <motion.div key={item.title} variants={fadeUp} className="rounded-2xl border border-ink-700 bg-ink-800/40 p-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/15 text-blue-300">
+                <Icon name={item.icon} className="h-5 w-5" />
+              </div>
               <h3 className="mt-4 font-display text-display-md font-semibold">{item.title}</h3>
               <p className="mt-2 text-body text-paper-400">{item.description}</p>
             </motion.div>

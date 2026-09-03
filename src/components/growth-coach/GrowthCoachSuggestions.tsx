@@ -11,9 +11,9 @@ function PromptCard({ prompt, onSelect }: { prompt: SuggestedPrompt; onSelect: (
     <button
       type="button"
       onClick={() => onSelect(prompt.id)}
-      className="flex items-center gap-2.5 rounded-xl border border-ink-100 bg-white px-3.5 py-3 text-left text-sm font-medium text-ink-800 shadow-soft transition-all duration-200 ease-confident hover:-translate-y-0.5 hover:border-grove-200 hover:shadow-lifted"
+      className="flex items-center gap-2.5 rounded-xl border border-ink-100 bg-white px-3.5 py-3 text-left text-sm font-medium text-ink-800 shadow-soft transition-all duration-200 ease-confident hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lifted"
     >
-      <Icon name={prompt.icon} className="h-4 w-4 shrink-0 text-grove-700" aria-hidden="true" />
+      <Icon name={prompt.icon} className="h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
       <span>{prompt.label}</span>
     </button>
   );

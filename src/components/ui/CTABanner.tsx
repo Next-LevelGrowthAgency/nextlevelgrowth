@@ -10,11 +10,12 @@ export function CTABanner({
   description?: string;
 }) {
   return (
-    <section className="bg-grove-700 py-16 text-white">
+    <section className="relative overflow-hidden bg-ink-900 py-16 text-white">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600" />
       <Container className="flex flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-left">
         <div>
           <h2 className="font-display text-2xl font-semibold">{title}</h2>
-          <p className="mt-2 max-w-xl text-grove-100">{description}</p>
+          <p className="mt-2 max-w-xl text-paper-300">{description}</p>
         </div>
         <Button href={primaryCta.href} variant="inverse" size="lg" className="shrink-0">
           {primaryCta.label}
