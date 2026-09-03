@@ -24,7 +24,7 @@ export function GrowthFramework() {
           whileInView="visible"
           viewport={viewportOnce}
           variants={staggerChildren()}
-          className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5"
+          className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
         >
           {frameworkStages.map((stage, index) => (
             <motion.li
@@ -38,7 +38,7 @@ export function GrowthFramework() {
               {index < frameworkStages.length - 1 ? (
                 <span
                   aria-hidden="true"
-                  className="absolute -right-3 top-1/2 hidden h-px w-6 -translate-y-1/2 bg-ink-600 lg:block"
+                  className="absolute -right-3 top-1/2 hidden h-px w-6 -translate-y-1/2 bg-ink-600 xl:block"
                 />
               ) : null}
             </motion.li>

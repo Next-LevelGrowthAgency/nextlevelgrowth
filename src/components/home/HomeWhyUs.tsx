@@ -14,43 +14,43 @@ import type { Differentiator } from "@/types";
  */
 const homeDifferentiators: Differentiator[] = [
   {
-    title: "Strategy before design",
+    title: "Strategy First",
     description: "We start with your goals and your customers, not a template.",
     icon: "Compass",
   },
   {
-    title: "Real results, not just good looks",
-    description: "We build toward leads, calls, and appointments, not just good looks.",
+    title: "Real Results",
+    description: "We build toward leads, calls, and booked appointments.",
     icon: "Target",
   },
   {
-    title: "Clear communication",
+    title: "Clear Communication",
     description: "You'll always know what's happening and why.",
     icon: "MessagesSquare",
   },
   {
-    title: "Built around your business",
+    title: "Built Around Your Business",
     description: "No unnecessary complexity, no generic playbooks.",
     icon: "Puzzle",
   },
   {
-    title: "Fast, modern, and built for phones",
+    title: "Fast & Mobile-First",
     description: "Built the way your customers actually browse.",
     icon: "Smartphone",
   },
   {
-    title: "Honest recommendations",
-    description: "We tell you what your business needs, not what's easiest for us to sell.",
+    title: "Honest Recommendations",
+    description: "What your business needs, not what's easiest to sell.",
     icon: "BadgeCheck",
   },
   {
-    title: "A long-term partnership",
-    description: "We're invested in where your business is headed, not just the launch date.",
+    title: "Long-Term Partnership",
+    description: "Invested in where your business is headed, not just launch day.",
     icon: "Handshake",
   },
   {
-    title: "Plain answers, not tech talk",
-    description: "You get plain-English guidance, not jargon.",
+    title: "Plain-English Guidance",
+    description: "Clear explanations, never tech jargon.",
     icon: "Lightbulb",
   },
 ];

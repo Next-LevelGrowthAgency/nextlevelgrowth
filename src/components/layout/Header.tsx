@@ -42,34 +42,37 @@ export function Header() {
             : "border-transparent bg-paper-100"
         )}
       >
-        <div className="container-content flex h-16 items-center justify-between">
+        <div className="container-content flex h-16 items-center justify-between gap-6">
           <Link
             id="site-logo"
             href="/"
-            className="font-display text-lg font-semibold tracking-tight text-ink-900"
+            className="shrink-0 font-display text-lg font-semibold tracking-tight text-ink-900"
           >
             {siteConfig.shortName}
           </Link>
 
-          <nav aria-label="Primary" className="hidden md:block">
-            <ul className="flex items-center gap-8">
+          <nav aria-label="Primary" className="hidden flex-1 justify-center md:flex">
+            <ul className="flex items-center gap-10">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     className={cn(
-                      "text-sm font-medium",
+                      "relative py-1 text-sm font-medium transition-colors",
                       pathname === link.href ? "text-blue-600" : "text-ink-700 hover:text-ink-900"
                     )}
                   >
                     {link.label}
+                    {pathname === link.href ? (
+                      <span aria-hidden="true" className="absolute -bottom-[3px] left-0 h-0.5 w-full rounded-full bg-gradient-to-r from-teal-400 via-blue-500 to-purple-500" />
+                    ) : null}
                   </Link>
                 </li>
               ))}
             </ul>
           </nav>
 
-          <div className="hidden md:block">
+          <div className="hidden shrink-0 md:block">
             <Button href={primaryCta.href} size="md">
               {primaryCta.label}
             </Button>

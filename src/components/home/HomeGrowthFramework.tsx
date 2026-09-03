@@ -27,12 +27,12 @@ const homeFrameworkStages: FrameworkStage[] = [
   {
     number: "02",
     title: "Clarify",
-    description: "Together we figure out your message and your plan — built around what actually moves your business forward.",
+    description: "Together we build a plan around what actually moves your business forward.",
   },
   {
     number: "03",
     title: "Build",
-    description: "We build your website and everything behind it — made for your business, not copied from a template.",
+    description: "We build your website and everything behind it, made for your business.",
   },
   {
     number: "04",
@@ -42,7 +42,7 @@ const homeFrameworkStages: FrameworkStage[] = [
   {
     number: "05",
     title: "Grow",
-    description: "We monitor results, refine strategy, and keep creating momentum. Growth is a direction, not a one-time project.",
+    description: "We track results and keep creating momentum. Growth never stops.",
   },
 ];
 
@@ -62,7 +62,7 @@ export function HomeGrowthFramework() {
           whileInView="visible"
           viewport={viewportOnce}
           variants={staggerChildren()}
-          className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5"
+          className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
         >
           {homeFrameworkStages.map((stage, index) => (
             <motion.li
@@ -76,7 +76,7 @@ export function HomeGrowthFramework() {
               {index < homeFrameworkStages.length - 1 ? (
                 <span
                   aria-hidden="true"
-                  className="absolute -right-3 top-1/2 hidden h-px w-6 -translate-y-1/2 bg-ink-600 lg:block"
+                  className="absolute -right-3 top-1/2 hidden h-px w-6 -translate-y-1/2 bg-ink-600 xl:block"
                 />
               ) : null}
             </motion.li>

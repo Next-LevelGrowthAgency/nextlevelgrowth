@@ -75,12 +75,10 @@ export const secondaryCta = {
 
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "Services", href: "/services" },
   { label: "Pricing", href: "/pricing" },
   { label: "Our Approach", href: "/approach" },
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
-  { label: "Insights", href: "/insights" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -153,74 +151,69 @@ export const frameworkStages: FrameworkStage[] = [
   {
     number: "01",
     title: "Discover",
-    description:
-      "We take the time to understand your business, your customers, your goals, your market, and where your online presence stands today.",
+    description: "We learn your business, your goals, and where you stand online today.",
   },
   {
     number: "02",
     title: "Clarify",
-    description:
-      "Together we develop a clear message, offer, positioning, and growth strategy built around what actually moves your business forward.",
+    description: "Together we build a clear message and growth strategy that works.",
   },
   {
     number: "03",
     title: "Build",
-    description:
-      "We create your website, lead-capture systems, content, and digital foundation, designed with intention, not templates.",
+    description: "We build your website and digital foundation, made for your business.",
   },
   {
     number: "04",
     title: "Launch",
-    description:
-      "We test everything, connect analytics, optimize performance, and introduce your new experience to the world.",
+    description: "We test everything, connect analytics, and launch with confidence.",
   },
   {
     number: "05",
     title: "Grow",
-    description:
-      "We monitor results, refine strategy, and keep creating momentum. Growth is a direction, not a one-time project.",
+    description: "We track results and keep creating momentum. Growth never stops.",
   },
 ];
 
 export const differentiators: Differentiator[] = [
   {
-    title: "Strategy before design",
+    title: "Strategy First",
     description: "We start with your goals and your customers, not a template.",
     icon: "Compass",
   },
   {
-    title: "Business outcomes over vanity metrics",
-    description: "We build toward leads, calls, and appointments, not just good looks.",
+    title: "Results That Matter",
+    description: "Focused on leads, calls, and booked business, not just good looks.",
     icon: "Target",
   },
   {
-    title: "Clear communication",
+    title: "Clear Communication",
     description: "You'll always know what's happening and why.",
     icon: "MessagesSquare",
   },
   {
-    title: "Solutions shaped around your business",
+    title: "Built Around Your Business",
     description: "No unnecessary complexity, no generic playbooks.",
     icon: "Puzzle",
   },
   {
-    title: "Modern, fast, mobile-first execution",
+    title: "Modern & Mobile-First",
     description: "Built the way your customers actually browse.",
     icon: "Smartphone",
   },
   {
-    title: "Honest recommendations",
-    description: "We tell you what your business needs, not what's easiest for us to sell.",
+    title: "Honest Recommendations",
+    description: "What your business actually needs, not what's easiest to sell.",
     icon: "BadgeCheck",
   },
   {
-    title: "A long-term partnership",
-    description: "We're invested in where your business is headed, not just the launch date.",
+    title: "Long-Term Partnership",
+    description: "Invested in where your business is headed, not just launch day.",
     icon: "Handshake",
   },
   {
-    title: "Technology translated into practical value",
-    description: "You get plain-English guidance, not jargon.",
+    title: "Plain-English Guidance",
+    description: "Technology explained clearly, never jargon.",
     icon: "Lightbulb",
   },
 ];
@@ -324,14 +317,14 @@ export const conceptProjects: ConceptProject[] = [
 ];
 
 export const capabilityProofs: CapabilityProof[] = [
-  { title: "Works great on phones", description: "Built for how your customers actually browse.", icon: "Smartphone" },
-  { title: "Built to turn visitors into customers", description: "Every page has a clear next step.", icon: "MousePointerClick" },
-  { title: "Clear calls to action", description: "No confusing menus of options.", icon: "ArrowUpRight" },
-  { title: "Built to show up on Google", description: "Built to be found, not just to look good.", icon: "Search" },
-  { title: "Fast performance", description: "A slow site loses customers. Ours are fast.", icon: "Gauge" },
-  { title: "Accessible experience", description: "Usable for every visitor, on every device.", icon: "Accessibility" },
-  { title: "You'll know what's working", description: "Set up to measure what actually matters.", icon: "BarChart3" },
-  { title: "Never miss a customer inquiry", description: "Built in from day one, not bolted on later.", icon: "Inbox" },
+  { title: "Built for Phones", description: "Built for how your customers actually browse.", icon: "Smartphone" },
+  { title: "Built to Convert", description: "Every page has a clear next step.", icon: "MousePointerClick" },
+  { title: "Clear Calls to Action", description: "No confusing menus of options.", icon: "ArrowUpRight" },
+  { title: "Built to Be Found", description: "Optimized to rank, not just to look good.", icon: "Search" },
+  { title: "Fast Performance", description: "A slow site loses customers. Ours are fast.", icon: "Gauge" },
+  { title: "Fully Accessible", description: "Usable for every visitor, on every device.", icon: "Accessibility" },
+  { title: "Clear Reporting", description: "Set up to measure what actually matters.", icon: "BarChart3" },
+  { title: "Never Miss an Inquiry", description: "Built in from day one, not bolted on later.", icon: "Inbox" },
 ];
 
 export const industries: IndustryTag[] = [
