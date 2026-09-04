@@ -55,6 +55,7 @@ export function PackageSection({ pkg, imageSide = "right", tone = "paper", child
             </div>
 
             <p className={cn("mt-3 balance font-display text-display-md", pkg.accent.text)}>{pkg.positioning[0]}</p>
+            <p className="mt-2 text-sm font-medium text-ink-500">{pkg.bestFor}</p>
 
             <div className="mt-5 flex flex-wrap items-baseline gap-x-8 gap-y-1.5 border-t border-ink-100 pt-5">
               <p className="font-display text-3xl font-semibold text-ink-900">

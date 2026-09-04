@@ -5,6 +5,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
 import { primaryCta } from "@/lib/site-config";
 import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
+import { Eye, MousePointerClick, Sparkles, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 
@@ -15,10 +16,28 @@ const founderDetails = [
   "Husband & Father",
 ];
 
+const principles: { title: string; copy: string; icon: LucideIcon }[] = [
+  {
+    title: "Look Professional",
+    copy: "Your website should reflect the quality of your business.",
+    icon: Sparkles,
+  },
+  {
+    title: "Make It Clear",
+    copy: "Customers should understand what you do within seconds.",
+    icon: Eye,
+  },
+  {
+    title: "Make the Next Step Easy",
+    copy: "Calls, forms, and booking should never be hard to find.",
+    icon: MousePointerClick,
+  },
+];
+
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Why Next Level Growth exists, and the philosophy behind how we help local businesses grow.",
+    "About Next Level Growth: a web design and digital growth company based in Reno, Nevada, building professional websites for businesses everywhere.",
   alternates: { canonical: "/about" },
 };
 
@@ -28,28 +47,41 @@ export default function AboutPage() {
       <AnalyticsBeacon event="page_view" pagePath="/about" />
       <PageHero
         eyebrow="About"
-        title="Why Next Level Growth Exists"
-        description="Too many local businesses are doing great work and getting overlooked online, not because they lack quality, but because their digital presence doesn't reflect it."
-        ctaLabel={primaryCta.label}
+        title="Great Businesses Deserve a Website That Shows It."
+        description="Too many businesses do excellent work but look average online. Next Level Growth exists to close that gap."
+        ctaLabel="Let's Build Yours"
         ctaHref={primaryCta.href}
       />
 
       <Section tone="paper">
-        <Container className="max-w-3xl space-y-6 text-lg leading-relaxed text-ink-700">
-          <p>
-            Next Level Growth was built around a simple observation: the
-            businesses that deserve to be found aren&rsquo;t always the ones
-            that are. A great local business can lose customers to a
-            competitor with a better website, a stronger Google presence, or
-            simply a clearer next step to take.
-          </p>
-          <p>
-            A good website should do more than look professional. It should
-            make your business easier to understand, easier to trust, and
-            easier to contact. Next Level Growth exists to help you build
-            that foundation, then connect the right tools around it as you
-            grow.
-          </p>
+        <Container>
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16">
+            <div>
+              <p className="text-eyebrow text-gradient-brand">Our Philosophy</p>
+              <h2 className="mt-3 balance text-display-md text-ink-900">
+                A great business can still get overlooked online.
+              </h2>
+              <p className="mt-4 max-w-md text-body text-ink-600">
+                A stronger website gives customers a clearer reason to trust you and an easier way to
+                reach you. Next Level Growth exists to help you build that, then connect the right
+                tools around it as you grow.
+              </p>
+            </div>
+
+            <ul className="grid grid-cols-1 gap-5 sm:grid-cols-3 lg:gap-4">
+              {principles.map((principle) => (
+                <li key={principle.title} className="rounded-2xl border border-ink-100 bg-white p-6 shadow-soft">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-blue-600 text-white">
+                    <principle.icon className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                  <h3 className="mt-4 font-display text-base font-semibold leading-snug text-ink-900">
+                    {principle.title}
+                  </h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink-600">{principle.copy}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </Container>
       </Section>
 

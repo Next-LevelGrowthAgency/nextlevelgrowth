@@ -20,8 +20,8 @@ const whatYouGet = [
   },
   {
     icon: "MessageSquareText",
-    title: "Honest, straightforward feedback",
-    description: "No pressure, no confusing terms. Just a clear picture of what's working and what isn't.",
+    title: "Honest feedback you can use",
+    description: "A clear picture of what's working, what isn't, and why it matters.",
   },
   {
     icon: "ListChecks",

@@ -44,20 +44,16 @@ export function ApproachHero() {
           </motion.p>
 
           <motion.h1 {...fadeUpProps(0.05)} className="balance text-display-2xl">
-            Your Business Has a{" "}
+            Know Where You Want to{" "}
             <span className="bg-gradient-to-r from-teal-300 via-blue-300 to-purple-300 bg-clip-text text-transparent">
-              Destination.
+              Go.
             </span>{" "}
-            Let&rsquo;s Build the Path Forward.
+            We&rsquo;ll Build the Digital Path to Get There.
           </motion.h1>
 
           <motion.p {...fadeUpProps(0.12)} className="mt-6 max-w-xl text-subhead text-paper-200">
-            Every business starts somewhere different. We take the time to understand where you are,
-            where you want to go, and what will actually help you move forward.
-          </motion.p>
-
-          <motion.p {...fadeUpProps(0.18)} className="mt-3 max-w-xl text-body text-paper-400">
-            Strategy, technology, and execution — built around your business and your goals.
+            We start by understanding your business, then build the website, visibility, and digital
+            tools that make sense for where you&rsquo;re headed.
           </motion.p>
 
           <motion.div {...fadeUpProps(0.25)} className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -74,7 +70,7 @@ export function ApproachHero() {
           </motion.div>
 
           <motion.p {...fadeUpProps(0.3)} className="mt-8 text-sm font-medium tracking-wide text-paper-400">
-            Understand. Build. Launch. Grow.
+            Understand. Plan. Build. Launch. Grow.
           </motion.p>
         </div>
       </Container>

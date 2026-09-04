@@ -251,7 +251,7 @@ export function GrowthCoachLeadForm({
               <p className="text-sm text-ink-500">
                 {emailSent
                   ? `A copy has been sent to ${values.email}.`
-                  : "Email delivery isn't fully configured yet, so no email was sent — your report is saved and visible to our team."}
+                  : "Email delivery isn't fully configured yet, so no email was sent. Your report is saved and visible to our team."}
               </p>
               {submissionId ? <p className="text-xs text-ink-400">Reference: {submissionId}</p> : null}
             </div>
@@ -390,7 +390,7 @@ export function GrowthCoachLeadForm({
                           onChange={(e) => set("consentToEmailFollowUp", e.target.checked)}
                         />
                         <span className="text-sm text-ink-800">
-                          <span className="font-medium">Email</span> — additional follow-up beyond this report.
+                          <span className="font-medium">Email</span>: additional follow-up beyond this report.
                         </span>
                       </label>
                       <label className="flex items-start gap-3 rounded-xl border border-ink-100 p-3">
@@ -401,7 +401,7 @@ export function GrowthCoachLeadForm({
                           onChange={(e) => set("consentToPhoneCall", e.target.checked)}
                         />
                         <span className="text-sm text-ink-800">
-                          <span className="font-medium">Phone call</span> — requires a phone number above.
+                          <span className="font-medium">Phone call</span>: requires a phone number above.
                         </span>
                       </label>
                     </div>

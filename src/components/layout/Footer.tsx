@@ -24,10 +24,10 @@ export function Footer() {
           <div className="col-span-2">
             <p className="font-display text-lg font-semibold text-paper-100">{siteConfig.shortName}</p>
             <p className="mt-3 max-w-xs text-body text-paper-400">
-              Helping local businesses reach their next level through modern
+              Professional web design and digital growth for local businesses, built on modern
               websites, local SEO, and smarter digital strategy.
             </p>
-            <p className="mt-2 text-sm text-paper-500">Based in Reno, Nevada — serving businesses everywhere.</p>
+            <p className="mt-2 text-sm text-paper-500">Based in Reno, Nevada. Building for businesses everywhere.</p>
             {configuredSocialLinks.length > 0 ? (
               <div className="mt-6 flex gap-4">
                 {configuredSocialLinks.map(([platform, href]) => {

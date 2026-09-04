@@ -49,6 +49,7 @@ export function PricingOverview() {
 
                 <h3 className="mt-4 font-display text-lg font-semibold text-ink-900">{pkg.name}</h3>
                 <p className="mt-1 text-sm text-ink-600">{pkg.tagline}</p>
+                <p className="mt-2 text-xs font-medium text-ink-400">{pkg.bestFor.replace(/^Best for /, "For ")}</p>
 
                 <div className="mt-4">
                   <p className="font-display text-2xl font-semibold text-ink-900">

@@ -10,9 +10,9 @@ import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Our Approach",
+  title: "Our Web Design Process",
   description:
-    "A clear path from where your business is today to where you want it to go. Understand, plan, build, launch, and grow with Next Level Growth.",
+    "How Next Level Growth approaches web design and digital growth: understand your business, plan the right site and tools, build, launch, and keep improving.",
   alternates: { canonical: "/approach" },
 };
 

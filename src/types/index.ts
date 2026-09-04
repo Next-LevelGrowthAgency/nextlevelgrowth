@@ -736,6 +736,8 @@ export type PricingPackage = {
   tagline: string;
   /** One or two short positioning lines shown large under the package name. */
   positioning: string[];
+  /** Short "best for" line answering who this package fits, shown on the quick-overview card and the full package section. */
+  bestFor: string;
   price: number;
   setupPrice: number;
   description: string;

@@ -32,8 +32,8 @@ export default function ServicesPage() {
     <>
       <PageHero
         eyebrow="Services"
-        title="A Full Growth Ecosystem, Not a Pile of Add-Ons"
-        description="Every service connects to the same goal: helping your business get discovered, build trust, and turn more visitors into customers. Start with one, or bring them together."
+        title="A Website First. Everything Else Connects to It."
+        description="Every service here supports the same goal: helping your business get discovered, build trust, and turn more visitors into customers."
         ctaLabel={primaryCta.label}
         ctaHref={primaryCta.href}
       />

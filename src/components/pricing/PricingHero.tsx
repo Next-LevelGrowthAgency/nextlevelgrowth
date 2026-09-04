@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
-const capabilityStrip = "Websites • SEO • AI • Automation • Growth Systems";
+const capabilityStrip = "Web Design • SEO • Google • AI • Automation • Ongoing Support";
 
 /**
  * Large split hero: real HTML copy on the left, the approved pricing cover
@@ -35,19 +35,19 @@ export function PricingHero() {
       <Container className="relative grid grid-cols-1 items-center gap-10 py-14 sm:py-16 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] lg:gap-10 lg:py-20">
         <div>
           <motion.p {...fadeUpProps(0)} className="text-eyebrow mb-5 bg-gradient-to-r from-teal-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Next Level Growth Agency
+            Website &amp; Digital Growth Pricing
           </motion.p>
 
           <motion.h1 {...fadeUpProps(0.05)} className="balance text-display-2xl text-ink-900">
-            Digital Solutions. <span className="bg-gradient-to-r from-teal-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">Real Growth.</span>
+            Build the Website.{" "}
+            <span className="bg-gradient-to-r from-teal-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Choose How Far You Want to Grow.
+            </span>
           </motion.h1>
 
-          <motion.h2 {...fadeUpProps(0.1)} className="mt-3 font-display text-display-md text-ink-600">
-            Services &amp; Pricing
-          </motion.h2>
-
           <motion.p {...fadeUpProps(0.15)} className="mt-6 max-w-lg text-subhead text-ink-600">
-            Digital solutions designed to help businesses build, improve, and grow their online presence.
+            Start with a professional website, ongoing support, or a full digital growth plan. Pick the
+            level that fits your business today and expand when you&rsquo;re ready.
           </motion.p>
 
           <motion.div {...fadeUpProps(0.2)} className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -59,7 +59,7 @@ export function PricingHero() {
               Explore Packages
             </Button>
             <Button href="/contact" variant="secondary" size="lg">
-              Contact Us
+              Talk With Us
             </Button>
           </motion.div>
 
@@ -77,7 +77,7 @@ export function PricingHero() {
           <div className="relative overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-lifted">
             <Image
               src="/images/Pricing/Picing-cover.png"
-              alt="Next Level Growth Agency — digital solutions built for business growth"
+              alt="Next Level Growth Agency: website design and digital growth packages built for business growth"
               width={1672}
               height={941}
               priority

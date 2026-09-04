@@ -16,6 +16,7 @@ export const pricingPackages: PricingPackage[] = [
     name: "Foundation",
     tagline: "Website care and support.",
     positioning: ["Reliable care. Real peace of mind."],
+    bestFor: "Best for businesses that already have a website and want dependable ongoing care.",
     price: 249,
     setupPrice: 250,
     description:
@@ -46,6 +47,7 @@ export const pricingPackages: PricingPackage[] = [
     name: "Launch",
     tagline: "Build your professional digital foundation.",
     positioning: ["Built to impress. Built to convert."],
+    bestFor: "Best for businesses that need a professional website and a strong online foundation.",
     price: 349,
     setupPrice: 750,
     description: "For businesses that need a polished professional website and a strong digital foundation.",
@@ -77,6 +79,7 @@ export const pricingPackages: PricingPackage[] = [
     name: "Growth",
     tagline: "Increase visibility, leads, and performance.",
     positioning: ["Get found. Get trusted. Get more customers."],
+    bestFor: "Best for businesses ready to improve visibility, lead capture, reviews, and performance.",
     price: 549,
     setupPrice: 1250,
     description:
@@ -110,6 +113,7 @@ export const pricingPackages: PricingPackage[] = [
     name: "Next Level",
     tagline: "Broader ongoing digital growth support.",
     positioning: ["We handle more. You grow faster."],
+    bestFor: "Best for businesses that want ongoing strategy, AI, automation, and broader support.",
     price: 999,
     setupPrice: 2500,
     description:

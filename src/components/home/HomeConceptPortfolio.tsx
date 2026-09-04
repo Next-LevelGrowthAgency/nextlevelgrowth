@@ -33,7 +33,7 @@ export function HomeConceptPortfolio() {
           <SectionHeading
             eyebrow="Sample Transformations"
             title="What Growth Could Look Like for a Business Like Yours"
-            description="These are concept projects, not real clients — a look at how we'd approach a business like yours."
+            description="These are concept projects, not real clients: a look at how we'd approach a business like yours."
             className="max-w-2xl"
           />
           <Button href="/work" variant="secondary" size="md" className="shrink-0">

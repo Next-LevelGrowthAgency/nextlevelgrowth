@@ -14,9 +14,9 @@ import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing",
+  title: "Web Design Pricing & Packages",
   description:
-    "Explore Next Level Growth Agency pricing for professional websites, SEO, Google Business optimization, AI solutions, automation, apps, social media, and ongoing digital growth services.",
+    "Website design pricing and digital growth packages from Next Level Growth: professional websites, local SEO, Google Business optimization, AI, and automation.",
   alternates: { canonical: "/pricing" },
 };
 

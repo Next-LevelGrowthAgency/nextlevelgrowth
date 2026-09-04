@@ -52,7 +52,7 @@ export function TransformationSection() {
             aria-hidden="true"
             className="absolute -bottom-4 -right-4 -z-10 h-full w-full rounded-3xl bg-gradient-to-br from-teal-200 via-blue-200 to-purple-200 opacity-40 blur-sm"
           />
-          <p className="mt-3 text-center text-xs text-ink-400">Concept example — shown for illustration only.</p>
+          <p className="mt-3 text-center text-xs text-ink-400">Concept example, shown for illustration only.</p>
         </motion.div>
       </Container>
     </section>

@@ -9,7 +9,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with Next Level Growth. No pressure, no confusing pitch.",
+  description:
+    "Start a website design or digital growth inquiry with Next Level Growth. Based in Reno, Nevada, building for businesses everywhere.",
   alternates: { canonical: "/contact" },
 };
 
@@ -36,8 +37,8 @@ export default async function ContactPage({
     <>
       <PageHero
         eyebrow="Contact"
-        title="Let's Start a Conversation"
-        description="Have a question, or ready to talk through your business? Reach out below, or request a Free Growth Audit for a deeper look at your online presence."
+        title="Ready for a Website That Represents Your Business?"
+        description="Tell us what you're looking to build or improve. We'll help you figure out the right place to start."
       />
 
       <Section tone="paper" className="relative overflow-hidden">
@@ -46,7 +47,7 @@ export default async function ContactPage({
           <div className="rounded-3xl border border-ink-100 bg-white p-7 shadow-soft sm:p-9">
             <h2 className="text-display-md">Send a Message</h2>
             <p className="mt-2 text-sm text-ink-500">
-              Tell us a bit about your business. There&rsquo;s no commitment — we&rsquo;ll follow up personally.
+              Tell us a bit about your business. There&rsquo;s no commitment, and we&rsquo;ll follow up personally.
             </p>
             <div className="mt-6">
               <ContactForm initialMessage={initialMessage} />

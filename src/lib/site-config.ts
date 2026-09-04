@@ -23,9 +23,9 @@ import type {
 export const siteConfig = {
   name: "Next Level Growth",
   shortName: "Next Level Growth",
-  tagline: "Helping Local Businesses Reach Their Next Level",
+  tagline: "Professional Web Design & Digital Growth",
   description:
-    "Next Level Growth helps local and service-based businesses attract more customers, build credibility, and grow with confidence through modern websites, local SEO, and smarter digital strategy.",
+    "Next Level Growth is a web design and digital growth company based in Reno, Nevada, building professional websites and stronger online presence for businesses everywhere.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.nextlevelgrowth.com",
 
   contact: {
