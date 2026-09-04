@@ -7,7 +7,6 @@ import { ApproachWhyUs } from "@/components/approach/ApproachWhyUs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema } from "@/lib/schema";
 import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
-import { pageViewEventName } from "@/lib/site-analytics";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,7 +19,8 @@ export const metadata: Metadata = {
 export default function ApproachPage() {
   return (
     <>
-      <AnalyticsBeacon event={pageViewEventName("approach")} />
+      <AnalyticsBeacon event="page_view" pagePath="/approach" />
+      <AnalyticsBeacon event="approach_view" pagePath="/approach" />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Our Approach", url: "/approach" }])} />
 
       <ApproachHero />

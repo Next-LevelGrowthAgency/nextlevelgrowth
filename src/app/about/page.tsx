@@ -5,7 +5,6 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
 import { primaryCta } from "@/lib/site-config";
 import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
-import { pageViewEventName } from "@/lib/site-analytics";
 import type { Metadata } from "next";
 import Image from "next/image";
 
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <AnalyticsBeacon event={pageViewEventName("about")} />
+      <AnalyticsBeacon event="page_view" pagePath="/about" />
       <PageHero
         eyebrow="About"
         title="Why Next Level Growth Exists"

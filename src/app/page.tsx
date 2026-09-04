@@ -15,7 +15,6 @@ import { faqSchema } from "@/lib/schema";
 import { faqs, siteConfig } from "@/lib/site-config";
 import { testimonials } from "@/lib/site-config";
 import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
-import { pageViewEventName } from "@/lib/site-analytics";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -27,7 +26,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <AnalyticsBeacon event={pageViewEventName("home")} />
+      <AnalyticsBeacon event="page_view" pagePath="/" />
       <JsonLd data={faqSchema(faqs)} />
       <Hero />
       <EmpathySection />

@@ -1,21 +1,22 @@
+import { LeadStatusSelect } from "@/components/admin/LeadStatusSelect";
 import { getLeadAdapter } from "@/lib/growth-coach/adapters";
 import type { LeadProfile } from "@/types";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Leads — Admin", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "Inquiries — Admin", robots: { index: false, follow: false } };
 
 const SOURCE_LABEL: Record<string, string> = { contact: "Contact form", "growth-audit": "Growth Audit", "growth-coach": "Growth Coach" };
 const STATUS_OPTIONS: NonNullable<LeadProfile["followUpStatus"]>[] = ["new", "contacted", "qualified", "follow-up-needed", "won", "lost"];
 
-/** Compact "which channels did they opt into" summary for the list view — see the lead detail page for the full consent record with timestamps and the audit trail (IP hash, user agent, terms/language versions). */
-function consentSummary(lead: LeadProfile): string {
-  const granted = [
-    lead.consentToEmailFollowUp ? "Email" : null,
-    lead.consentToPhoneCall ? "Phone" : null,
-    lead.consentToMarketing ? "Marketing" : null,
-  ].filter((v): v is string => Boolean(v));
-  return granted.length > 0 ? granted.join(", ") : "Report only";
+/** Best real signal for "what are they interested in" without a dedicated column — the contact form embeds a chosen Pricing package as a sentence in the free-text message rather than a structured field, so that's read back out here rather than inventing a new required form field. */
+function deriveInterest(lead: LeadProfile): string {
+  if (lead.recommendedPlan?.name) return lead.recommendedPlan.name;
+  if (lead.serviceInterests && lead.serviceInterests.length > 0) return lead.serviceInterests.join(", ");
+  const packageMention = lead.message?.match(/interested in the ([\w\s-]+?) package/i);
+  if (packageMention) return `${packageMention[1]} package`;
+  if (lead.primaryGoal) return lead.primaryGoal;
+  return "General inquiry";
 }
 
 export default async function AdminLeadsPage({ searchParams }: { searchParams: Promise<{ source?: string; status?: string; q?: string }> }) {
@@ -38,7 +39,7 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: P
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-display text-display-md text-ink-900">Leads</h1>
+        <h1 className="font-display text-display-md text-ink-900">Inquiries</h1>
         <p className="text-sm text-ink-500">{filtered.length} of {allLeads.length}</p>
       </div>
 
@@ -78,17 +79,17 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: P
               <th className="px-5 py-3">Date</th>
               <th className="px-5 py-3">Name</th>
               <th className="px-5 py-3">Business</th>
+              <th className="px-5 py-3">Email</th>
+              <th className="px-5 py-3">Interest</th>
               <th className="px-5 py-3">Source</th>
               <th className="px-5 py-3">Status</th>
-              <th className="px-5 py-3">Qualification</th>
-              <th className="px-5 py-3">Consented to</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-5 py-8 text-center text-ink-500">
-                  No leads match these filters.
+                  No inquiries match these filters.
                 </td>
               </tr>
             ) : (
@@ -96,21 +97,25 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: P
                 <tr key={lead.id} className="border-b border-ink-50 last:border-0 hover:bg-paper-100">
                   <td className="px-5 py-3 text-ink-600">{new Date(lead.createdAt).toLocaleDateString()}</td>
                   <td className="px-5 py-3">
-                    <Link href={`/admin/leads/${lead.id}`} className="font-medium text-grove-700 hover:underline">
-                      {[lead.firstName, lead.lastName].filter(Boolean).join(" ") || lead.email || "(unnamed)"}
+                    <Link href={`/admin/leads/${lead.id}`} className="font-medium text-blue-600 hover:underline">
+                      {[lead.firstName, lead.lastName].filter(Boolean).join(" ") || "(unnamed)"}
                     </Link>
                   </td>
                   <td className="px-5 py-3">{lead.businessName ?? "—"}</td>
+                  <td className="px-5 py-3 text-ink-600">{lead.email ?? "—"}</td>
+                  <td className="px-5 py-3 text-ink-600">{deriveInterest(lead)}</td>
                   <td className="px-5 py-3">{SOURCE_LABEL[lead.source] ?? lead.source}</td>
-                  <td className="px-5 py-3">{lead.followUpStatus ?? "new"}</td>
-                  <td className="px-5 py-3">{lead.leadQualificationLevel ?? "—"}</td>
-                  <td className="px-5 py-3 text-ink-600">{consentSummary(lead)}</td>
+                  <td className="px-5 py-3">
+                    <LeadStatusSelect leadId={lead.id} status={lead.followUpStatus ?? "new"} options={STATUS_OPTIONS} />
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      <p className="mt-3 text-xs text-ink-400">Open an inquiry for the full consent record, notes, and (for Growth Coach leads) the conversation transcript.</p>
     </div>
   );
 }

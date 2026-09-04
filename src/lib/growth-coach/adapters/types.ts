@@ -56,6 +56,44 @@ export interface LeadAdapter {
   getConversationTranscript(leadId: string): Promise<{ messages: CoachTranscriptMessage[]; businessPath: string | null; responseDepth: string | null } | null>;
 }
 
+// -----------------------------------------------------------------------
+// First-party analytics events — durable storage backing the admin
+// dashboard's Overview/Traffic/Pages/Inquiries views. Same fail-safe
+// factory pattern as everything else in this folder: falls back to an
+// in-memory mock (analytics-events-local-mock.ts, wrapping the existing
+// analytics-store.ts counters) when Supabase isn't configured.
+// -----------------------------------------------------------------------
+
+export type AnalyticsWindowDays = 7 | 30 | 90;
+
+export type AnalyticsSnapshot = {
+  /** Total events recorded matching event_name = 'page_view' in the window. */
+  totalPageViews: number;
+  /** page_path -> count, for 'page_view' events only, in the window. */
+  pageViewsByPath: Record<string, number>;
+  /** event_name -> count for every OTHER (non-page_view) event in the window. */
+  eventCounts: Record<string, number>;
+  /** One point per calendar day in the window, oldest first — for a simple trend line. Empty when the active adapter can't compute it (in-memory fallback). */
+  dailyPageViews: { date: string; count: number }[];
+  /** True only when this snapshot came from durable (Supabase) storage — the in-memory fallback can't produce a real window/trend, so the UI should say so rather than imply precision it doesn't have. */
+  durable: boolean;
+};
+
+export type AnalyticsEventRecord = {
+  id: string;
+  eventName: string;
+  pagePath: string | null;
+  createdAt: number;
+};
+
+export interface AnalyticsEventAdapter {
+  /** Never throws — analytics must never break the request that triggered it. */
+  recordEvent(input: { eventName: string; pagePath?: string | null; metadata?: Record<string, unknown> | null }): Promise<void>;
+  getSnapshot(windowDays: AnalyticsWindowDays): Promise<AnalyticsSnapshot>;
+  /** Most recent events first. */
+  listRecent(limit?: number): Promise<AnalyticsEventRecord[]>;
+}
+
 export type OutboundEmail = {
   to: string;
   subject: string;

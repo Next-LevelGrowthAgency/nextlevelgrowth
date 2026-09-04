@@ -51,7 +51,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     );
   }
 
-  const logoutAction = session.source === "supabase" ? "/api/auth/logout" : "/api/admin/logout";
+  const logoutAction = session.source === "supabase" ? "/api/auth/logout?redirect=/admin/login" : "/api/admin/logout";
 
   return (
     <div className="min-h-screen bg-paper-100 lg:flex">

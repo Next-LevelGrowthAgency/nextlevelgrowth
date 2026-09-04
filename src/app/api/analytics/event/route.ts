@@ -1,24 +1,31 @@
-import { incrementAnalyticsCounter } from "@/lib/growth-coach/analytics-store";
-import { isClientEventName } from "@/lib/site-analytics";
+import { getAnalyticsEventAdapter } from "@/lib/growth-coach/adapters";
+import { isAllowedEventName, isKnownPagePath } from "@/lib/site-analytics";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
 /**
- * Fire-and-forget analytics beacon for the small set of client-side
- * conversion events that can't be observed from a Server Component (the
- * contact form's start/submit moments). Unlike the older
- * /api/growth-coach/analytics beacon, this one allowlists event names —
- * this store now feeds a dashboard the owner reads directly, so it's
- * worth rejecting anything outside the known set rather than letting the
- * counters list fill with arbitrary client-supplied strings. Never reads
- * or persists anything beyond the event name — no props, no PII.
+ * Fire-and-forget analytics beacon for events a Server Component can't
+ * observe directly — statically prerendered page views, and the contact
+ * form's start/submit moments. Allowlists both the event name and (when
+ * present) the page path against known values — this table feeds a
+ * dashboard the owner reads directly, so it's worth rejecting anything
+ * outside the known set rather than letting it fill with arbitrary
+ * client-supplied strings. Never reads or persists anything beyond that —
+ * no props, no PII.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const event = typeof body?.event === "string" ? body.event : null;
-    if (event && isClientEventName(event)) incrementAnalyticsCounter(event);
+    const pagePath = typeof body?.pagePath === "string" ? body.pagePath : null;
+
+    if (event && isAllowedEventName(event)) {
+      await getAnalyticsEventAdapter().recordEvent({
+        eventName: event,
+        pagePath: pagePath && isKnownPagePath(pagePath) ? pagePath : null,
+      });
+    }
   } catch {
     // ignore malformed beacons
   }

@@ -8,10 +8,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export function LoginForm({ hideSignupLink = false }: { hideSignupLink?: boolean } = {}) {
+export function LoginForm({
+  hideSignupLink = false,
+  hideForgotPassword = false,
+  defaultRedirect = "/portal",
+}: { hideSignupLink?: boolean; hideForgotPassword?: boolean; defaultRedirect?: string } = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = sanitizeRedirectPath(searchParams.get("next"), "/portal");
+  const redirectTo = sanitizeRedirectPath(searchParams.get("next"), defaultRedirect);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,7 +43,7 @@ export function LoginForm({ hideSignupLink = false }: { hideSignupLink?: boolean
       if (error) {
         // Generic message regardless of "wrong password" vs "no such
         // account" — avoids leaking which emails have accounts.
-        setFormError("Incorrect email or password.");
+        setFormError("Unable to sign in. Check your credentials and try again.");
         setSubmitting(false);
         return;
       }
@@ -78,9 +82,11 @@ export function LoginForm({ hideSignupLink = false }: { hideSignupLink?: boolean
           <label htmlFor="password" className="text-sm font-medium text-ink-800">
             Password
           </label>
-          <Link href="/forgot-password" className="text-xs text-blue-600 underline hover:text-blue-800">
-            Forgot password?
-          </Link>
+          {!hideForgotPassword ? (
+            <Link href="/forgot-password" className="text-xs text-blue-600 underline hover:text-blue-800">
+              Forgot password?
+            </Link>
+          ) : null}
         </div>
         <input
           id="password"

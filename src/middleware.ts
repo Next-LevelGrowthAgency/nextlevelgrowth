@@ -33,7 +33,11 @@ export async function middleware(request: NextRequest) {
   const { supabase, response } = createSupabaseMiddlewareClient(request);
 
   if (pathname.startsWith("/admin")) {
-    if (pathname.startsWith("/admin/unavailable")) {
+    // The admin entry point itself must always be reachable without a
+    // session — under BOTH auth modes below, so this exemption sits
+    // before either branch runs (an unauthenticated visitor hitting this
+    // page is the expected case, not something to redirect away from).
+    if (pathname.startsWith("/admin/unavailable") || pathname.startsWith("/admin/login")) {
       return response;
     }
 
@@ -42,7 +46,7 @@ export async function middleware(request: NextRequest) {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        const loginUrl = new URL(`/login?next=${encodeURIComponent(pathname)}`, request.url);
+        const loginUrl = new URL(`/admin/login?next=${encodeURIComponent(pathname)}`, request.url);
         return NextResponse.redirect(loginUrl);
       }
       // Authenticated — role authorization happens in admin/layout.tsx.
@@ -53,10 +57,6 @@ export async function middleware(request: NextRequest) {
     // before, intentionally independent of the dev-password env vars.
     if (process.env.NODE_ENV === "production") {
       return NextResponse.rewrite(new URL("/admin/unavailable", request.url));
-    }
-
-    if (pathname.startsWith("/admin/login")) {
-      return response;
     }
 
     const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;

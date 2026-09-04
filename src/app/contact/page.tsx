@@ -29,8 +29,8 @@ export default async function ContactPage({
   const packageLabel = packageSlug ? packageLabels[packageSlug] : undefined;
   const initialMessage = packageLabel ? `I'm interested in the ${packageLabel} package.` : undefined;
 
-  trackPageView("contact");
-  if (packageSlug && packageLabel) trackPackageClick(packageSlug);
+  await trackPageView("/contact");
+  if (packageSlug && packageLabel) await trackPackageClick(packageSlug);
 
   return (
     <>

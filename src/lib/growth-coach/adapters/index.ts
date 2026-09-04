@@ -1,9 +1,11 @@
 import { localAiUsageAdapter } from "./ai-usage-local-mock";
 import { supabaseAiUsageAdapter } from "./ai-usage-supabase";
+import { localAnalyticsEventAdapter } from "./analytics-events-local-mock";
+import { supabaseAnalyticsEventAdapter } from "./analytics-events-supabase";
 import { consoleEmailAdapter, localLeadAdapter } from "./local-mock";
 import { isResendConfigured, resendEmailAdapter } from "./resend";
 import { isSupabaseConfigured, supabaseLeadAdapter } from "./supabase";
-import type { AiUsageAdapter, EmailAdapter, LeadAdapter } from "./types";
+import type { AiUsageAdapter, AnalyticsEventAdapter, EmailAdapter, LeadAdapter } from "./types";
 
 /**
  * Single seam every route/page should import through instead of reaching
@@ -32,4 +34,8 @@ export function isDurableStorageActive(): boolean {
 
 export function getAiUsageAdapter(): AiUsageAdapter {
   return isSupabaseConfigured() ? supabaseAiUsageAdapter : localAiUsageAdapter;
+}
+
+export function getAnalyticsEventAdapter(): AnalyticsEventAdapter {
+  return isSupabaseConfigured() ? supabaseAnalyticsEventAdapter : localAnalyticsEventAdapter;
 }
