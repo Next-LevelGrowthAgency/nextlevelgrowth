@@ -12,9 +12,12 @@ export function FinalCTA() {
           Let&rsquo;s find out what&rsquo;s holding your business back online,
           and fix it.
         </p>
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
           <Button href={primaryCta.href} size="lg">
-            Start With a Free Growth Audit
+            {primaryCta.label}
+          </Button>
+          <Button href="/pricing" variant="secondary" size="lg" className="border-paper-400 text-paper-100 hover:bg-white/10">
+            View Pricing
           </Button>
         </div>
         <p className="mt-5 text-body text-paper-400">

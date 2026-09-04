@@ -44,10 +44,11 @@ export function ApproachHero() {
           </motion.p>
 
           <motion.h1 {...fadeUpProps(0.05)} className="balance text-display-2xl">
-            A Clear Path to Your{" "}
+            Your Business Has a{" "}
             <span className="bg-gradient-to-r from-teal-300 via-blue-300 to-purple-300 bg-clip-text text-transparent">
-              Next Level
-            </span>
+              Destination.
+            </span>{" "}
+            Let&rsquo;s Build the Path Forward.
           </motion.h1>
 
           <motion.p {...fadeUpProps(0.12)} className="mt-6 max-w-xl text-subhead text-paper-200">

@@ -9,7 +9,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Insights",
   description:
-    "Practical, plain-English guidance on websites, local SEO, and digital marketing for local businesses.",
+    "Practical guidance on websites, local SEO, and digital marketing for local businesses.",
   alternates: { canonical: "/insights" },
 };
 
@@ -18,8 +18,8 @@ export default function InsightsPage() {
     <>
       <PageHero
         eyebrow="Insights"
-        title="Practical Guidance, No Jargon"
-        description="Straightforward articles on websites, local SEO, and digital marketing, written for business owners, not developers."
+        title="Practical Guidance for Growing Businesses"
+        description="Articles on websites, local SEO, and digital marketing, written for business owners, not developers."
       />
 
       <Section tone="paper">

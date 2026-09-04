@@ -45,6 +45,9 @@ export default async function ContactPage({
         <Container className="relative grid grid-cols-1 gap-12 lg:grid-cols-2">
           <div className="rounded-3xl border border-ink-100 bg-white p-7 shadow-soft sm:p-9">
             <h2 className="text-display-md">Send a Message</h2>
+            <p className="mt-2 text-sm text-ink-500">
+              Tell us a bit about your business. There&rsquo;s no commitment — we&rsquo;ll follow up personally.
+            </p>
             <div className="mt-6">
               <ContactForm initialMessage={initialMessage} />
             </div>

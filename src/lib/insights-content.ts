@@ -21,7 +21,7 @@ export const insightPosts: InsightPost[] = [
     slug: "what-is-a-growth-audit",
     title: "What Actually Happens During a Free Growth Audit?",
     excerpt:
-      "A plain-English walkthrough of what we look at, what you'll walk away with, and why there's no pressure attached.",
+      "A clear walkthrough of what we look at, what you'll walk away with, and why there's no pressure attached.",
     category: "Getting Started",
     readTime: "4 min read",
     body: [
@@ -33,7 +33,7 @@ export const insightPosts: InsightPost[] = [
     slug: "local-seo-basics-for-small-business",
     title: "Local SEO Basics Every Small Business Owner Should Know",
     excerpt:
-      "The handful of fundamentals that actually move the needle for local search visibility. No jargon required.",
+      "The handful of fundamentals that actually move the needle for local search visibility.",
     category: "Local SEO",
     readTime: "6 min read",
     body: [

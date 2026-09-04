@@ -41,18 +41,14 @@ export default function AboutPage() {
             businesses that deserve to be found aren&rsquo;t always the ones
             that are. A great local business can lose customers to a
             competitor with a better website, a stronger Google presence, or
-            simply a clearer next step for visitors to take.
+            simply a clearer next step to take.
           </p>
           <p>
-            We exist to close that gap, translating websites, SEO,
-            marketing, and automation into a strategy that&rsquo;s actually
-            built around your goals, your customers, and your budget. Not
-            generic best practices. Not one-size-fits-all packages.
-          </p>
-          <p>
-            We believe growth should feel clearer, not more complicated. That
-            means honest recommendations, clear communication, and a
-            long-term view of your business rather than a single project.
+            A good website should do more than look professional. It should
+            make your business easier to understand, easier to trust, and
+            easier to contact. Next Level Growth exists to help you build
+            that foundation, then connect the right tools around it as you
+            grow.
           </p>
         </Container>
       </Section>
@@ -124,7 +120,7 @@ export default function AboutPage() {
               Let&rsquo;s identify what is holding your business back and build what comes next.
             </p>
             <div className="mt-5">
-              <Button href={primaryCta.href}>Start Your Free Growth Assessment</Button>
+              <Button href={primaryCta.href}>{primaryCta.label}</Button>
             </div>
           </div>
         </Container>
