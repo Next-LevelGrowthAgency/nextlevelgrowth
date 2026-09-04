@@ -738,6 +738,10 @@ export type PricingPackage = {
   positioning: string[];
   /** Short "best for" line answering who this package fits, shown on the quick-overview card and the full package section. */
   bestFor: string;
+  /** Very short "best for" phrase (2-4 words) for the comparison table's compact self-select row. */
+  bestForShort: string;
+  /** Very short action-oriented line shown under the price in the comparison table header. */
+  compareValueLabel: string;
   price: number;
   setupPrice: number;
   description: string;
@@ -766,7 +770,10 @@ export type CustomServiceCategory = {
   services: CustomService[];
 };
 
+/** A comparison cell is either a plain boolean (checkmark / dash) or a short depth descriptor string (e.g. "Local + Ongoing") shown in place of a checkmark. */
+export type ComparisonCellValue = boolean | string;
+
 export type ComparisonRow = {
   label: string;
-  included: Record<PricingPackageId, boolean>;
+  values: Record<PricingPackageId, ComparisonCellValue>;
 };

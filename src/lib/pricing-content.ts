@@ -17,6 +17,8 @@ export const pricingPackages: PricingPackage[] = [
     tagline: "Website care and support.",
     positioning: ["Reliable care. Real peace of mind."],
     bestFor: "Best for businesses that already have a website and want dependable ongoing care.",
+    bestForShort: "Existing websites",
+    compareValueLabel: "Keep your website running.",
     price: 249,
     setupPrice: 250,
     description:
@@ -48,6 +50,8 @@ export const pricingPackages: PricingPackage[] = [
     tagline: "Build your professional digital foundation.",
     positioning: ["Built to impress. Built to convert."],
     bestFor: "Best for businesses that need a professional website and a strong online foundation.",
+    bestForShort: "New or outdated websites",
+    compareValueLabel: "Build your professional foundation.",
     price: 349,
     setupPrice: 750,
     description: "For businesses that need a polished professional website and a strong digital foundation.",
@@ -80,6 +84,8 @@ export const pricingPackages: PricingPackage[] = [
     tagline: "Increase visibility, leads, and performance.",
     positioning: ["Get found. Get trusted. Get more customers."],
     bestFor: "Best for businesses ready to improve visibility, lead capture, reviews, and performance.",
+    bestForShort: "Businesses ready to grow online",
+    compareValueLabel: "Grow visibility and opportunities.",
     price: 549,
     setupPrice: 1250,
     description:
@@ -114,6 +120,8 @@ export const pricingPackages: PricingPackage[] = [
     tagline: "Broader ongoing digital growth support.",
     positioning: ["We handle more. You grow faster."],
     bestFor: "Best for businesses that want ongoing strategy, AI, automation, and broader support.",
+    bestForShort: "Businesses wanting full support",
+    compareValueLabel: "Build the full digital system.",
     price: 999,
     setupPrice: 2500,
     description:
@@ -261,26 +269,56 @@ export const socialContentScopeNote =
  * Growth and Next Level, etc. — derived directly from each package's
  * `features` array above, not a separate source of truth.
  */
-const allTrue: Record<PricingPackageId, boolean> = { foundation: true, launch: true, growth: true, nextLevel: true };
 const fromLaunch: Record<PricingPackageId, boolean> = { foundation: false, launch: true, growth: true, nextLevel: true };
 const fromGrowth: Record<PricingPackageId, boolean> = { foundation: false, launch: false, growth: true, nextLevel: true };
 const nextLevelOnly: Record<PricingPackageId, boolean> = { foundation: false, launch: false, growth: false, nextLevel: true };
 
 /**
- * Trimmed to the highest-value rows for scanability — not every feature
- * from each package's full list, just enough to make the tier differences
+ * Trimmed to the highest-value rows for scanability, not every feature from
+ * each package's full list, just enough to make the tier differences
  * obvious at a glance. The full detail lives in each package section above.
+ *
+ * Rows with real depth differences across tiers (SEO, Google Business, Lead
+ * Capture, Analytics & Reporting, Website Care) use a short descriptor
+ * string instead of a bare checkmark, since a checkmark alone can't show
+ * that Launch's "SEO" and Growth's "SEO" are not the same level of work.
+ * Every descriptor is derived from that package's own `features` list
+ * above, not invented for this table.
  */
 export const comparisonRows: ComparisonRow[] = [
-  { label: "Website Care", included: allTrue },
-  { label: "Professional Website", included: fromLaunch },
-  { label: "SEO", included: fromLaunch },
-  { label: "Google Business", included: fromLaunch },
-  { label: "Reviews / Reputation", included: fromGrowth },
-  { label: "Lead Capture", included: fromLaunch },
-  { label: "Analytics", included: fromLaunch },
-  { label: "AI", included: nextLevelOnly },
-  { label: "Automation", included: nextLevelOnly },
-  { label: "Social Media", included: nextLevelOnly },
-  { label: "Priority Support", included: nextLevelOnly },
+  {
+    label: "Website Care",
+    values: {
+      foundation: "Ongoing Care",
+      launch: "Ongoing Updates",
+      growth: "Performance + Updates",
+      nextLevel: "Priority Support",
+    },
+  },
+  { label: "Professional Website", values: fromLaunch },
+  { label: "Mobile Responsive Design", values: fromLaunch },
+  {
+    label: "SEO",
+    values: { foundation: false, launch: "Basic Setup", growth: "Local + Ongoing", nextLevel: "Advanced + Ongoing" },
+  },
+  {
+    label: "Google Business",
+    values: { foundation: false, launch: "Initial Setup", growth: "Ongoing Optimization", nextLevel: "Ongoing Optimization" },
+  },
+  { label: "Review / Reputation System", values: fromGrowth },
+  {
+    label: "Lead Capture",
+    values: { foundation: false, launch: "Contact Forms", growth: "Advanced Lead Capture", nextLevel: "Advanced + Automation" },
+  },
+  { label: "Website Performance Optimization", values: fromGrowth },
+  {
+    label: "Analytics & Reporting",
+    values: { foundation: "Basic Reporting", launch: "Basic Analytics", growth: "Advanced Analytics", nextLevel: "Advanced + Strategy" },
+  },
+  { label: "Ongoing Growth Support", values: fromGrowth },
+  { label: "AI Assistant", values: nextLevelOnly },
+  { label: "Automation", values: nextLevelOnly },
+  { label: "Social Media Support", values: nextLevelOnly },
+  { label: "Conversion Optimization", values: nextLevelOnly },
+  { label: "Priority Support", values: nextLevelOnly },
 ];
