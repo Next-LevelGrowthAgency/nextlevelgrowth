@@ -2,6 +2,7 @@ import { GrowthAuditForm } from "@/components/forms/GrowthAuditForm";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { PageHero } from "@/components/ui/PageHero";
+import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,8 +20,8 @@ const whatYouGet = [
   },
   {
     icon: "MessageSquareText",
-    title: "Honest, plain-English feedback",
-    description: "No jargon, no pressure. Just a clear picture of what's working and what isn't.",
+    title: "Honest, straightforward feedback",
+    description: "No pressure, no confusing terms. Just a clear picture of what's working and what isn't.",
   },
   {
     icon: "ListChecks",
@@ -32,6 +33,7 @@ const whatYouGet = [
 export default function GrowthAuditPage() {
   return (
     <>
+      <AnalyticsBeacon event="growth_audit_click" />
       <PageHero
         eyebrow="Free Growth Audit"
         title="See Exactly Where the Opportunity Is"

@@ -12,6 +12,16 @@ type FieldErrors = Partial<Record<"name" | "email" | "message" | "phone" | "comp
 
 const blankValues = { name: "", email: "", message: "", phone: "", companyName: "" };
 
+/** Fire-and-forget analytics beacon — never blocks or throws into the form flow. */
+function trackEvent(event: "contact_start" | "contact_submit") {
+  fetch("/api/analytics/event", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ event }),
+    keepalive: true,
+  }).catch(() => {});
+}
+
 /**
  * Lightweight contact form (separate from the multi-step Growth Audit form).
  * Posts to /api/contact and interprets the standardized SubmissionResponse
@@ -27,10 +37,15 @@ export function ContactForm({ initialMessage }: { initialMessage?: string } = {}
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const turnstileTokenRef = useRef<string | null>(null);
   const submittingRef = useRef(false);
+  const hasStartedRef = useRef(false);
   const errorSummaryId = useId();
   const firstErrorFieldRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
   function set<K extends keyof typeof initialValues>(key: K, value: string) {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent("contact_start");
+    }
     setValues((prev) => ({ ...prev, [key]: value }));
     if (fieldErrors[key]) setFieldErrors((prev) => ({ ...prev, [key]: undefined }));
   }
@@ -86,6 +101,7 @@ export function ContactForm({ initialMessage }: { initialMessage?: string } = {}
       setSubmissionId(result.submissionId);
       form.reset();
       setValues(initialValues);
+      trackEvent("contact_submit");
     } catch {
       setStatus("error");
       setFormError("Couldn't reach the server. Please check your connection and try again.");

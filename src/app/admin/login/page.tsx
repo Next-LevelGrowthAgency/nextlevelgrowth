@@ -18,7 +18,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
   return (
     <div className="flex min-h-screen items-center justify-center bg-ink-900 px-4">
       <div className="w-full max-w-sm rounded-2xl border border-ink-200 bg-white p-8 shadow-lifted">
-        <div className="flex items-center gap-2 text-grove-700">
+        <div className="flex items-center gap-2 text-blue-600">
           <Sparkles className="h-5 w-5" aria-hidden="true" />
           <span className="text-xs font-semibold uppercase tracking-wide">Next Level Growth</span>
         </div>
@@ -46,7 +46,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
               type="password"
               required
               autoComplete="current-password"
-              className="mt-1.5 w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
+              className="mt-1.5 w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             />
           </div>
 
@@ -58,7 +58,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
               id="role"
               name="role"
               defaultValue="owner"
-              className="mt-1.5 w-full rounded-lg border border-ink-200 bg-white px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
+              className="mt-1.5 w-full rounded-lg border border-ink-200 bg-white px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             >
               <option value="owner">Owner</option>
               <option value="admin">Admin</option>
@@ -68,7 +68,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
 
           <button
             type="submit"
-            className="w-full rounded-full bg-grove-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-grove-700"
+            className="w-full rounded-full bg-gradient-to-r from-teal-500 to-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
           >
             Log in
           </button>

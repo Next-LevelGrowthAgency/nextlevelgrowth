@@ -1,19 +1,12 @@
+import { StatTile } from "@/components/admin/StatTile";
 import { getLeadAdapter, isDurableStorageActive, isEmailDeliveryActive } from "@/lib/growth-coach/adapters";
 import { getAnalyticsCounts } from "@/lib/growth-coach/analytics-store";
 import { buildDashboardOverview } from "@/lib/growth-coach/dashboard-overview";
+import { getSiteAnalyticsSnapshot } from "@/lib/site-analytics";
 import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Admin Overview", robots: { index: false, follow: false } };
-
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-xl border border-ink-100 bg-white p-4">
-      <p className="text-xs uppercase tracking-wide text-ink-500">{label}</p>
-      <p className="mt-1 font-display text-2xl font-semibold text-ink-900">{value}</p>
-    </div>
-  );
-}
 
 function CountList({ items }: { items: { label: string; count: number }[] }) {
   if (items.length === 0) return <p className="text-sm text-ink-500">Not enough data yet.</p>;
@@ -32,6 +25,7 @@ function CountList({ items }: { items: { label: string; count: number }[] }) {
 export default async function AdminOverviewPage() {
   const leads = await getLeadAdapter().listLeads();
   const overview = buildDashboardOverview(leads, getAnalyticsCounts());
+  const site = getSiteAnalyticsSnapshot();
   const emailActive = isEmailDeliveryActive();
   const dbActive = isDurableStorageActive();
 
@@ -46,7 +40,23 @@ export default async function AdminOverviewPage() {
         </div>
       ) : null}
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <p className="mt-8 text-xs font-semibold uppercase tracking-wide text-ink-500">Website Activity</p>
+      <p className="mt-1 text-xs text-ink-400">
+        Best-effort counts since the last redeploy — see{" "}
+        <Link href="/admin/traffic" className="underline hover:text-ink-600">
+          Traffic
+        </Link>{" "}
+        for how this is measured.
+      </p>
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatTile label="Homepage Views" value={site.pageViews.home} />
+        <StatTile label="Pricing Views" value={site.pageViews.pricing} />
+        <StatTile label="Growth Audit Clicks" value={site.growthAuditClicks} />
+        <StatTile label="Contact Submissions" value={site.contactSubmits} />
+      </div>
+
+      <p className="mt-8 text-xs font-semibold uppercase tracking-wide text-ink-500">Growth Coach &amp; Inquiries</p>
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatTile label="Total Leads" value={overview.totalLeads} />
         <StatTile label="Avg Growth Score" value={overview.averageGrowthScore ?? "–"} />
         <StatTile label="New" value={overview.newLeads} />
@@ -78,8 +88,8 @@ export default async function AdminOverviewPage() {
       </div>
 
       <div className="mt-6">
-        <Link href="/admin/leads" className="text-sm font-medium text-grove-700 underline hover:text-grove-900">
-          View all leads →
+        <Link href="/admin/leads" className="text-sm font-medium text-blue-600 underline hover:text-blue-800">
+          View all inquiries →
         </Link>
       </div>
     </div>

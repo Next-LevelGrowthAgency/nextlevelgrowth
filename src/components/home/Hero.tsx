@@ -48,9 +48,9 @@ export function Hero() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
             className="balance text-display-2xl"
           >
-            More Customers Start With a Better Website.{" "}
+            Build a Stronger Online Presence.{" "}
             <span className="bg-gradient-to-r from-teal-300 via-blue-300 to-purple-300 bg-clip-text text-transparent">
-              Let&rsquo;s Build Yours.
+              Grow From There.
             </span>
           </motion.h1>
 
@@ -60,8 +60,8 @@ export function Hero() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
             className="mt-6 max-w-xl text-subhead text-paper-300"
           >
-            We build websites, get you found on Google, and handle the
-            marketing that brings customers in.
+            We design professional websites and connect the digital tools that help
+            your business get found, build trust, and create more opportunities online.
           </motion.p>
 
           <motion.div

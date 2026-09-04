@@ -4,6 +4,8 @@ import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
 import { primaryCta } from "@/lib/site-config";
+import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
+import { pageViewEventName } from "@/lib/site-analytics";
 import type { Metadata } from "next";
 import Image from "next/image";
 
@@ -24,6 +26,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
+      <AnalyticsBeacon event={pageViewEventName("about")} />
       <PageHero
         eyebrow="About"
         title="Why Next Level Growth Exists"
@@ -49,10 +52,9 @@ export default function AboutPage() {
           </p>
           <p>
             We believe growth should feel clearer, not more complicated. That
-            means honest recommendations, plain-English communication, and a
+            means honest recommendations, clear communication, and a
             long-term view of your business rather than a single project.
           </p>
-
         </Container>
       </Section>
 

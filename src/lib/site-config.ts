@@ -67,8 +67,8 @@ export const primaryCta = {
 };
 
 export const secondaryCta = {
-  label: "See What We Do",
-  href: "/services",
+  label: "View Pricing",
+  href: "/pricing",
 };
 
 export const navLinks: NavLink[] = [
@@ -347,4 +347,4 @@ export const trustStatement =
   "No fluff. No fake promises. Just honest work that helps your business grow.";
 
 export const announcementBarMessage =
-  "Growth strategies built for ambitious local businesses.";
+  "Professional websites and digital growth solutions for local businesses.";

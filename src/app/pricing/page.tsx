@@ -10,6 +10,8 @@ import { PricingHero } from "@/components/pricing/PricingHero";
 import { PricingOverview } from "@/components/pricing/PricingOverview";
 import { breadcrumbSchema } from "@/lib/schema";
 import { getPackageById } from "@/lib/pricing-content";
+import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
+import { pageViewEventName } from "@/lib/site-analytics";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -27,6 +29,7 @@ export default function PricingPage() {
 
   return (
     <>
+      <AnalyticsBeacon event={pageViewEventName("pricing")} />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Pricing", url: "/pricing" }])} />
 
       <PricingHero />

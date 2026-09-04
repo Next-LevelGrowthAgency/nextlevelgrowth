@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export function LoginForm() {
+export function LoginForm({ hideSignupLink = false }: { hideSignupLink?: boolean } = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = sanitizeRedirectPath(searchParams.get("next"), "/portal");
@@ -64,7 +64,7 @@ export function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           aria-invalid={!!errors.email}
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         />
         {errors.email ? (
           <p role="alert" className="mt-1.5 text-sm font-medium text-red-700">
@@ -78,7 +78,7 @@ export function LoginForm() {
           <label htmlFor="password" className="text-sm font-medium text-ink-800">
             Password
           </label>
-          <Link href="/forgot-password" className="text-xs text-grove-700 underline hover:text-grove-900">
+          <Link href="/forgot-password" className="text-xs text-blue-600 underline hover:text-blue-800">
             Forgot password?
           </Link>
         </div>
@@ -89,7 +89,7 @@ export function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           aria-invalid={!!errors.password}
-          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-grove-600"
+          className="w-full rounded-lg border border-ink-200 px-4 py-2.5 text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         />
         {errors.password ? (
           <p role="alert" className="mt-1.5 text-sm font-medium text-red-700">
@@ -108,12 +108,14 @@ export function LoginForm() {
         {submitting ? "Signing in…" : "Sign in"}
       </Button>
 
-      <p className="text-center text-sm text-ink-600">
-        Don&rsquo;t have an account?{" "}
-        <Link href="/signup" className="font-medium text-grove-700 underline hover:text-grove-900">
-          Create one
-        </Link>
-      </p>
+      {!hideSignupLink ? (
+        <p className="text-center text-sm text-ink-600">
+          Don&rsquo;t have an account?{" "}
+          <Link href="/signup" className="font-medium text-blue-600 underline hover:text-blue-800">
+            Create one
+          </Link>
+        </p>
+      ) : null}
     </form>
   );
 }

@@ -2,6 +2,8 @@ import { ConceptPortfolio } from "@/components/home/ConceptPortfolio";
 import { CTABanner } from "@/components/ui/CTABanner";
 import { PageHero } from "@/components/ui/PageHero";
 import { primaryCta } from "@/lib/site-config";
+import { AnalyticsBeacon } from "@/components/analytics/AnalyticsBeacon";
+import { pageViewEventName } from "@/lib/site-analytics";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,6 +16,7 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <>
+      <AnalyticsBeacon event={pageViewEventName("work")} />
       <PageHero
         eyebrow="Our Work"
         title="A Look at How We Think and Build"

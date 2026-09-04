@@ -50,8 +50,8 @@ const homeDifferentiators: Differentiator[] = [
     icon: "Handshake",
   },
   {
-    title: "Plain-English Guidance",
-    description: "Clear explanations, never tech jargon.",
+    title: "Explained Simply",
+    description: "You'll understand exactly what we're doing and why.",
     icon: "Lightbulb",
   },
 ];

@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
 import { hasAddress, hasPhone, hasServiceArea, siteConfig } from "@/lib/site-config";
+import { trackPackageClick, trackPageView } from "@/lib/site-analytics";
 import { Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -27,6 +28,9 @@ export default async function ContactPage({
   const { package: packageSlug } = await searchParams;
   const packageLabel = packageSlug ? packageLabels[packageSlug] : undefined;
   const initialMessage = packageLabel ? `I'm interested in the ${packageLabel} package.` : undefined;
+
+  trackPageView("contact");
+  if (packageSlug && packageLabel) trackPackageClick(packageSlug);
 
   return (
     <>
