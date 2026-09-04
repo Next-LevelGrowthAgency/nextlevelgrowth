@@ -35,12 +35,12 @@ const homeDifferentiators: Differentiator[] = [
     icon: "Puzzle",
   },
   {
-    title: "Fast & Mobile-First",
+    title: "Mobile-First",
     description: "Built the way your customers actually browse.",
     icon: "Smartphone",
   },
   {
-    title: "Honest Recommendations",
+    title: "Honest Advice",
     description: "What your business needs, not what's easiest to sell.",
     icon: "BadgeCheck",
   },
@@ -50,7 +50,7 @@ const homeDifferentiators: Differentiator[] = [
     icon: "Handshake",
   },
   {
-    title: "Explained Simply",
+    title: "Explained Clearly",
     description: "You'll understand exactly what we're doing and why.",
     icon: "Lightbulb",
   },
@@ -71,15 +71,13 @@ export function HomeWhyUs() {
           whileInView="visible"
           viewport={viewportOnce}
           variants={staggerChildren()}
-          className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
           {homeDifferentiators.map((item) => (
             <motion.div key={item.title} variants={fadeUp} className="rounded-2xl bg-white p-6 shadow-soft transition-shadow duration-300 hover:shadow-lifted">
               <Icon name={item.icon} className="h-5 w-5 text-blue-600" />
-              <h3 className="mt-4 font-display text-display-md font-semibold text-ink-900">
-                {item.title}
-              </h3>
-              <p className="mt-2 text-body text-ink-600">{item.description}</p>
+              <h3 className="mt-4 font-display text-lg font-semibold leading-snug text-ink-900">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-600">{item.description}</p>
             </motion.div>
           ))}
         </motion.div>

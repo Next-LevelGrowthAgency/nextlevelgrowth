@@ -73,27 +73,20 @@ export function ConceptPortfolio() {
               )}
               <div className="flex flex-1 flex-col p-6">
                 {/*
-                  items-start (not items-center): if a longer industry name
-                  wraps to two lines against the badge, the badge stays
-                  pinned to the first line instead of drifting to the
-                  vertical middle of both.
-                  min-w-0 on the title: without it, a flex child's default
-                  min-width is `auto` (its own content's intrinsic width),
-                  which can stop it from ever wrapping and push the badge
-                  out toward/past the card edge instead — min-w-0 lets the
-                  title actually shrink and wrap within the space the badge
-                  (shrink-0, so IT never gets squeezed) leaves available.
-                  break-words is a safety net for a single word longer than
-                  the card is wide.
+                  Badge sits above the title on its own row instead of
+                  sharing a horizontal row with it — putting them side by
+                  side (title flex-1, badge shrink-0) used to squeeze the
+                  title into whatever width the badge left over, and a
+                  long single word like "Restaurant" or the first word of
+                  "Professional Services Firm" would hit CSS's normal
+                  word-wrap fallback and break mid-word once that shrunk
+                  width was narrower than the word itself. Stacked, the
+                  title always gets the card's full content width.
                 */}
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="min-w-0 flex-1 break-words font-display text-display-md font-semibold text-ink-900">
-                    {project.industry}
-                  </h3>
-                  <Badge tone="ink" className="shrink-0">
-                    {project.label}
-                  </Badge>
-                </div>
+                <Badge tone="ink" className="w-fit">
+                  {project.label}
+                </Badge>
+                <h3 className="mt-3 font-display text-display-md font-semibold text-ink-900">{project.industry}</h3>
 
                 <dl className="mt-4 space-y-3">
                   <div>
