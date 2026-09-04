@@ -18,8 +18,8 @@ export default function WorkPage() {
       <AnalyticsBeacon event="page_view" pagePath="/work" />
       <PageHero
         eyebrow="Our Work"
-        title="A Look at How We Think and Build"
-        description="Until we can show real client results here, these concept projects demonstrate our strategic and design approach across different industries. Every project below is clearly labeled. None represent an actual paid engagement."
+        title="Ideas Built to Show What's Possible"
+        description="Explore website concepts designed around different industries, styles, and customer needs. Use them as inspiration for what we could build around your business."
         ctaLabel={primaryCta.label}
         ctaHref={primaryCta.href}
       />
