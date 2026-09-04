@@ -3,6 +3,7 @@ import { FAQSection } from "@/components/home/FAQSection";
 import { FinalCTA } from "@/components/home/FinalCTA";
 import { Hero } from "@/components/home/Hero";
 import { HomeConceptPortfolio } from "@/components/home/HomeConceptPortfolio";
+import { HomeEmotionalBridge } from "@/components/home/HomeEmotionalBridge";
 import { HomeGrowthFramework } from "@/components/home/HomeGrowthFramework";
 import { HomeWhyUs } from "@/components/home/HomeWhyUs";
 import { Industries } from "@/components/home/Industries";
@@ -32,6 +33,7 @@ export default function HomePage() {
       <EmpathySection />
       <TransformationSection />
       <ServicesOverview />
+      <HomeEmotionalBridge />
       <HomeGrowthFramework />
       <HomeWhyUs />
       <HomeConceptPortfolio />

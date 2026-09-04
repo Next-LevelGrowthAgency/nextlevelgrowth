@@ -343,8 +343,5 @@ export const faqs: FaqItem[] = [
  */
 export const testimonials: Testimonial[] = [];
 
-export const trustStatement =
-  "No fluff. No fake promises. Just honest work that helps your business grow.";
-
 export const announcementBarMessage =
   "Professional websites and digital growth solutions for local businesses.";

@@ -6,28 +6,32 @@ import { fadeUp, staggerChildren, viewportOnce } from "@/lib/motion";
 import { motion } from "framer-motion";
 import { Compass, Inbox, LayoutTemplate, Search, type LucideIcon } from "lucide-react";
 
-const frustrations: { label: string; statement: string; icon: LucideIcon; gradient: string }[] = [
+const problems: { label: string; headline: string; supporting: string; icon: LucideIcon; gradient: string }[] = [
   {
     label: "Website",
-    statement: "Outdated or nonexistent online presence.",
+    headline: "Your website feels outdated.",
+    supporting: "Or you don't have one yet.",
     icon: LayoutTemplate,
     gradient: "from-teal-500 to-cyan-500",
   },
   {
     label: "Visibility",
-    statement: "Hard to get found by the right customers.",
+    headline: "Customers can't easily find you.",
+    supporting: "Your business isn't showing up where it should.",
     icon: Search,
     gradient: "from-cyan-500 to-blue-600",
   },
   {
-    label: "Leads",
-    statement: "Inconsistent inquiries and missed opportunities.",
+    label: "Opportunities",
+    headline: "Potential customers slip away.",
+    supporting: "Calls, forms, and follow-up aren't connected.",
     icon: Inbox,
     gradient: "from-blue-600 to-violet-600",
   },
   {
     label: "Direction",
-    statement: "Disconnected tools and unclear next steps.",
+    headline: "You're not sure what comes next.",
+    supporting: "Too many tools. No clear plan.",
     icon: Compass,
     gradient: "from-violet-600 to-purple-700",
   },
@@ -35,12 +39,12 @@ const frustrations: { label: string; statement: string; icon: LucideIcon; gradie
 
 export function EmpathySection() {
   return (
-    <section className="bg-paper-100 py-20 sm:py-28">
+    <section className="bg-paper-100 py-16 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="We Get It"
-          title="Running a Great Business Is Hard Enough. Growing Online Shouldn&rsquo;t Feel This Complicated."
-          description="Most business owners aren't struggling because they lack ambition. They're struggling because digital marketing has been made more confusing than it needs to be."
+          eyebrow="Your Business Deserves a Strong Online Presence"
+          title="You&rsquo;ve Built the Business. Let&rsquo;s Make Sure People See It."
+          description="A great business can still be overlooked when its website, search presence, and customer experience don't reflect the quality behind it."
         />
 
         <motion.ul
@@ -50,7 +54,7 @@ export function EmpathySection() {
           variants={staggerChildren()}
           className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {frustrations.map((item) => (
+          {problems.map((item) => (
             <motion.li
               key={item.label}
               variants={fadeUp}
@@ -60,7 +64,8 @@ export function EmpathySection() {
                 <item.icon className="h-5 w-5" aria-hidden="true" />
               </div>
               <p className="mt-4 text-eyebrow text-ink-500">{item.label}</p>
-              <p className="mt-1.5 font-display text-base font-semibold leading-snug text-ink-900">{item.statement}</p>
+              <p className="mt-1.5 font-display text-base font-semibold leading-snug text-ink-900">{item.headline}</p>
+              <p className="mt-1 text-sm leading-relaxed text-ink-500">{item.supporting}</p>
             </motion.li>
           ))}
         </motion.ul>

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { primaryCta, secondaryCta, trustStatement } from "@/lib/site-config";
+import { primaryCta, secondaryCta } from "@/lib/site-config";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
@@ -32,14 +32,14 @@ export function Hero() {
       </div>
 
       <Container className="relative py-28 sm:py-36 lg:py-44">
-        <div className="max-w-3xl">
+        <div className="max-w-2xl">
           <motion.p
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="text-eyebrow mb-6 text-teal-300"
           >
-            For Local Businesses Ready to Grow
+            Websites Built for Businesses Ready to Grow
           </motion.p>
 
           <motion.h1
@@ -48,9 +48,9 @@ export function Hero() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
             className="balance text-display-2xl"
           >
-            Build a Stronger Online Presence.{" "}
+            Build a Website That{" "}
             <span className="bg-gradient-to-r from-teal-300 via-blue-300 to-purple-300 bg-clip-text text-transparent">
-              Grow From There.
+              Moves Your Business Forward.
             </span>
           </motion.h1>
 
@@ -60,18 +60,28 @@ export function Hero() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
             className="mt-6 max-w-xl text-subhead text-paper-300"
           >
-            We design professional websites and connect the digital tools that help
-            your business get found, build trust, and create more opportunities online.
+            We design professional websites that help your business stand out, build trust, and make
+            it easier for customers to choose you.
+          </motion.p>
+
+          <motion.p
+            initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
+            className="mt-3 max-w-xl text-sm text-paper-400"
+          >
+            Then, when you&rsquo;re ready, we can connect SEO, Google visibility, AI, automation, and
+            ongoing support around it.
           </motion.p>
 
           <motion.div
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.22 }}
             className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
           >
             <Button href={primaryCta.href} size="lg">
-              {primaryCta.label}
+              Build My Website
             </Button>
             <Button href={secondaryCta.href} variant="secondary" size="lg" className="border-paper-400 text-paper-100 hover:bg-white/10">
               {secondaryCta.label}
@@ -81,10 +91,10 @@ export function Hero() {
           <motion.p
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="mt-6 text-body text-paper-400"
+            transition={{ duration: 0.7, delay: 0.32 }}
+            className="mt-6 text-sm text-paper-400"
           >
-            {trustStatement}
+            Professional websites. Built around your business.
           </motion.p>
         </div>
       </Container>
